@@ -1,0 +1,78 @@
+<library path="lib/libpanda_sim_controllers">
+<!-- 
+    <class name="panda_sim_controllers/PandaHeadController"
+	 type="panda_sim_controllers::PandaHeadController"
+	 base_class_type="controller_interface::ControllerBase">
+        <description>
+           The PandaHeadController tracks position commands for the Panda head pan. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class> -->
+
+    <class name="panda_sim_controllers/ElectricGripperController"
+	 type="panda_sim_controllers::ElectricGripperController"
+	 base_class_type="controller_interface::ControllerBase">
+        <description>
+           The ElectricGripperController tracks position commands for the electric grippers. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/PandaPositionController"
+           type="panda_sim_controllers::PandaPositionController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The PandaPositionController tracks position commands for the entire Panda arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/PandaVelocityController"
+           type="panda_sim_controllers::PandaVelocityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The PandaPositionController tracks velocity commands for the entire Panda arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/PandaEffortController"
+           type="panda_sim_controllers::PandaEffortController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The PandaPositionController tracks effort commands for the entire Panda arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/PandaGravityController"
+           type="panda_sim_controllers::PandaGravityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The PandaGravityController adds an effort component to compensate for gravity. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+
+
+    <!-- Following 3 "panda_effort_controllers" are copies of upstream 'ros_controllers/effort_controllers' which should be removed once inheritence enabling change is upstreamed. -->
+    <class name="panda_sim_controllers/JointPositionController"
+           type="panda_effort_controllers::JointPositionController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointPositionController tracks position commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/JointVelocityController"
+           type="panda_effort_controllers::JointVelocityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointVelocityController tracks velocity commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="panda_sim_controllers/JointEffortController"
+           type="panda_effort_controllers::JointEffortController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointEffortController tracks effort commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+</library>

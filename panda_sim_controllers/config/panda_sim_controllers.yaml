@@ -1,0 +1,109 @@
+panda_simulator:
+  # Publish all joint states -----------------------------------
+
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
+
+  # Panda SDK Controllers: Position --------------------------
+  effort_joint_position_controller:
+    type: panda_sim_controllers/PandaPositionController
+    topic_joint_command: /panda_simulator/arm/joint_command
+    topic_set_speed_ratio: /robot/limb/right/set_speed_ratio
+    joints:
+      panda_joint1_controller:
+        joint: panda_joint1
+        pid: {p: 500.0,  i: 10.0, d: 25.0}
+      panda_joint2_controller:
+        joint: panda_joint2
+        pid: {p: 400.0,  i: 10.0, d: 30.0}
+      panda_joint3_controller:
+        joint: panda_joint3
+        pid: {p: 250.0,  i: 10.0, d: 30.0}
+      panda_joint4_controller:
+        joint: panda_joint4
+        pid: {p: 300.0,  i: 10.0, d: 50.0}
+      panda_joint5_controller:
+        joint: panda_joint5
+        pid: {p: 300.0,  i: 10.0, d: 8.0}
+      panda_joint6_controller:
+        joint: panda_joint6
+        pid: {p: 100.0,  i: 1.0, d: 5.0}
+      panda_joint7_controller:
+        joint: panda_joint7
+        pid: {p: 50.0,  i: 10.0, d: 4.0}
+      panda_finger_joint1_controller:
+        joint: panda_finger_joint1
+        pid: {p: 50.0,  i: 10.0, d: 4.0}
+      panda_finger_joint2_controller:
+        joint: panda_finger_joint2
+        pid: {p: 50.0,  i: 10.0, d: 4.0}
+
+  # Panda SDK Controllers: Velocity --------------------------
+  effort_joint_velocity_controller:
+    type: panda_sim_controllers/PandaVelocityController
+    topic: /panda_simulator/arm/joint_command
+    joints:
+      panda_joint1_controller:
+        joint: panda_joint1
+        pid: {p: 10,  i: 0.0, d: 0.1}
+      panda_joint2_controller:
+        joint: panda_joint2
+        pid: {p: 100,  i: 1.0, d: 0.1}
+      panda_joint3_controller:
+        joint: panda_joint3
+        pid: {p: 0.05,  i: 0.0, d: 0.01}
+      panda_joint4_controller:
+        joint: panda_joint4
+        pid: {p: 0.5,  i: 0.01, d: 0.1}
+      panda_joint5_controller:
+        joint: panda_joint5
+        pid: {p: 1.0,  i: 0.0, d: 0.01}
+      panda_joint6_controller:
+        joint: panda_joint6
+        pid: {p: 0.05,  i: 0.0, d: 0.01}
+      panda_joint7_controller:
+        joint: panda_joint7
+        pid: {p: 0.05,  i: 0.0, d: 0.01}
+
+  # Panda SDK Controllers: Effort --------------------------
+  effort_joint_effort_controller:
+    type: panda_sim_controllers/PandaEffortController
+    topic: /panda_simulator/arm/joint_command
+    joints:
+      panda_joint1_controller:
+        joint: panda_joint1
+      panda_joint2_controller:
+        joint: panda_joint2
+      panda_joint3_controller:
+        joint: panda_joint3
+      panda_joint4_controller:
+        joint: panda_joint4
+      panda_joint5_controller:
+        joint: panda_joint5
+      panda_joint6_controller:
+        joint: panda_joint6
+      panda_joint7_controller:
+        joint: panda_joint7
+
+  # Panda SDK Controllers: Gravity Compensation ------------
+  effort_joint_gravity_controller:
+    type: panda_sim_controllers/PandaGravityController
+    command_topic: /robot/limb/right/gravity_compensation_torques
+    disable_topic: /robot/limb/right/suppress_gravity_compensation
+    disable_timeout: 0.2
+    joints:
+      panda_joint1_controller:
+        joint: panda_joint1
+      panda_joint2_controller:
+        joint: panda_joint2
+      panda_joint3_controller:
+        joint: panda_joint3
+      panda_joint4_controller:
+        joint: panda_joint4
+      panda_joint5_controller:
+        joint: panda_joint5
+      panda_joint6_controller:
+        joint: panda_joint6
+      panda_joint7_controller:
+        joint: panda_joint7

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <!-- <arg name="head_display_img" default="$(find panda_gazebo)/share/images/panda_sdk_research.png"/> -->
+
+
+  <arg name="ns" default="panda_simulator"/>
+  <!-- This argument loads the electric gripper, for example electric_gripper:=true -->
+  <!-- <arg name="electric_gripper" default="false"/> -->
+  <!-- This argument loads panda's pedestal URDF -->
+  <!-- <arg name="pedestal" default="true"/> -->
+  <!-- This argument fixes the robot statically to the world -->
+  <arg name="static" default="true"/>
+  <!-- This argument dictates whether gazebo should be launched in this file -->
+  <arg name="load_gazebo" default="true"/>
+  <!-- This argument sets the initial joint states -->
+  <arg name="initial_joint_states"
+    default=" -J panda::panda_joint1 0.000
+              -J panda::panda_joint2 -0.785
+              -J panda::panda_joint3 0.0
+              -J panda::panda_joint4 -1.9
+              -J panda::panda_joint5 0.0
+              -J panda::panda_joint6 1.57
+              -J panda::panda_joint7 0.785"/>
+              <!-- 0.00020082598954863977, -0.7850038009359614, 0.00015446583697012738, -2.3556103476139536, -0.00048749371177230215, 1.571537698017226, 0.7845346834179426, 0.039917126297950745, 0.039917126297950745 -->
+
+<rosparam command="load" file="$(find panda_gazebo)/config/config.yaml" />
+<rosparam command="load" file="$(find panda_gazebo)/config/acceleration_limits.yaml" />
+
+ <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro"/>
+ <param name="$(arg ns)/arm/root_name" value="panda_link0" />
+ <param name="$(arg ns)/arm/tip_name" value="panda_hand" />
+ <param name="$(arg ns)/arm/gravity_tip_name" value="panda_hand" />
+  <!-- We resume the logic in empty_world.launch, changing the name of the world to be launched -->
+  <include if="$(arg load_gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find panda_gazebo)/worlds/panda.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Publish a static transform between the world and the base of the robot -->
+  <node if="$(arg static)" pkg="tf2_ros" type="static_transform_publisher"
+	name="base_to_world" args="0 0 0 0 0 0 1 world panda_link0" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+<!--    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-param robot_description -urdf -z 0.0 -model panda" /> -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model panda $(arg initial_joint_states)"/>
+  <!-- ros_control panda launch file -->
+  <include file="$(find panda_sim_controllers)/launch/panda_sim_controllers.launch">
+      <arg name="gui" value="$(arg gui)" />
+      <arg name="ns" value="$(arg ns)" />
+  </include>
+
+  <!-- panda cameras launch file -->
+<!--   <arg name="wrist_camera" default="right_hand_camera" />
+  <arg name="head_camera"  default="head_camera" />
+  <include file="$(find panda_gazebo)/launch/panda_sim_cameras.launch">
+      <arg name="wrist_camera" value="$(arg wrist_camera)" />
+      <arg name="head_camera" value="$(arg head_camera)" />
+  </include>
+ -->
+
+  <!-- Publish a static transform between the world and the base of the robot -->
+  <node pkg="rosbag" type="play" name="io_robot" args="-l $(find panda_gazebo)/share/bags/robot_io.bag" />
+
+</launch>
