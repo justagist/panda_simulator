@@ -20,10 +20,11 @@
   <author>Rethink Robotics Inc.</author>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>eigen</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>gazebo_ros</build_depend>
   <build_depend>gazebo_ros_control</build_depend>
-  <build_depend>intera_core_msgs</build_depend>
+  <build_depend>franka_core_msgs</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>libgazebo7-dev</build_depend>
   <build_depend>realtime_tools</build_depend>
@@ -39,7 +40,7 @@
   <run_depend>gazebo</run_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
-  <run_depend>intera_core_msgs</run_depend>
+  <run_depend>franka_core_msgs</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>realtime_tools</run_depend>
   <run_depend>roscpp</run_depend>

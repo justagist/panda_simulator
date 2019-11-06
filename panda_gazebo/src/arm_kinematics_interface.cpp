@@ -18,8 +18,7 @@
 
 #include <memory>
 
-#include <intera_core_msgs/EndpointState.h>
-#include <intera_core_msgs/EndpointStates.h>
+#include <franka_core_msgs/TipState.h>
 #include <geometry_msgs/PoseStamped.h>
 
 #include <kdl/frames.hpp>
@@ -57,33 +56,25 @@ bool ArmKinematicsInterface::init(ros::NodeHandle& nh, std::string side)
   // }
   gravity_torques_seq_ = 0;
   endpoint_state_seq_ = 0;
-  gravity_torques_pub_ = nh.advertise<intera_core_msgs::SEAJointState>(
+  gravity_torques_pub_ = nh.advertise<franka_core_msgs::SEAJointState>(
                             "arm/gravity_compensation_torques", 1);
-  endpoint_state_pub_ = nh.advertise<intera_core_msgs::EndpointState>(
+  endpoint_state_pub_ = nh.advertise<franka_core_msgs::TipState>(
                             "arm/endpoint_state", 1);
-  tip_state_pub_ = nh.advertise<intera_core_msgs::EndpointStates>(
-                            "arm/tip_states", 1);
   joint_state_sub_ = nh.subscribe("joint_states", 1,
                        &ArmKinematicsInterface::jointStateCallback, this);
   joint_command_sub_ = nh.subscribe("arm/joint_command", 1,
                        &ArmKinematicsInterface::jointCommandCallback, this);
-  fk_service_ = nh.advertiseService(
-                    "/ExternalTools/"+side_+"/PositionKinematicsNode/FKService",
-                    &ArmKinematicsInterface::servicePositionFK, this);
-  ik_service_ = nh.advertiseService(
-                  "/ExternalTools/"+side_+"/PositionKinematicsNode/IKService",
-                  &ArmKinematicsInterface::servicePositionIK, this);
   // Update at 100Hz
   update_timer_ = nh.createTimer(100, &ArmKinematicsInterface::update, this);
-  joint_limits_pub_ = nh.advertise<intera_core_msgs::JointLimits>(
+  joint_limits_pub_ = nh.advertise<franka_core_msgs::JointLimits>(
                             "joint_limits", 1, true);
   joint_limits_pub_.publish(joint_limits_);
   return true;
 }
 
-intera_core_msgs::JointLimits ArmKinematicsInterface::retrieveJointLimits()
+franka_core_msgs::JointLimits ArmKinematicsInterface::retrieveJointLimits()
 {
-  auto joint_limits = intera_core_msgs::JointLimits();
+  auto joint_limits = franka_core_msgs::JointLimits();
   // Cycle through all tree joints,
   for (const auto& kv : tree_.getSegments())
   {
@@ -237,9 +228,9 @@ void ArmKinematicsInterface::jointStateCallback(const sensor_msgs::JointStateCon
   joint_state_buffer_.set(joint_state);
 }
 
-void ArmKinematicsInterface::jointCommandCallback(const intera_core_msgs::JointCommandConstPtr& msg)
+void ArmKinematicsInterface::jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg)
 {
-  auto joint_command = std::make_shared<intera_core_msgs::JointCommand>(*msg);
+  auto joint_command = std::make_shared<franka_core_msgs::JointCommand>(*msg);
   joint_command_buffer_.set(joint_command);
 }
 
@@ -249,13 +240,13 @@ void ArmKinematicsInterface::publishGravityTorques()
   joint_state_buffer_.get(joint_state);
   if (joint_state)
   {
-    intera_core_msgs::SEAJointState gravity_torques;
+    franka_core_msgs::SEAJointState gravity_torques;
     auto num_jnts = kinematic_chain_map_[tip_name_].chain.getNrOfJoints();
     KDL::JntArray jnt_pos(num_jnts), jnt_vel(num_jnts), jnt_eff(num_jnts), jnt_accelerations(num_jnts);
     KDL::JntArray jnt_gravity_model(num_jnts), jnt_gravity_only(num_jnts), jnt_zero(num_jnts);
     jointStateToKDL(*joint_state, kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, jnt_eff);
 
-    std::shared_ptr<const intera_core_msgs::JointCommand> joint_command;
+    std::shared_ptr<const franka_core_msgs::JointCommand> joint_command;
     joint_command_buffer_.get(joint_command);
     if (joint_command)
     {
@@ -295,8 +286,8 @@ void ArmKinematicsInterface::publishGravityTorques()
 }
 
 void ArmKinematicsInterface::jointCommandToGravityMsg(const std::vector<std::string>& joint_names,
-                                                      const intera_core_msgs::JointCommand& command_msg,
-                                                      intera_core_msgs::SEAJointState& gravity_msg)
+                                                      const franka_core_msgs::JointCommand& command_msg,
+                                                      franka_core_msgs::SEAJointState& gravity_msg)
 {
   auto num_jnts = joint_names.size();
   gravity_msg.commanded_position.resize(num_jnts);
@@ -371,126 +362,6 @@ void ArmKinematicsInterface::jointStateToKDL(const sensor_msgs::JointState& join
   }
 }
 
-bool ArmKinematicsInterface::servicePositionIK(intera_core_msgs::SolvePositionIK::Request& req,
-                                       intera_core_msgs::SolvePositionIK::Response& res)
-{
-  auto req_size = req.pose_stamp.size();
-  res.joints.resize(req_size, sensor_msgs::JointState());
-  res.result_type.resize(req_size, res.IK_FAILED);
-  for (size_t i = 0; i < req_size; i++)
-  {
-    res.joints[i].header.stamp = ros::Time::now();
-    // Try to find the kinematic chain, if not, create it
-    auto kinematic_chain_it = kinematic_chain_map_.find(req.tip_names[i]);
-    if (!req.tip_names.size() || kinematic_chain_it == kinematic_chain_map_.end())
-    {
-      if (!createKinematicChain(req.tip_names[i]))
-      {
-        // If chain is not found and cannot be created, leave isValid false and move on
-        res.result_type[i] = res.IK_ENDPOINT_DOES_NOT_EXIST;
-        continue;
-      }
-      else
-      {
-        // Update the iterator now that the chain is created
-        kinematic_chain_it = kinematic_chain_map_.find(req.tip_names[i]);
-      }
-    }
-    auto num_jnts = kinematic_chain_it->second.chain.getNrOfJoints();
-    KDL::JntArray jnt_seed(num_jnts);
-    KDL::JntArray jnt_result(num_jnts);
-    // Nullspace
-    KDL::JntArray jnt_nullspace_bias(0); // Size Zero tells SNS not to use the nullspace
-    if (req.use_nullspace_goal.size() > i && req.use_nullspace_goal[i]){
-      jointStatePositionToKDL(req.nullspace_goal[i],
-          kinematic_chain_it->second, jnt_nullspace_bias);
-      if(req.nullspace_gain.size() > i)
-        kinematic_chain_it->second.ik_solver->setNullspaceGain(req.nullspace_gain[i]);
-    }
-    if (req.seed_mode == req.SEED_USER || req.seed_mode == req.SEED_AUTO)
-    {
-      if (req.seed_angles.size() > i &&
-          req.seed_angles[i].name.size() && req.seed_angles[i].position.size() &&
-          req.seed_angles[i].name.size() == req.seed_angles[i].position.size())
-      {
-
-        jointStatePositionToKDL(req.seed_angles[i],
-            kinematic_chain_it->second, jnt_seed);
-        if (computePositionIK(kinematic_chain_it->second,
-                req.pose_stamp[i].pose, jnt_nullspace_bias, jnt_seed, jnt_result))
-        {
-          res.result_type[i] = req.SEED_USER;
-        }
-        /* if (jointsInCollision(kinematic_chain_map_[req.tip_names[i]], jnt_result))
-        {
-          res.result_type[i] = res.IK_IN_COLLISION;
-        }  TODO(imcmahon) Utilize FCL for collision checking
-        */
-      }
-    }
-    if (req.seed_mode == req.SEED_CURRENT ||
-         (req.seed_mode == req.SEED_AUTO &&
-           (res.result_type[i] == res.IK_FAILED || res.result_type[i] == res.IK_IN_COLLISION)
-         )
-       )
-    {
-        std::shared_ptr<const sensor_msgs::JointState> joint_state;
-        joint_state_buffer_.get(joint_state);
-        if (joint_state.get())
-        {
-          jointStatePositionToKDL(*joint_state.get(),
-              kinematic_chain_it->second, jnt_seed);
-          if (computePositionIK(kinematic_chain_it->second,
-              req.pose_stamp[i].pose, jnt_nullspace_bias, jnt_seed, jnt_result))
-          {
-            res.result_type[i] = req.SEED_CURRENT;
-          }
-        /* if (jointsInCollision(kinematic_chain_map_[req.tip_names[i]], jnt_result))
-        {
-          res.result_type[i] = res.IK_IN_COLLISION;
-        }  TODO(imcmahon) Utilize FCL for collision checking
-        */
-       }
-    }
-    // Reset Nullspace Gain
-    kinematic_chain_it->second.ik_solver->setNullspaceGain(1.0);
-    // Result
-    res.joints[i].name = kinematic_chain_it->second.joint_names;
-    res.joints[i].position.resize(num_jnts);
-    for(size_t j = 0; j < num_jnts; j++){
-      res.joints[i].position[j] = jnt_result(j);
-    }
-  }
-  return true;
-}
-
-bool ArmKinematicsInterface::servicePositionFK(intera_core_msgs::SolvePositionFK::Request& req,
-                                       intera_core_msgs::SolvePositionFK::Response& res)
-{
-  auto req_size = req.configuration.size();
-  res.inCollision.resize(req_size, false);
-  res.isValid.resize(req_size, false);
-  res.pose_stamp.resize(req_size, geometry_msgs::PoseStamped());
-  for (size_t i = 0; i < req_size; i++)
-  {
-    res.pose_stamp[i].header.stamp = ros::Time::now();
-    // Try to find the kinematic chain, if not, create it
-    if (!req.tip_names.size() ||
-        (kinematic_chain_map_.find(req.tip_names[i]) == kinematic_chain_map_.end() &&
-        !createKinematicChain(req.tip_names[i])))
-    {
-        // If chain is not found and cannot be created, leave isValid false and move on
-        continue;
-    }
-    KDL::JntArray jnt_pos;
-    jointStatePositionToKDL(req.configuration[i], kinematic_chain_map_[req.tip_names[i]], jnt_pos);
-    if (computePositionFK(kinematic_chain_map_[req.tip_names[i]], jnt_pos, res.pose_stamp[i].pose))
-    {
-      res.isValid[i] = true;
-    }
-  }
-  return true;
-}
 
 bool ArmKinematicsInterface::computeGravity(const Kinematics& kin,
                                             const KDL::JntArray& jnt_pos,
@@ -560,39 +431,69 @@ void ArmKinematicsInterface::publishEndpointState()
   joint_state_buffer_.get(joint_state);
   if (joint_state.get())
   {
-    intera_core_msgs::EndpointStates endpoint_states;
+    franka_core_msgs::TipState endpoint_state;
+    endpoint_state.O_F_ext_hat_K.header.frame_id = "panda_link0";
+    endpoint_state.O_F_ext_hat_K.wrench.force.x = 0.0;
+    endpoint_state.O_F_ext_hat_K.wrench.force.y = 0.0;
+    endpoint_state.O_F_ext_hat_K.wrench.force.z = 0.0;
+    endpoint_state.O_F_ext_hat_K.wrench.torque.x = 0.0;
+    endpoint_state.O_F_ext_hat_K.wrench.torque.y = 0.0;
+    endpoint_state.O_F_ext_hat_K.wrench.torque.z = 0.0;
+
+    endpoint_state.K_F_ext_hat_K.header.frame_id = "panda_K";
+    endpoint_state.K_F_ext_hat_K.wrench.force.x = 0.0;
+    endpoint_state.K_F_ext_hat_K.wrench.force.y = 0.0;
+    endpoint_state.K_F_ext_hat_K.wrench.force.z = 0.0;
+    endpoint_state.K_F_ext_hat_K.wrench.torque.x = 0.0;
+    endpoint_state.K_F_ext_hat_K.wrench.torque.y = 0.0;
+    endpoint_state.K_F_ext_hat_K.wrench.torque.z = 0.0;
     for(const auto& chain : kinematic_chain_map_)
     {
-      intera_core_msgs::EndpointState endpoint_state;
-      endpoint_state.valid = true;
-      KDL::JntArray jnt_pos, jnt_vel, jnt_eff;
-      jointStateToKDL(*joint_state.get(), chain.second, jnt_pos, jnt_vel, jnt_eff);
-      if (!computePositionFK(chain.second, jnt_pos, endpoint_state.pose))
-      {
-        endpoint_state.valid &= false;
-      }
-      KDL::JntArrayVel jnt_array_vel(jnt_pos, jnt_vel);
-      if (!computeVelocityFK(chain.second, jnt_array_vel, endpoint_state.twist))
-      {
-        endpoint_state.valid &= false;
-      }
+      
       /* TODO(imcmahon) once ChainFDSolverTau is upstreamed
       if(!computeEffortFK(kinematic_chain_map_[tip_name_], jnt_pos, jnt_eff, endpoint_state.wrench)){
         endpoint_state.valid &= false;
       }
       */
-      endpoint_states.names.push_back(chain.first);
-      endpoint_states.states.push_back(endpoint_state);
       if(chain.first == tip_name_)
       {
+        geometry_msgs::Pose pose;
+        KDL::JntArray jnt_pos, jnt_vel, jnt_eff;
+        jointStateToKDL(*joint_state.get(), chain.second, jnt_pos, jnt_vel, jnt_eff);
+
+        computePositionFK(chain.second, jnt_pos, pose);
+
+        Eigen::Quaterniond q(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
+        // Eigen::Affine3d t(Eigen::Translation3d(Eigen::Vector3d(pose.position.x, pose.position.y, pose.position.z)));
+        Eigen::Matrix3d m = q.toRotationMatrix();
+
+
+        Eigen::Vector3d t(pose.position.x, pose.position.y, pose.position.z);
+
+
+        Eigen::Matrix4d Trans; // Your Transformation Matrix
+        Trans.setIdentity();   // Set to Identity to make bottom row of Matrix 0,0,0,1
+        Trans.block<3,3>(0,0) = m;
+        Trans.block<3,1>(0,3) = t;
+
+        Eigen::Map<RowVectorXd> flattened_mat(Trans.data(), Trans.size());
+        // endpoint_state.O_T_EE = flattened_mat.data()
+        std::vector<double> vec(flattened_mat.data(), flattened_mat.data() + flattened_mat.size());
+
+
+        std::copy_n(vec.begin(), 16, endpoint_state.O_T_EE.begin());
+        // t.linear() = q.toRotationMatrix();
+
+        KDL::JntArrayVel jnt_array_vel(jnt_pos, jnt_vel);
+        // if (!computeVelocityFK(chain.second, jnt_array_vel, endpoint_state.twist))
+        // {
+        //   endpoint_state.valid &= false;
+        // }
         endpoint_state.header.frame_id = root_name_;
         endpoint_state.header.stamp = ros::Time::now();
         endpoint_state_pub_.publish(endpoint_state);
       }
     }
-    endpoint_states.header.frame_id = root_name_;
-    endpoint_states.header.stamp = ros::Time::now();
-    tip_state_pub_.publish(endpoint_states);
   }
 }
 

@@ -57,12 +57,10 @@ namespace panda_sim_controllers {
     speed_ratio_buffer_.set(speed_ratio);
   }
 
-  PandaPositionController::CommandsPtr PandaPositionController::cmdPositionMode(const intera_core_msgs::JointCommandConstPtr& msg) {
+  PandaPositionController::CommandsPtr PandaPositionController::cmdPositionMode(const franka_core_msgs::JointCommandConstPtr& msg) {
     if (msg->names.size() != msg->position.size()) {
       ROS_ERROR_STREAM_NAMED(JOINT_ARRAY_CONTROLLER_NAME, "Position commands size does not match joints size");
     }
-
-    ROS_WARN_STREAM("REACHNG HERE!!");
 
     std::vector<double> delta_time(msg->names.size());
     std::vector<double> current_position(msg->names.size());
@@ -109,7 +107,7 @@ namespace panda_sim_controllers {
     return commands;
   }
 
-  PandaPositionController::CommandsPtr PandaPositionController::cmdTrajectoryMode(const intera_core_msgs::JointCommandConstPtr& msg) {
+  PandaPositionController::CommandsPtr PandaPositionController::cmdTrajectoryMode(const franka_core_msgs::JointCommandConstPtr& msg) {
       CommandsPtr commands(new std::vector<Command>());
       if (msg->names.size() != msg->position.size() || msg->names.size() != msg->velocity.size()) {
         ROS_ERROR_STREAM_NAMED(JOINT_ARRAY_CONTROLLER_NAME, "Trajectory commands size does not match joints size");
@@ -128,15 +126,15 @@ namespace panda_sim_controllers {
       return commands;
   }
 
-  void PandaPositionController::jointCommandCB(const intera_core_msgs::JointCommandConstPtr& msg) {
+  void PandaPositionController::jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg) {
     // lock out other thread(s) which are getting called back via ros.
     std::lock_guard<std::mutex> guard(mtx_);
     CommandsPtr commands;
     // TODO: Verify commands are valid (names of joints are correct, within URDF limits, lengths of command fields are the same)
-    if(msg->mode == intera_core_msgs::JointCommand::POSITION_MODE) {
+    if(msg->mode == franka_core_msgs::JointCommand::POSITION_MODE) {
       commands = cmdPositionMode(msg);
     }
-    else if(msg->mode == intera_core_msgs::JointCommand::TRAJECTORY_MODE) {
+    else if(msg->mode == franka_core_msgs::JointCommand::TRAJECTORY_MODE) {
       commands = cmdTrajectoryMode(msg);
     }
     // Only write the command if this is the correct command mode, with a valid CommandPtr

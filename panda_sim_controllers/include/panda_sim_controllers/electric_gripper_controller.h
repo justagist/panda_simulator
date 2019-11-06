@@ -23,8 +23,8 @@
 #include <urdf/model.h>
 #include <controller_interface/controller.h>
 #include <realtime_tools/realtime_box.h>
-#include <intera_core_msgs/IOComponentCommand.h>
-#include <intera_core_msgs/IONodeConfiguration.h>
+#include <franka_core_msgs/IOComponentCommand.h>
+#include <franka_core_msgs/IONodeConfiguration.h>
 #include <panda_sim_controllers/panda_joint_position_controller.h>  // used for controlling individual joints
 
 namespace panda_sim_controllers
@@ -58,7 +58,7 @@ namespace panda_sim_controllers
     // An indicator to evalute to true when an unproccessed new command is in the realtime buffer
     bool new_command_;
     size_t update_counter_;
-    intera_core_msgs::IONodeConfiguration config_;
+    franka_core_msgs::IONodeConfiguration config_;
 
     // Command subscriber
     ros::Subscriber gripper_command_sub_;
@@ -97,7 +97,7 @@ namespace panda_sim_controllers
      *        storing the new desired internal gripper state
      * @param msg trajectory goal
      */
-    void commandCB(const intera_core_msgs::IOComponentCommandConstPtr& msg);
+    void commandCB(const franka_core_msgs::IOComponentCommandConstPtr& msg);
 
     // Create an effort-based joint position controller for every joint
     std::vector<

@@ -52,7 +52,7 @@ namespace panda_sim_controllers {
       ROS_INFO_STREAM_THROTTLE(60, "Gravity compensation torques are disabled...");
   }
 
-  void PandaGravityController::gravityCommandCB(const intera_core_msgs::SEAJointStateConstPtr& msg) {
+  void PandaGravityController::gravityCommandCB(const franka_core_msgs::SEAJointStateConstPtr& msg) {
 
       std::vector<Command> commands;
       if (msg->name.size() != msg->gravity_model_effort.size()) {

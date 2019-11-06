@@ -33,8 +33,8 @@ namespace panda_sim_controllers {
     return true;
   }
 
-  void PandaEffortController::jointCommandCB(const intera_core_msgs::JointCommandConstPtr& msg) {
-    if (msg->mode == intera_core_msgs::JointCommand::TORQUE_MODE) {
+  void PandaEffortController::jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg) {
+    if (msg->mode == franka_core_msgs::JointCommand::TORQUE_MODE) {
       std::vector<Command> commands;
 
       if (msg->names.size() != msg->effort.size()) {

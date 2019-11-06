@@ -18,7 +18,7 @@
 #define PANDA_EFFORT_CONTROLLER_H
 
 #include <panda_sim_controllers/joint_array_controller.h>
-#include <intera_core_msgs/JointCommand.h>
+#include <franka_core_msgs/JointCommand.h>
 #include <panda_sim_controllers/panda_joint_effort_controller.h>
 #include <ros/node_handle.h>
 
@@ -36,7 +36,7 @@ namespace panda_sim_controllers
   private:
     ros::Subscriber sub_joint_command_;
 
-    void jointCommandCB(const intera_core_msgs::JointCommandConstPtr& msg);
+    void jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg);
   };
 }
 

@@ -52,7 +52,7 @@ void ArmControllerInterface::commandTimeoutCheck(const ros::TimerEvent& e) {
       ((ros::Time::now() - *p_cmd_msg_time.get()) > (*p_timeout_length.get())));
   if(command_timeout) {
     // Timeout violated, force robot back to Position Mode
-    switchControllers(intera_core_msgs::JointCommand::POSITION_MODE);
+    switchControllers(franka_core_msgs::JointCommand::POSITION_MODE);
   }
 }
 
@@ -77,20 +77,20 @@ bool ArmControllerInterface::switchControllers(int control_mode) {
   {
     switch (control_mode)
     {
-      case intera_core_msgs::JointCommand::POSITION_MODE:
-      case intera_core_msgs::JointCommand::TRAJECTORY_MODE:
+      case franka_core_msgs::JointCommand::POSITION_MODE:
+      case franka_core_msgs::JointCommand::TRAJECTORY_MODE:
         start_controllers.push_back(getControllerString("position"));
         start_controllers.push_back(getControllerString("gravity"));
         stop_controllers.push_back(getControllerString("velocity"));
         stop_controllers.push_back(getControllerString("effort"));
         break;
-      case intera_core_msgs::JointCommand::VELOCITY_MODE:
+      case franka_core_msgs::JointCommand::VELOCITY_MODE:
         start_controllers.push_back(getControllerString("velocity"));
         start_controllers.push_back(getControllerString("gravity"));
         stop_controllers.push_back(getControllerString("position"));
         stop_controllers.push_back(getControllerString("effort"));
         break;
-      case intera_core_msgs::JointCommand::TORQUE_MODE:
+      case franka_core_msgs::JointCommand::TORQUE_MODE:
         start_controllers.push_back(getControllerString("effort"));
         start_controllers.push_back(getControllerString("gravity"));
         stop_controllers.push_back(getControllerString("position"));
@@ -115,7 +115,7 @@ bool ArmControllerInterface::switchControllers(int control_mode) {
   return true;
 }
 
-void ArmControllerInterface::jointCommandCallback(const intera_core_msgs::JointCommandConstPtr& msg) {
+void ArmControllerInterface::jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg) {
   // lock out other thread(s) which are getting called back via ros.
   std::lock_guard<std::mutex> guard(mtx_);
   if(switchControllers(msg->mode)) {

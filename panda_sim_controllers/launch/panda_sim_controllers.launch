@@ -32,7 +32,7 @@
   <!-- convert joint states to TF transforms -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
 	respawn="false" output="screen">
-    <remap from="/joint_states" to="/robot/joint_states" />
+    <remap from="/$(arg ns)/joint_states" to="/$(arg ns)/arm/joint_states" />
   </node>
 
 </launch>

@@ -21,7 +21,7 @@
 #include <ros/ros.h>
 #include <controller_interface/controller.h>
 #include <realtime_tools/realtime_buffer.h>
-#include <intera_core_msgs/HeadPanCommand.h>
+#include <franka_core_msgs/HeadPanCommand.h>
 #include <panda_sim_controllers/panda_joint_position_controller.h>  // used for controlling individual joints
 #include <panda_hardware_interface/shared_joint_interface.h>
 
@@ -68,7 +68,7 @@ private:
    * @brief Callback from a recieved goal from the published topic message
    * @param msg trajectory goal
    */
-  void commandCB(const intera_core_msgs::HeadPanCommandConstPtr& msg);
+  void commandCB(const franka_core_msgs::HeadPanCommandConstPtr& msg);
 
   // Create an effort-based joint position controller for every joint
   std::shared_ptr<panda_effort_controllers::JointPositionController> head_controller_ptr;

@@ -23,7 +23,7 @@
 
 #include <std_msgs/Float64.h>
 #include <realtime_tools/realtime_box.h>
-#include <intera_core_msgs/JointCommand.h>
+#include <franka_core_msgs/JointCommand.h>
 
 
 namespace panda_gazebo {
@@ -50,7 +50,7 @@ namespace panda_gazebo {
 
   protected:
     void jointCommandTimeoutCallback(const std_msgs::Float64 msg);
-    void jointCommandCallback(const intera_core_msgs::JointCommandConstPtr& msg);
+    void jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg);
     std::string getControllerString(std::string mode_str);
     bool switchControllers(int control_mode);
     void commandTimeoutCheck(const ros::TimerEvent& e);

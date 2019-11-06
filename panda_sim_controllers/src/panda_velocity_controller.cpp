@@ -33,8 +33,8 @@ namespace panda_sim_controllers {
     return true;
   }
 
-  void PandaVelocityController::jointCommandCB(const intera_core_msgs::JointCommandConstPtr& msg) {
-    if (msg->mode == intera_core_msgs::JointCommand::VELOCITY_MODE) {
+  void PandaVelocityController::jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg) {
+    if (msg->mode == franka_core_msgs::JointCommand::VELOCITY_MODE) {
       std::vector<Command> commands;
 
       if (msg->names.size() != msg->velocity.size()) {

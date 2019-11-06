@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   effort_controllers
   roscpp
   roslint
-  intera_core_msgs
+  franka_core_msgs
   realtime_tools
   panda_hardware_interface
 )

@@ -23,13 +23,14 @@
 #include <realtime_tools/realtime_box.h>
 
 #include <sensor_msgs/JointState.h>
-#include <intera_core_msgs/JointCommand.h>
-#include <intera_core_msgs/JointLimits.h>
-#include <intera_core_msgs/SolvePositionFK.h>
-#include <intera_core_msgs/SolvePositionIK.h>
-#include <intera_core_msgs/SEAJointState.h>
+#include <franka_core_msgs/JointCommand.h>
+#include <franka_core_msgs/JointLimits.h>
+#include <franka_core_msgs/SEAJointState.h>
 
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Pose.h>
+
+#include <Eigen/Geometry>
 
 #include <kdl/chainidsolver_recursive_newton_euler.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
@@ -65,12 +66,12 @@ struct Kinematics
 private:
 std::string side_, root_name_, tip_name_, camera_name_, gravity_tip_name_;
 urdf::Model robot_model_;
-intera_core_msgs::JointLimits joint_limits_;
+franka_core_msgs::JointLimits joint_limits_;
 KDL::Tree tree_;
 std::map<std::string, double> acceleration_map_;
 std::map<std::string, Kinematics> kinematic_chain_map_;
 
-realtime_tools::RealtimeBox< std::shared_ptr<const intera_core_msgs::JointCommand> > joint_command_buffer_;
+realtime_tools::RealtimeBox< std::shared_ptr<const franka_core_msgs::JointCommand> > joint_command_buffer_;
 realtime_tools::RealtimeBox< std::shared_ptr<const sensor_msgs::JointState> > joint_state_buffer_;
 
 ros::Subscriber joint_command_sub_;
@@ -83,9 +84,6 @@ long endpoint_state_seq_;
 ros::Publisher gravity_torques_pub_;
 long gravity_torques_seq_;
 
-ros::ServiceServer ik_service_;
-ros::ServiceServer fk_service_;
-
 ros::Timer update_timer_;
 
 /* Method to be invoked at a regular interval for publishing states
@@ -94,7 +92,7 @@ void update(const ros::TimerEvent& e);
 
 /* Method to retrieve and populate joint limits from URDF and parameters
  */
-intera_core_msgs::JointLimits retrieveJointLimits();
+franka_core_msgs::JointLimits retrieveJointLimits();
 
 
 /* Method create a new kinematic chain starting at "base" and ending at "tip_name"
@@ -102,7 +100,7 @@ intera_core_msgs::JointLimits retrieveJointLimits();
  */
 bool createKinematicChain(std::string tip_name);
 
-void jointCommandCallback(const intera_core_msgs::JointCommandConstPtr& msg);
+void jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg);
 
 /* Callback to capture and store the current joint states of the robot
  */
@@ -120,20 +118,6 @@ void publishEndpointState();
  * @returns true if all parameters found and parsed
  */
 bool parseParams(const ros::NodeHandle& nh);
-
-/* Method to service the Forward Kinematics request of any
- * kinematic chain starting at the "base"
- * @returns true to conform to ROS Service signature
- */
-bool servicePositionFK(intera_core_msgs::SolvePositionFK::Request& req,
-                       intera_core_msgs::SolvePositionFK::Response& res);
-
-/* Method to service the Inverse Kinematics request of any
- * kinematic chain starting at the "base"
- * @returns true to conform to ROS Service signature
- */
-bool servicePositionIK(intera_core_msgs::SolvePositionIK::Request& req,
-                       intera_core_msgs::SolvePositionIK::Response& res);
 
 /* Method to calculate the position FK for the required joint configuration in rad
  * with the result stored in geometry_msgs::Pose
@@ -184,8 +168,8 @@ void jointStatePositionToKDL(const sensor_msgs::JointState& joint_configuration,
  * the SEAJointState message (aka gravity_compensation_torques)
  */
 void jointCommandToGravityMsg(const std::vector<std::string>& joint_names,
-                              const intera_core_msgs::JointCommand& command_msg,
-                              intera_core_msgs::SEAJointState& gravity_msg);
+                              const franka_core_msgs::JointCommand& command_msg,
+                              franka_core_msgs::SEAJointState& gravity_msg);
 
 };
 }  // namespace panda_gazebo

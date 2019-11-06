@@ -16,7 +16,7 @@
 
 #include <panda_sim_controllers/panda_head_controller.h>
 #include <pluginlib/class_list_macros.h>
-#include <intera_core_msgs/HeadState.h>
+#include <franka_core_msgs/HeadState.h>
 
 
 namespace panda_sim_controllers
@@ -83,13 +83,13 @@ bool PandaHeadController::init(panda_hardware_interface::SharedJointInterface* r
     ros::NodeHandle nh_base("~");
     // Create command subscriber custom to panda
     head_command_sub =
-        nh_base.subscribe<intera_core_msgs::HeadPanCommand>(cmd_topic_name, 1, &PandaHeadController::commandCB, this);
+        nh_base.subscribe<franka_core_msgs::HeadPanCommand>(cmd_topic_name, 1, &PandaHeadController::commandCB, this);
   }
   else  // default "command" topic
   {
     // Create command subscriber custom to panda
     head_command_sub =
-        nh_.subscribe<intera_core_msgs::HeadPanCommand>("command", 1, &PandaHeadController::commandCB, this);
+        nh_.subscribe<franka_core_msgs::HeadPanCommand>("command", 1, &PandaHeadController::commandCB, this);
   }
   std::string state_topic_name;
   if (nh_.getParam("topic_state", state_topic_name))
@@ -97,11 +97,11 @@ bool PandaHeadController::init(panda_hardware_interface::SharedJointInterface* r
     // Get a node handle that is relative to the base path
     ros::NodeHandle nh_base("~");
     // Create command subscriber custom to panda
-    head_state_pub_ = nh_base.advertise<intera_core_msgs::HeadState>(state_topic_name, 1);
+    head_state_pub_ = nh_base.advertise<franka_core_msgs::HeadState>(state_topic_name, 1);
   }
   else
   {
-    head_state_pub_ = nh.advertise<intera_core_msgs::HeadState>("state", 1);
+    head_state_pub_ = nh.advertise<franka_core_msgs::HeadState>("state", 1);
   }
 
   // Update at 100Hz
@@ -111,7 +111,7 @@ bool PandaHeadController::init(panda_hardware_interface::SharedJointInterface* r
 
 void PandaHeadController::publishHeadState(const ros::TimerEvent& event)
 {
-  auto head_state = intera_core_msgs::HeadState();
+  auto head_state = franka_core_msgs::HeadState();
   head_state.pan = head_controller_ptr->getPosition();
   head_state.isTurning = std::abs(head_controller_ptr->joint_.getVelocity()) > HEAD_PAN_DEADBAND_VELOCITY;
   head_state.isBlocked = false;
@@ -158,7 +158,7 @@ void PandaHeadController::updateCommands()
   head_controller_ptr->setCommand(head_command->position, head_command->velocity);
 }
 
-void PandaHeadController::commandCB(const intera_core_msgs::HeadPanCommandConstPtr& msg)
+void PandaHeadController::commandCB(const franka_core_msgs::HeadPanCommandConstPtr& msg)
 {
   // Command Head Pan Position and
   // Command Velocity proportional to speed ratio x direction x URDF max speed

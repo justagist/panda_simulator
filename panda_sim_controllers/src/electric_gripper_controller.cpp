@@ -16,10 +16,10 @@
 **************************************************************************/
 
 #include <panda_sim_controllers/electric_gripper_controller.h>
-#include <intera_core_msgs/IODeviceStatus.h>
-#include <intera_core_msgs/IODeviceConfiguration.h>
-#include <intera_core_msgs/IODataStatus.h>
-#include <intera_core_msgs/IOStatus.h>
+#include <franka_core_msgs/IODeviceStatus.h>
+#include <franka_core_msgs/IODeviceConfiguration.h>
+#include <franka_core_msgs/IODataStatus.h>
+#include <franka_core_msgs/IOStatus.h>
 #include <std_msgs/String.h>
 #include <pluginlib/class_list_macros.h>
 #include <yaml-cpp/yaml.h>
@@ -114,12 +114,12 @@ bool ElectricGripperController::init(panda_hardware_interface::SharedJointInterf
     ros::NodeHandle nh_base("~");
 
     // Create command subscriber custom to panda
-    gripper_command_sub_ = nh_base.subscribe<intera_core_msgs::IOComponentCommand>(
+    gripper_command_sub_ = nh_base.subscribe<franka_core_msgs::IOComponentCommand>(
         command_topic_name, 1, &ElectricGripperController::commandCB, this);
   } else  // default "command" topic
   {
     // Create command subscriber custom to intera
-    gripper_command_sub_ = nh_.subscribe<intera_core_msgs::IOComponentCommand>(
+    gripper_command_sub_ = nh_.subscribe<franka_core_msgs::IOComponentCommand>(
         "command", 1, &ElectricGripperController::commandCB, this);
   }
   std::string state_topic_name;
@@ -128,31 +128,31 @@ bool ElectricGripperController::init(panda_hardware_interface::SharedJointInterf
     // Get a node handle that is relative to the base path
     ros::NodeHandle nh_base("~");
     // Create command subscriber custom to panda
-    gripper_state_pub_ = nh_base.advertise<intera_core_msgs::IODeviceStatus>(state_topic_name, 1, true);
+    gripper_state_pub_ = nh_base.advertise<franka_core_msgs::IODeviceStatus>(state_topic_name, 1, true);
   }
   else
   {
-    gripper_state_pub_ = nh.advertise<intera_core_msgs::IODeviceStatus>("state", 1, true);
+    gripper_state_pub_ = nh.advertise<franka_core_msgs::IODeviceStatus>("state", 1, true);
   }
 
-  end_effector_config_pub_ = nh.advertise<intera_core_msgs::IONodeConfiguration>("/io/end_effector/config", 1, true);
+  end_effector_config_pub_ = nh.advertise<franka_core_msgs::IONodeConfiguration>("/io/end_effector/config", 1, true);
   std::string config_topic_name;
   if (nh_.getParam("topic_config", config_topic_name))
   {// They provided a custom topic to subscribe to
     // Get a node handle that is relative to the base path
     ros::NodeHandle nh_base("~");
     // Create command subscriber custom to panda
-    gripper_config_pub_ = nh_base.advertise<intera_core_msgs::IODeviceConfiguration>(config_topic_name, 1, true);
+    gripper_config_pub_ = nh_base.advertise<franka_core_msgs::IODeviceConfiguration>(config_topic_name, 1, true);
   }
   else
   {
-    gripper_config_pub_ = nh.advertise<intera_core_msgs::IODeviceConfiguration>("config", 1, true);
+    gripper_config_pub_ = nh.advertise<franka_core_msgs::IODeviceConfiguration>("config", 1, true);
   }
 
   // Populate End Effector Config
   config_.time = ros::Time::now();
   config_.node.name = "EndEffector";
-  auto device = intera_core_msgs::IOComponentConfiguration();
+  auto device = franka_core_msgs::IOComponentConfiguration();
   device.name = "right_gripper";
   config_.devices.push_back(device);
 
@@ -203,83 +203,83 @@ void ElectricGripperController::timerUpdate(const ros::TimerEvent& event) {
 }
 
 void ElectricGripperController::publishState() {
-    auto gripper_state = intera_core_msgs::IODeviceStatus();
+    auto gripper_state = franka_core_msgs::IODeviceStatus();
 
     gripper_state.time = ros::Time::now();
     if(gripper_state.time.sec == 0){
         gripper_state.time.sec = 1; // Hack to make the config valid when starting
     }
     gripper_state.device.name = "right_gripper";
-    auto ready_status = intera_core_msgs::IOStatus();
+    auto ready_status = franka_core_msgs::IOStatus();
     ready_status.tag = ready_status.READY;
     ready_status.detail = "{}";
 
-    auto calibrate = intera_core_msgs::IODataStatus();
+    auto calibrate = franka_core_msgs::IODataStatus();
     calibrate.name = "calibrate";
     calibrate.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     calibrate.status = ready_status;
 
-    auto cmd_grip = intera_core_msgs::IODataStatus();
+    auto cmd_grip = franka_core_msgs::IODataStatus();
     cmd_grip.name = "cmd_grip";
     cmd_grip.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     cmd_grip.status = ready_status;
 
-    auto dead_zone_m = intera_core_msgs::IODataStatus();
+    auto dead_zone_m = franka_core_msgs::IODataStatus();
     dead_zone_m.name = "dead_zone_m";
     dead_zone_m.format = "{\"role\":\"output\",\"type\":\"float\",\"units\":\"meters\"}";
     dead_zone_m.status = ready_status;
 
-    auto force_response_n = intera_core_msgs::IODataStatus();
+    auto force_response_n = franka_core_msgs::IODataStatus();
     force_response_n.name = "force_response_n";
     force_response_n.format = "{\"role\":\"input\",\"type\":\"float\"}";
     force_response_n.status = ready_status;
 
-    auto go = intera_core_msgs::IODataStatus();
+    auto go = franka_core_msgs::IODataStatus();
     go.name = "go";
     go.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     go.status = ready_status;
 
-    auto has_error = intera_core_msgs::IODataStatus();
+    auto has_error = franka_core_msgs::IODataStatus();
     has_error.name = "has_error";
     has_error.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     has_error.status = ready_status;
 
-    auto is_calibrated = intera_core_msgs::IODataStatus();
+    auto is_calibrated = franka_core_msgs::IODataStatus();
     is_calibrated.name = "is_calibrated";
     is_calibrated.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     is_calibrated.status = ready_status;
 
-    auto is_gripping = intera_core_msgs::IODataStatus();
+    auto is_gripping = franka_core_msgs::IODataStatus();
     is_gripping.name = "is_gripping";
     is_gripping.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     is_gripping.status = ready_status;
 
-    auto is_moving = intera_core_msgs::IODataStatus();
+    auto is_moving = franka_core_msgs::IODataStatus();
     is_moving.name = "is_moving";
     is_moving.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     is_moving.status = ready_status;
 
-    auto position_m = intera_core_msgs::IODataStatus();
+    auto position_m = franka_core_msgs::IODataStatus();
     position_m.name = "position_m";
     position_m.format = "{\"role\":\"output\",\"type\":\"float\",\"units\":\"meters\"}";
     position_m.status = ready_status;
 
-    auto position_response_m = intera_core_msgs::IODataStatus();
+    auto position_response_m = franka_core_msgs::IODataStatus();
     position_response_m.name = "position_response_m";
     position_response_m.format = "{\"role\":\"output\",\"type\":\"float\",\"units\":\"meters\"}";
     position_response_m.status = ready_status;
 
-    auto reboot = intera_core_msgs::IODataStatus();
+    auto reboot = franka_core_msgs::IODataStatus();
     reboot.name = "reboot";
     reboot.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     reboot.status = ready_status;
 
-    auto right_gripper_tip_object_kg = intera_core_msgs::IODataStatus();
+    auto right_gripper_tip_object_kg = franka_core_msgs::IODataStatus();
     right_gripper_tip_object_kg.name = "right_gripper_tip_object_kg";
     right_gripper_tip_object_kg.format = "{\"role\":\"output\",\"type\":\"bool\"}";
     right_gripper_tip_object_kg.status = ready_status;
 
-    auto speed_mps = intera_core_msgs::IODataStatus();
+    auto speed_mps = franka_core_msgs::IODataStatus();
     speed_mps.name = "speed_mps";
     speed_mps.format = "{\"role\":\"output\",\"type\":\"float\",\"units\":\"metersPerSecond\"}";
     speed_mps.status = ready_status;
@@ -323,7 +323,7 @@ void ElectricGripperController::publishState() {
 }
 
 void ElectricGripperController::publishConfig(){
-    auto gripper_config = intera_core_msgs::IODeviceConfiguration();
+    auto gripper_config = franka_core_msgs::IODeviceConfiguration();
     gripper_config.time = ros::Time::now();
     if(gripper_config.time.sec == 0){
         gripper_config.time.sec = 1; // Hack to make the config valid when starting
@@ -371,7 +371,7 @@ void ElectricGripperController::updateCommands() {
 }
 
 void ElectricGripperController::commandCB(
-    const intera_core_msgs::IOComponentCommandConstPtr& msg) {
+    const franka_core_msgs::IOComponentCommandConstPtr& msg) {
   // Save off Command Time if new
   if(!cmd_times_list_.contains(msg->time)){
     cmd_times_list_.addTime(msg->time);

@@ -18,7 +18,7 @@
 #define PANDA_GRAVITY_CONTROLLER_H
 
 #include <panda_sim_controllers/joint_array_controller.h>
-#include <intera_core_msgs/SEAJointState.h>
+#include <franka_core_msgs/SEAJointState.h>
 #include <std_msgs/Empty.h>
 #include <realtime_tools/realtime_box.h>
 #include <panda_sim_controllers/panda_joint_effort_controller.h>
@@ -44,7 +44,7 @@ namespace panda_sim_controllers
     realtime_tools::RealtimeBox< std::shared_ptr<const ros::Time > > box_disable_time_;
     ros::Duration gravity_disable_timeout_;
 
-    void gravityCommandCB(const intera_core_msgs::SEAJointStateConstPtr& msg);
+    void gravityCommandCB(const franka_core_msgs::SEAJointStateConstPtr& msg);
     void gravityDisableCB(const std_msgs::Empty& msg);
   };
 }

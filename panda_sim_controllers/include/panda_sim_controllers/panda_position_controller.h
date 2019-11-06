@@ -20,7 +20,7 @@
 #include <mutex>
 
 #include <panda_sim_controllers/joint_array_controller.h>
-#include <intera_core_msgs/JointCommand.h>
+#include <franka_core_msgs/JointCommand.h>
 #include <panda_sim_controllers/panda_joint_position_controller.h>
 #include <ros/node_handle.h>
 
@@ -47,9 +47,9 @@ namespace panda_sim_controllers
     ros::Subscriber sub_speed_ratio_;
     realtime_tools::RealtimeBox< std::shared_ptr<const std_msgs::Float64> > speed_ratio_buffer_;
     void speedRatioCallback(const std_msgs::Float64 msg);
-    void jointCommandCB(const intera_core_msgs::JointCommandConstPtr& msg);
-    CommandsPtr cmdTrajectoryMode(const intera_core_msgs::JointCommandConstPtr& msg);
-    CommandsPtr cmdPositionMode(const intera_core_msgs::JointCommandConstPtr& msg);
+    void jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg);
+    CommandsPtr cmdTrajectoryMode(const franka_core_msgs::JointCommandConstPtr& msg);
+    CommandsPtr cmdPositionMode(const franka_core_msgs::JointCommandConstPtr& msg);
 
   };
 }

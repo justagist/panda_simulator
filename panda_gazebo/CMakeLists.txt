@@ -8,7 +8,7 @@ find_package(catkin
     gazebo_ros
     gazebo_ros_control
     image_transport
-    intera_core_msgs
+    franka_core_msgs
     realtime_tools
     roscpp
     roslint
@@ -21,13 +21,14 @@ find_package(catkin
 # Depend on system install of Gazebo
 find_package(GAZEBO REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+find_package(Eigen3 REQUIRED)
 
 catkin_package(
  CATKIN_DEPENDS
   panda_hardware_interface
   gazebo_ros_control
   image_transport
-  intera_core_msgs
+  franka_core_msgs
   realtime_tools
   roscpp
   kdl_parser
@@ -46,6 +47,7 @@ link_directories(
 include_directories(include
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_library(panda_gazebo_ros_control
