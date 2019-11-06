@@ -1,0 +1,78 @@
+<library path="lib/libsawyer_sim_controllers">
+<!-- 
+    <class name="sawyer_sim_controllers/SawyerHeadController"
+	 type="sawyer_sim_controllers::SawyerHeadController"
+	 base_class_type="controller_interface::ControllerBase">
+        <description>
+           The SawyerHeadController tracks position commands for the Sawyer head pan. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class> -->
+
+    <class name="sawyer_sim_controllers/ElectricGripperController"
+	 type="sawyer_sim_controllers::ElectricGripperController"
+	 base_class_type="controller_interface::ControllerBase">
+        <description>
+           The ElectricGripperController tracks position commands for the electric grippers. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/SawyerPositionController"
+           type="sawyer_sim_controllers::SawyerPositionController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The SawyerPositionController tracks position commands for the entire Sawyer arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/SawyerVelocityController"
+           type="sawyer_sim_controllers::SawyerVelocityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The SawyerPositionController tracks velocity commands for the entire Sawyer arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/SawyerEffortController"
+           type="sawyer_sim_controllers::SawyerEffortController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The SawyerPositionController tracks effort commands for the entire Sawyer arm. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/SawyerGravityController"
+           type="sawyer_sim_controllers::SawyerGravityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The SawyerGravityController adds an effort component to compensate for gravity. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+
+
+    <!-- Following 3 "sawyer_effort_controllers" are copies of upstream 'ros_controllers/effort_controllers' which should be removed once inheritence enabling change is upstreamed. -->
+    <class name="sawyer_sim_controllers/JointPositionController"
+           type="sawyer_effort_controllers::JointPositionController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointPositionController tracks position commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/JointVelocityController"
+           type="sawyer_effort_controllers::JointVelocityController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointVelocityController tracks velocity commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+    <class name="sawyer_sim_controllers/JointEffortController"
+           type="sawyer_effort_controllers::JointEffortController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointEffortController tracks effort commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+</library>

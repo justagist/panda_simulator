@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- these are the arguments you can pass this launch file -->
+  <arg name="paused" default="false"/>
+  <!-- Publish a static transform between the world and the base of the robot -->
+  <node pkg="sawyer_gazebo" type="cameras_sim_io_node.py" name="camera_sim"/>
+  <!-- sawyer cameras launch file -->
+  <arg name="wrist_camera" default="right_hand_camera" />
+  <arg name="head_camera"  default="head_camera" />
+  <arg name="wrist_camera_ns" default="/io/internal_camera/$(arg wrist_camera)" />
+  <arg name="head_camera_ns"  default="/io/internal_camera/$(arg head_camera)" />
+
+  <node pkg="nodelet" type="nodelet" name="intera_camera_nodelets" args="manager"/>
+  <include file="$(find sawyer_gazebo)/launch/image_proc.launch" ns="$(arg wrist_camera_ns)">
+      <arg name="manager"              value="/intera_camera_nodelets" />
+      <arg name="use_mono"             value="true" />
+      <arg name="mono_topic"           value="image_raw" />
+      <arg name="use_color"            value="false" />
+      <arg name="use_debayer"          value="false" />
+  </include>
+  <include file="$(find sawyer_gazebo)/launch/image_proc.launch" ns="$(arg head_camera_ns)">
+      <arg name="manager" value="/intera_camera_nodelets" />
+      <arg name="use_mono"             value="false" />
+      <arg name="use_color"            value="true" />
+      <arg name="color_topic"          value="image_raw" />
+      <arg name="use_debayer"          value="false" />
+  </include>
+
+</launch>

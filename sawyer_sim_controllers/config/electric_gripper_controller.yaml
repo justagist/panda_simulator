@@ -1,0 +1,16 @@
+robot:
+  # SDK Controllers: Gripper --------------------------
+  electric_gripper_controller:
+    type: sawyer_sim_controllers/ElectricGripperController
+    topic_command: /io/end_effector/right_gripper/command
+    topic_config:  /io/end_effector/right_gripper/config
+    topic_state:   /io/end_effector/right_gripper/state
+    joints:
+          # main joint
+          right_gripper_l_finger_controller:
+            joint: right_gripper_l_finger_joint
+            pid: {p: 5000,  i: 50, d: 0.5}
+          # mimic joint
+          right_gripper_r_finger_controller:
+            joint: right_gripper_r_finger_joint
+            pid: {p: 5000,  i: 50, d: 0.5}

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<robot name="sawyer" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="gazebo" default="false"/>
+  <xacro:arg name="pedestal" default="true"/>
+  <xacro:arg name="static" default="true"/>
+  <xacro:arg name="electric_gripper" default="false"/>
+  <!-- Sawyer Base URDF -->
+  <xacro:include filename="$(find sawyer_description)/urdf/sawyer_base.urdf.xacro">
+    <xacro:arg name="gazebo" value="${gazebo}"/>
+    <xacro:arg name="pedestal" value="${pedestal}"/>
+  </xacro:include>
+  <xacro:if value="$(arg gazebo)">
+  <xacro:include filename="$(find sawyer_description)/urdf/sawyer_base.gazebo.xacro">
+    <xacro:arg name="static" value="${static}"/>
+    <xacro:arg name="pedestal" value="${pedestal}"/>
+  </xacro:include>
+  </xacro:if>
+  <!-- Electric Gripper End Effector -->
+  <xacro:if value="$(arg electric_gripper)">
+  <xacro:include filename="$(find sawyer_description)/urdf/sawyer_electric_gripper.urdf.xacro">
+    <xacro:arg name="gazebo" value="${gazebo}"/>
+  </xacro:include>
+  </xacro:if>
+
+</robot>

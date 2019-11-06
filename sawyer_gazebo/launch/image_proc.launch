@@ -1,0 +1,49 @@
+<!-- Launch in the camera namespace containing "image_raw" and "camera_info" -->
+<launch>
+
+  <arg name="manager" default="manager" /> <!-- Must be globally qualified -->
+  <!-- "default" needed to be added because the check-launch XML test failed
+       launch args without defaults. It should not fail, and when we
+       upgrade roslaunch, it will no longer fail. The we can remove this
+       unnecessary default argument. -->
+  <!--ex usage
+    <node pkg="nodelet" type="nodelet"
+          name="my_camera_nodelets" args="manager"/>
+    <include file="$(find image_proc)/launch/image_proc.launch"
+             ns="/my_camera_namespace">
+      <arg name="manager" value="/my_camera_nodelets" />
+    </include>
+  -->
+  <arg name="respawn"             default="false" />
+  <arg name="use_mono"            default="true" />
+  <arg name="mono_topic"          default="image_mono" />
+  <arg name="use_color"           default="true" />
+  <arg name="color_topic"         default="image_color" />
+  <arg name="use_debayer"         default="true" />
+  <!-- TODO Arguments for debayer, interpolation methods? -->
+
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+  <!-- Debayered images -->
+  <node if="$(arg use_debayer)" pkg="nodelet"
+        type="nodelet" name="debayer"
+        args="load image_proc/debayer $(arg manager) $(arg bond)"
+	      respawn="$(arg respawn)" />
+
+  <!-- Monochrome rectified image -->
+  <node if="$(arg use_mono)" pkg="nodelet" type="nodelet" name="rectify_mono"
+        args="load image_proc/rectify $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)" >
+    <remap from="image_mono" to="$(arg mono_topic)" />
+  </node>
+
+  <!-- Color rectified image -->
+  <node if="$(arg use_color)" pkg="nodelet" type="nodelet" name="rectify_color"
+        args="load image_proc/rectify $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <remap from="image_mono" to="$(arg color_topic)" />
+    <remap from="image_rect" to="image_rect_color" />
+  </node>
+
+</launch>

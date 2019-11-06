@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>sawyer_simulator</name>
+  <version>5.2.0</version>
+  <description>
+    Metapackage - Sawyer Robot Gazebo Simulation
+  </description>
+
+  <maintainer email="support@rethinkrobotics.com">
+    Rethink Robotics Inc.
+  </maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://sdk.rethinkrobotics.com/intera</url>
+  <url type="repository">
+    https://github.com/RethinkRobotics/sawyer_simultor
+  </url>
+  <url type="bugtracker">
+    https://github.com/RethinkRobotics/sawyer_simulator/issues
+  </url>
+  <author>Rethink Robotics Inc.</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>sawyer_gazebo</run_depend>
+  <run_depend>sawyer_sim_controllers</run_depend>
+  <run_depend>sawyer_sim_examples</run_depend>
+  <run_depend>sawyer_hardware_interface</run_depend>
+  <export>
+    <metapackage/>
+  </export>
+
+</package>

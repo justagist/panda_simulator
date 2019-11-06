@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<robot name="end_effector" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="gazebo" default="false"/>
+  <xacro:if value="$(arg gazebo)">
+    <xacro:property name="gazebo_tag" value="true" scope="local"/>
+  </xacro:if>
+  <xacro:unless value="$(arg gazebo)">
+    <xacro:property name="gazebo_tag" value="false" scope="local"/>
+  </xacro:unless>
+
+  <xacro:include filename="$(find intera_tools_description)/urdf/electric_gripper/rethink_electric_gripper.xacro" />
+  <xacro:rethink_electric_gripper side="right"
+                                  gazebo="${gazebo_tag}"
+                                  use_connector_plate="true"
+                                  l_finger="standard_narrow"
+                                  l_finger_slot="2"
+                                  l_finger_tip="basic_soft_tip"
+                                  l_finger_grasp="inner"
+                                  r_finger="standard_narrow"
+                                  r_finger_slot="2"
+                                  r_finger_tip="basic_soft_tip"
+                                  r_finger_grasp="inner"/>
+</robot>
