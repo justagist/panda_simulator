@@ -32,6 +32,9 @@
 
 <rosparam command="load" file="$(find panda_gazebo)/config/acceleration_limits.yaml" />
 
+<rosparam command="load" file="$(find panda_gazebo)/config/robot_details.yaml" />
+
+
  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro"/>
  <param name="$(arg ns)/arm/root_name" value="panda_link0" />
  <param name="$(arg ns)/arm/tip_name" value="panda_hand" /> <!-- change to include link8 when configuring load_gripper parameter -->
