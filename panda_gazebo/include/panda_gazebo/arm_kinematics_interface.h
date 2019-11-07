@@ -38,6 +38,7 @@
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <kdl/chainfksolvervel_recursive.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
+#include <kdl/chaindynparam.hpp>
 #include <sns_ik/sns_ik.hpp>
 
 #include <kdl/jntarray.hpp>
@@ -64,6 +65,7 @@ struct Kinematics
   std::unique_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver;
   std::unique_ptr<KDL::ChainIdSolver_RNE>         gravity_solver;
   std::unique_ptr<KDL::ChainJntToJacSolver>         jac_solver;
+  std::unique_ptr<KDL::ChainDynParam>         chain_dyn_param;
   std::unique_ptr<sns_ik::SNS_IK>                     ik_solver;
   // std::unique_ptr<KDL::ChainFdSolver>           fk_eff_solver;// TODO(imcmahon)
 };
@@ -112,6 +114,11 @@ void jointStateCallback(const sensor_msgs::JointStateConstPtr& msg);
 /* Compute Jacobian and end effector velocity and add to Robot State message
  */
 void addJacAndVelToMsg(const Kinematics& kin, const KDL::JntArray& jnt_pos,
+                       const KDL::JntArray& jnt_vel, franka_core_msgs::RobotState& robot_state);
+
+/* Compute inertia, coriolis and gravity, and add to Robot State message
+ */
+void addDynamicsToMsg(const Kinematics& kin, const KDL::JntArray& jnt_pos,
                        const KDL::JntArray& jnt_vel, franka_core_msgs::RobotState& robot_state);
 
 /* Method to publish the endpoint state message

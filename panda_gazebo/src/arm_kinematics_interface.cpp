@@ -131,7 +131,10 @@ bool ArmKinematicsInterface::createKinematicChain(std::string tip_name)
     kin.joint_names.push_back(kin.chain.getSegment(seg_idx).getJoint().getName());
   }
   // Construct Solvers
-  kin.gravity_solver = std::make_unique<KDL::ChainIdSolver_RNE>(kin.chain, KDL::Vector(0.0, 0.0, -9.8));
+  KDL::Vector grav_(0.0,0.0,-9.81);
+
+  kin.chain_dyn_param = std::make_unique<KDL::ChainDynParam>(kin.chain, grav_);
+  kin.gravity_solver = std::make_unique<KDL::ChainIdSolver_RNE>(kin.chain, grav_);
   kin.fk_pos_solver = std::make_unique<KDL::ChainFkSolverPos_recursive>(kin.chain);
   kin.fk_vel_solver = std::make_unique<KDL::ChainFkSolverVel_recursive>(kin.chain);
   kin.jac_solver = std::make_unique<KDL::ChainJntToJacSolver>(kin.chain);
@@ -248,39 +251,28 @@ void ArmKinematicsInterface::publishRobotState()
 
     std::shared_ptr<const franka_core_msgs::JointCommand> joint_command;
     joint_command_buffer_.get(joint_command);
-    if (joint_command)
-    { 
-      std::array<double, 7> acc;
-      addGravityToMsg(kinematic_chain_map_[tip_name_].joint_names, *joint_command, robot_state_msg, acc);
-      for (auto i = 0; i < joint_command->acceleration.size(); i++)
-        jnt_accelerations(i) = joint_command->acceleration[i];
-    }
+    // if (joint_command)
+    // { 
+    //   std::array<double, 7> acc;
+    //   addGravityToMsg(kinematic_chain_map_[tip_name_].joint_names, *joint_command, robot_state_msg, acc);
+    //   for (auto i = 0; i < joint_command->acceleration.size(); i++)
+    //     jnt_accelerations(i) = joint_command->acceleration[i];
+    // }
 
-    computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, jnt_accelerations, jnt_gravity_model);
-    computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_zero, jnt_zero, jnt_gravity_only);
-    auto clamp_limit = [](double i, double limit) { return std::max(std::min(limit, i), -limit); };
-    for (size_t jnt_idx = 0; jnt_idx < num_jnts; jnt_idx++)
-    {
-      auto torque_limit = robot_model_.getJoint(kinematic_chain_map_[tip_name_].joint_names[jnt_idx])->limits->effort;
-      robot_state_msg.gravity[jnt_idx] = clamp_limit(jnt_gravity_only(jnt_idx), torque_limit);
-      robot_state_msg.coriolis[jnt_idx] = clamp_limit(jnt_gravity_model(jnt_idx), torque_limit) - robot_state_msg.gravity[jnt_idx];
-    }
+    // computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, jnt_accelerations, jnt_gravity_model);
+    // computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_zero, jnt_zero, jnt_gravity_only);
+    // auto clamp_limit = [](double i, double limit) { return std::max(std::min(limit, i), -limit); };
+    // for (size_t jnt_idx = 0; jnt_idx < num_jnts; jnt_idx++)
+    // {
+    //   auto torque_limit = robot_model_.getJoint(kinematic_chain_map_[tip_name_].joint_names[jnt_idx])->limits->effort;
+    //   robot_state_msg.gravity[jnt_idx] = clamp_limit(jnt_gravity_only(jnt_idx), torque_limit);
+    //   robot_state_msg.coriolis[jnt_idx] = clamp_limit(jnt_gravity_model(jnt_idx), torque_limit) - robot_state_msg.gravity[jnt_idx];
+    // }
 
     addJacAndVelToMsg(kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, robot_state_msg);
-    // KDL::Jacobian J;
-    // J.resize(kinematic_chain_map_[tip_name_].chain.getNrOfJoints());
-    // kinematic_chain_map_[tip_name_].jac_solver->JntToJac(jnt_pos, J);
 
-    // Eigen::Matrix<double, 6, 1> ee_vel = J.data * jnt_vel.data;
+    addDynamicsToMsg(kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, robot_state_msg);
 
-    // Eigen::Map<Eigen::RowVectorXd> J_vec(J.data.data(), J.data.size());
-
-    // for (size_t i = 0; i < robot_state_msg.cartesian_collision.size(); i++) {
-    //   robot_state_msg.O_dP_EE[i] = ee_vel(i,0);
-    // }
-    // for (size_t i = 0; i < robot_state_msg.O_Jac_EE.size(); i++) {
-    //   robot_state_msg.O_Jac_EE[i] = J_vec(i,0);
-    // }
 
     robot_state_msg.header.frame_id = root_name_;
     gravity_torques_seq_++;
@@ -289,6 +281,31 @@ void ArmKinematicsInterface::publishRobotState()
     robot_state_publisher_.publish(robot_state_msg);
   }
 }
+void ArmKinematicsInterface::addDynamicsToMsg(const Kinematics& kin, const KDL::JntArray& jnt_pos,
+                                               const KDL::JntArray& jnt_vel, franka_core_msgs::RobotState& robot_state)
+{
+    auto num_jnts = kin.chain.getNrOfJoints();
+
+    KDL::JntArray C(num_jnts); //coriolis matrix
+    KDL::JntArray G(num_jnts); //gravity matrix
+    KDL::JntSpaceInertiaMatrix H(num_jnts); //inertiamatrix H=square matrix of size= number of joints
+    kin.chain_dyn_param->JntToMass(jnt_pos,H);
+    kin.chain_dyn_param->JntToCoriolis(jnt_pos,jnt_vel,C);
+    kin.chain_dyn_param->JntToGravity(jnt_pos,G);
+
+    for (size_t jnt_idx = 0; jnt_idx < num_jnts; jnt_idx++)
+    {
+      robot_state.gravity[jnt_idx] = G(jnt_idx,0);
+      robot_state.coriolis[jnt_idx] = C(jnt_idx,0);
+    }
+
+    Eigen::Map<Eigen::RowVectorXd> H_vec(H.data.data(), H.data.size());
+    for (size_t i = 0; i < robot_state.mass_matrix.size(); i++)
+    {
+      robot_state.mass_matrix[i] = H_vec(i);
+    }
+} 
+
 void ArmKinematicsInterface::addJacAndVelToMsg(const Kinematics& kin, const KDL::JntArray& jnt_pos,
                                                const KDL::JntArray& jnt_vel, franka_core_msgs::RobotState& robot_state)
 {
