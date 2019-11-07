@@ -26,15 +26,18 @@
 #include <franka_core_msgs/JointCommand.h>
 #include <franka_core_msgs/JointLimits.h>
 #include <franka_core_msgs/SEAJointState.h>
+#include <franka_core_msgs/RobotState.h>
 
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Wrench.h>
 
 #include <Eigen/Geometry>
 
 #include <kdl/chainidsolver_recursive_newton_euler.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <kdl/chainfksolvervel_recursive.hpp>
+#include <kdl/chainjnttojacsolver.hpp>
 #include <sns_ik/sns_ik.hpp>
 
 #include <kdl/jntarray.hpp>
@@ -60,8 +63,9 @@ struct Kinematics
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver;
   std::unique_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver;
   std::unique_ptr<KDL::ChainIdSolver_RNE>         gravity_solver;
+  std::unique_ptr<KDL::ChainJntToJacSolver>         jac_solver;
   std::unique_ptr<sns_ik::SNS_IK>                     ik_solver;
-  /*std::unique_ptr<KDL::ChainFDSolverTau>           fk_eff_solver; TODO(imcmahon)*/
+  // std::unique_ptr<KDL::ChainFdSolver>           fk_eff_solver;// TODO(imcmahon)
 };
 private:
 std::string side_, root_name_, tip_name_, camera_name_, gravity_tip_name_;
@@ -79,9 +83,8 @@ ros::Subscriber joint_state_sub_;
 
 ros::Publisher joint_limits_pub_;
 ros::Publisher endpoint_state_pub_;
-ros::Publisher tip_state_pub_;
+ros::Publisher robot_state_publisher_;
 long endpoint_state_seq_;
-ros::Publisher gravity_torques_pub_;
 long gravity_torques_seq_;
 
 ros::Timer update_timer_;
@@ -106,13 +109,18 @@ void jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg);
  */
 void jointStateCallback(const sensor_msgs::JointStateConstPtr& msg);
 
-/* Method to publish the Gravity Compensation Torques
+/* Compute Jacobian and end effector velocity and add to Robot State message
  */
-void publishGravityTorques(); // TODO(imcmahon): publish gravity
+void addJacAndVelToMsg(const Kinematics& kin, const KDL::JntArray& jnt_pos,
+                       const KDL::JntArray& jnt_vel, franka_core_msgs::RobotState& robot_state);
 
 /* Method to publish the endpoint state message
  */
 void publishEndpointState();
+
+/* Method to publish the robot state message
+ */
+void publishRobotState();
 
 /* Method to parse required parameters from the Param Server
  * @returns true if all parameters found and parsed
@@ -140,6 +148,11 @@ bool computePositionIK(const Kinematics& kin, const geometry_msgs::Pose& cart_po
  */
 bool computeVelocityFK(const Kinematics& kin, const KDL::JntArrayVel& jnt_vel, geometry_msgs::Twist& result);
 
+// bool computeEffortFK(const Kinematics& kin,
+//                                              const KDL::JntArray& jnt_pos,
+//                                              const KDL::JntArray& jnt_eff,
+//                                              geometry_msgs::Wrench& result);
+
 /* Method to calculate the gravity+coriolis+inertia torques for the required joint positions in rad and
  * joint velocities in rad/sec with the result stored in the provided KDL JointArray
  * @returns true if successful
@@ -165,11 +178,11 @@ void jointStatePositionToKDL(const sensor_msgs::JointState& joint_configuration,
 };
 
 /* Method to break down a JointCommand message object into the corresponding
- * the SEAJointState message (aka gravity_compensation_torques)
+ * the gravity torques
  */
-void jointCommandToGravityMsg(const std::vector<std::string>& joint_names,
+void addGravityToMsg(const std::vector<std::string>& joint_names,
                               const franka_core_msgs::JointCommand& command_msg,
-                              franka_core_msgs::SEAJointState& gravity_msg);
+                              franka_core_msgs::RobotState& robot_state, std::array<double, 7> &acc);
 
 };
 }  // namespace panda_gazebo
