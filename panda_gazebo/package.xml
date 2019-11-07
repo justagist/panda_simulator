@@ -1,23 +1,21 @@
 <?xml version="1.0"?>
 <package>
   <name>panda_gazebo</name>
-  <version>5.2.0</version>
+  <version>0.0.1</version>
   <description>The panda_gazebo package for simulating the Panda 
-    Robot from Rethink Robotics.
+    Robot from Franka Emika.
   </description>
 
-  <maintainer email="rsdk.support@rethinkrobotics.com">
-    Rethink Robotics Inc.
+  <maintainer email="sxs1412@bham.ac.uk">
+    Saif Sidhik
   </maintainer>
-  <license>Apache 2.0</license>
-  <url type="website">http://sdk.rethinkrobotics.com/intera/</url>
+  <license>TODO</license>
+  <!-- <url type="website"></url> -->
   <url type="repository">
-    https://github.com/RethinkRobotics/panda_simulator
+    https://github.com/JustaGist/panda_simulator
   </url>
-  <url type="bugtracker">
-    https://github.com/RethinkRobotics/panda_simulator/issues
-  </url>
-  <author>Rethink Robotics Inc.</author>
+
+  <author email="sxs1412@bham.ac.uk"> Saif Sidhik </author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>eigen</build_depend>
@@ -54,7 +52,6 @@
   <run_depend>nodelet</run_depend>
 
 
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
     <gazebo plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />
     <gazebo_ros_control plugin="${prefix}/panda_robot_hw_sim_plugins.xml"/>

@@ -1,4 +1,15 @@
 /***************************************************************************
+* Adapted from sawyer_effort_controller.cpp (sawyer_simulator package)
+
+*
+* @package: panda_sim_controllers
+* @metapackage: panda_simulator
+* @author: Saif Sidhik <sxs1412@bham.ac.uk>
+*
+
+**************************************************************************/
+
+/***************************************************************************
 * Copyright (c) 2013-2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

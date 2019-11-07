@@ -18,11 +18,6 @@
     </gravity>
 
     <gui fullscreen='0'>
-<!--       <camera name='user_camera'>
-        <pose frame=''>2.69836 -0.874828 2.04939 0 0.399643 2.75619</pose>
-        <view_controller>orbit</view_controller>
-        <projection_type>perspective</projection_type>
-      </camera> -->
     </gui>
 
   </world>

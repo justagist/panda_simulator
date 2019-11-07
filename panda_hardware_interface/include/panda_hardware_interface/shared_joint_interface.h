@@ -1,4 +1,15 @@
 /***************************************************************************
+* Adapted from shared_joint_interface.h (sawyer_simulator package)
+
+*
+* @package: panda_hardware_interface
+* @metapackage: panda_simulator
+* @author: Saif Sidhik <sxs1412@bham.ac.uk>
+*
+
+**************************************************************************/
+
+/***************************************************************************
 * Copyright (c) 2013-2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

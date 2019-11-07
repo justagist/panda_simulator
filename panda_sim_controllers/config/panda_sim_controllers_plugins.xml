@@ -1,12 +1,4 @@
 <library path="lib/libpanda_sim_controllers">
-<!-- 
-    <class name="panda_sim_controllers/PandaHeadController"
-	 type="panda_sim_controllers::PandaHeadController"
-	 base_class_type="controller_interface::ControllerBase">
-        <description>
-           The PandaHeadController tracks position commands for the Panda head pan. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
-        </description>
-    </class> -->
 
     <class name="panda_sim_controllers/ElectricGripperController"
 	 type="panda_sim_controllers::ElectricGripperController"
@@ -49,8 +41,6 @@
     </class>
 
 
-
-    <!-- Following 3 "panda_effort_controllers" are copies of upstream 'ros_controllers/effort_controllers' which should be removed once inheritence enabling change is upstreamed. -->
     <class name="panda_sim_controllers/JointPositionController"
            type="panda_effort_controllers::JointPositionController"
            base_class_type="controller_interface::ControllerBase">

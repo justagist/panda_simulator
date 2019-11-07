@@ -1,23 +1,20 @@
 <?xml version="1.0"?>
 <package>
   <name>panda_simulator</name>
-  <version>5.2.0</version>
+  <version>0.0.1</version>
   <description>
-    Metapackage - Panda Robot Gazebo Simulation
+    Metapackage - Panda Robot Gazebo Simulation and Controllers
   </description>
 
-  <maintainer email="support@rethinkrobotics.com">
-    Rethink Robotics Inc.
+  <maintainer email="sxs1412@bham.ac.uk">
+    Saif Sidhik
   </maintainer>
-  <license>Apache 2.0</license>
-  <url type="website">http://sdk.rethinkrobotics.com/intera</url>
+  <license>TODO</license>
   <url type="repository">
-    https://github.com/RethinkRobotics/panda_simultor
+    https://github.com/Justagist/panda_simulator
   </url>
-  <url type="bugtracker">
-    https://github.com/RethinkRobotics/panda_simulator/issues
-  </url>
-  <author>Rethink Robotics Inc.</author>
+
+  <author email="sxs1412@bham.ac.uk"> Saif Sidhik </author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>panda_gazebo</run_depend>

@@ -1,13 +1,13 @@
 robot_config:
     joint_config:
         joint_acceleration_limit:
-            panda_joint1: 10.0 # rad / sec^2
-            panda_joint2: 8.0  # rad / sec^2
+            panda_joint1: 15.0 # rad / sec^2
+            panda_joint2: 7.5  # rad / sec^2
             panda_joint3: 10.0 # rad / sec^2
-            panda_joint4: 10.0 # rad / sec^2
-            panda_joint5: 12.0 # rad / sec^2
-            panda_joint6: 12.0 # rad / sec^2
-            panda_joint7: 12.0 # rad / sec^2
+            panda_joint4: 12.5 # rad / sec^2
+            panda_joint5: 15.0 # rad / sec^2
+            panda_joint6: 20.0 # rad / sec^2
+            panda_joint7: 20.0 # rad / sec^2
             panda_finger_joint1: 12.0 # rad / sec^2
             panda_finger_joint2: 12.0 # rad / sec^2
-
+                 

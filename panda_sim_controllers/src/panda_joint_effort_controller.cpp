@@ -1,3 +1,14 @@
+/***************************************************************************
+* Adapted from sawyer_joint_effort_controller.cpp (sawyer_simulator package)
+
+*
+* @package: panda_sim_controllers
+* @metapackage: panda_simulator
+* @author: Saif Sidhik <sxs1412@bham.ac.uk>
+*
+
+**************************************************************************/
+
 /*********************************************************************
  * Software License Agreement (BSD License)
  *

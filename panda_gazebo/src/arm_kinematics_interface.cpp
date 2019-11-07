@@ -1,4 +1,14 @@
 /***************************************************************************
+* Adapted from arm_kinematics_interface.cpp (sawyer_simulator package)
+
+*
+* @package: panda_gazebo
+* @metapackage: panda_simulator
+* @author: Saif Sidhik <sxs1412@bham.ac.uk>
+*
+
+**************************************************************************/
+/***************************************************************************
 * Copyright (c) 2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

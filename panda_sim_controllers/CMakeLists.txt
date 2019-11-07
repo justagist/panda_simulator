@@ -30,13 +30,9 @@ add_library(${PROJECT_NAME}
   src/panda_velocity_controller.cpp
   src/panda_effort_controller.cpp
   src/panda_gravity_controller.cpp
-  # src/electric_gripper_controller.cpp
-  ## Copies of upstream ros_controllers/effort_controllers:
-  #  (remove once inheritable change is upstreamed)
   src/panda_joint_position_controller.cpp
   src/panda_joint_velocity_controller.cpp
   src/panda_joint_effort_controller.cpp
-  # src/panda_head_controller.cpp
 )
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
