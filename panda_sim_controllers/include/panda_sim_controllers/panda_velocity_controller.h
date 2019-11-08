@@ -30,6 +30,8 @@
 
 #include <panda_sim_controllers/joint_array_controller.h>
 #include <franka_core_msgs/JointCommand.h>
+#include <franka_core_msgs/JointControllerStates.h>
+#include <control_msgs/JointControllerState.h>
 #include <panda_sim_controllers/panda_joint_velocity_controller.h>
 #include <ros/node_handle.h>
 
@@ -41,14 +43,28 @@ namespace panda_sim_controllers
   class PandaVelocityController : public panda_sim_controllers::JointArrayController<panda_effort_controllers::JointVelocityController>
   {
   public:
-    virtual ~PandaVelocityController() {sub_joint_command_.shutdown();}
+    virtual ~PandaVelocityController() {sub_joint_command_.shutdown(); ; t_.join(); }
     virtual bool init(panda_hardware_interface::SharedJointInterface* hw, ros::NodeHandle &n);
     void setCommands();
 
   private:
     ros::Subscriber sub_joint_command_;
+    ros::Subscriber sub_joint_ctrl_gains_;
+    boost::thread t_;
+    boost::scoped_ptr<realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>> controller_states_publisher_ ;
+    void publishControllerState();
 
+  /** \brief The callback function to set joint commands
+   *
+   * \param msg joint commands (position).
+   */
     void jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg);
+
+      /** \brief The callback function to set pid controller gain for each joint
+   *
+   * \param msg joint gains using the franka_core_msgs::JointControllerStates msg.
+   */
+    void jointCtrlGainsCB(const franka_core_msgs::JointControllerStatesConstPtr& msg);
   };
 }
 

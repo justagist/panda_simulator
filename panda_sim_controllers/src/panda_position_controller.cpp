@@ -28,6 +28,8 @@
 #include <panda_sim_controllers/panda_position_controller.h>
 #include <pluginlib/class_list_macros.h>
 
+#include <boost/thread/thread.hpp>
+
 namespace panda_sim_controllers {
   bool PandaPositionController::init(panda_hardware_interface::SharedJointInterface* hw, ros::NodeHandle &n){
     if(!panda_sim_controllers::JointArrayController<panda_effort_controllers::JointPositionController>::init(hw, n)) {
@@ -45,13 +47,68 @@ namespace panda_sim_controllers {
         ros::NodeHandle nh("~");
         sub_speed_ratio_ = nh.subscribe(topic_speed_ratio, 1, &PandaPositionController::speedRatioCallback, this);
       } else {
-        sub_speed_ratio_ = n.subscribe("set_speed_ratio", 1, &PandaPositionController::speedRatioCallback, this);
+        sub_speed_ratio_ = n.subscribe("arm/set_speed_ratio", 1, &PandaPositionController::speedRatioCallback, this);
+      }
+      std::string topic_joint_controller_gains;
+      if (n.getParam("topic_joint_controller_gains", topic_joint_controller_gains)) {
+        ros::NodeHandle nh("~");
+        sub_joint_ctrl_gains_ = nh.subscribe(topic_joint_controller_gains, 1, &PandaPositionController::jointCtrlGainsCB, this);
+      } else {
+        sub_joint_ctrl_gains_ = n.subscribe("arm/joint_position_control_gains", 1, &PandaPositionController::jointCtrlGainsCB, this);
       }
       std::shared_ptr<std_msgs::Float64> speed_ratio(new std_msgs::Float64());
       speed_ratio->data = 0.3; // Default to 30% max urdf speed
       speed_ratio_buffer_.set(speed_ratio);
+
+        // Start realtime state publisher
+      controller_states_publisher_.reset(
+    new realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>(n, "/arm/joint_controller_states", 1));
+
+      if (!n.getParam("/franka_control/joint_names", controller_states_publisher_->msg_.names) ) {
+      ROS_ERROR(
+          "PandaPositionController: Invalid or no joint_names parameters provided, aborting "
+          "controller init!");
+      return false;
+      }
+
+      // start joint_controller_states publisher
+      t_ = boost::thread(&PandaPositionController::publishControllerState, this);
+
+
     }
     return true;
+  }
+
+  void PandaPositionController::publishControllerState(){
+
+  ros::Rate loop_rate(50);
+
+  // double _unused;
+  while (ros::ok())
+  {
+    if ((controller_states_publisher_->trylock()) && (controller_states_publisher_->msg_.names.size() <= controllers_.size())) {
+      std::vector<control_msgs::JointControllerState> jcs_vec;
+      for (size_t i = 0; i < controller_states_publisher_->msg_.names.size(); i++)
+      {
+          jcs_vec.push_back(controllers_[controller_states_publisher_->msg_.names[i]]->getCurrentControllerState());
+      } 
+      controller_states_publisher_->msg_.joint_controller_states = jcs_vec;
+      controller_states_publisher_->msg_.header.stamp = ros::Time::now();
+      controller_states_publisher_->unlockAndPublish();
+    }
+     
+    loop_rate.sleep();
+  }
+
+  }
+
+  void PandaPositionController::jointCtrlGainsCB(const franka_core_msgs::JointControllerStatesConstPtr& msg) {
+    for (size_t i = 0; i < msg->names.size(); i++)
+    {
+      controllers_[msg->names[i]]->setGains(msg->joint_controller_states[i].p, msg->joint_controller_states[i].i, 
+                                                   msg->joint_controller_states[i].d, msg->joint_controller_states[i].i_clamp, 
+                                                   0, msg->joint_controller_states[i].antiwindup);
+    }
   }
 
   void PandaPositionController::speedRatioCallback(const std_msgs::Float64 msg) {

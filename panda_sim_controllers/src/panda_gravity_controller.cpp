@@ -35,13 +35,13 @@ namespace panda_sim_controllers {
     if(!panda_sim_controllers::JointArrayController<panda_effort_controllers::JointEffortController>::init(hw, n, "GRAVITY_COMPENSATION")) {
       return false;
     }
-    std::string command_topic;
-    if (n.getParam("command_topic", command_topic)) {
-      ros::NodeHandle nh("~");
-      sub_joint_command_ = nh.subscribe(command_topic, 1, &PandaGravityController::gravityCommandCB, this);
-    } else {
-      sub_joint_command_ = n.subscribe("gravity_command", 1, &PandaGravityController::gravityCommandCB, this);
-    }
+    // std::string command_topic;
+    // if (n.getParam("command_topic", command_topic)) {
+    //   ros::NodeHandle nh("~");
+    //   sub_joint_command_ = nh.subscribe(command_topic, 1, &PandaGravityController::gravityCommandCB, this);
+    // } else {
+    //   sub_joint_command_ = n.subscribe("gravity_command", 1, &PandaGravityController::gravityCommandCB, this);
+    // }
     std::string disable_topic;
     if (n.getParam("disable_topic", disable_topic)) {
       ros::NodeHandle nh("~");
@@ -63,24 +63,24 @@ namespace panda_sim_controllers {
       ROS_INFO_STREAM_THROTTLE(60, "Gravity compensation torques are disabled...");
   }
 
-  void PandaGravityController::gravityCommandCB(const franka_core_msgs::SEAJointStateConstPtr& msg) {
+  // void PandaGravityController::gravityCommandCB(const franka_core_msgs::SEAJointStateConstPtr& msg) {
 
-      std::vector<Command> commands;
-      if (msg->name.size() != msg->gravity_model_effort.size()) {
-        ROS_ERROR_STREAM_NAMED(JOINT_ARRAY_CONTROLLER_NAME, "Gravity commands size does not match joints size");
-      }
-      std::shared_ptr<const ros::Time>  p_disable_msg_time;
-      box_disable_time_.get(p_disable_msg_time);
-      bool enable_gravity = !p_disable_msg_time || ((ros::Time::now() - *p_disable_msg_time.get()) > gravity_disable_timeout_);
-      for (int i = 0; i < msg->name.size(); i++) {
-        Command cmd = Command();
-        cmd.name_ = msg->name[i];
-        cmd.effort_ = enable_gravity ? msg->gravity_model_effort[i] : 0.0;
-        commands.push_back(cmd);
-      }
-      command_buffer_.writeFromNonRT(commands);
-      new_command_ = true;
-  }
+  //     std::vector<Command> commands;
+  //     if (msg->name.size() != msg->gravity_model_effort.size()) {
+  //       ROS_ERROR_STREAM_NAMED(JOINT_ARRAY_CONTROLLER_NAME, "Gravity commands size does not match joints size");
+  //     }
+  //     std::shared_ptr<const ros::Time>  p_disable_msg_time;
+  //     box_disable_time_.get(p_disable_msg_time);
+  //     bool enable_gravity = !p_disable_msg_time || ((ros::Time::now() - *p_disable_msg_time.get()) > gravity_disable_timeout_);
+  //     for (int i = 0; i < msg->name.size(); i++) {
+  //       Command cmd = Command();
+  //       cmd.name_ = msg->name[i];
+  //       cmd.effort_ = enable_gravity ? msg->gravity_model_effort[i] : 0.0;
+  //       commands.push_back(cmd);
+  //     }
+  //     command_buffer_.writeFromNonRT(commands);
+  //     new_command_ = true;
+  // }
 
   void PandaGravityController::setCommands() {
     // set the new commands for each controller

@@ -36,7 +36,6 @@
 #include <sensor_msgs/JointState.h>
 #include <franka_core_msgs/JointCommand.h>
 #include <franka_core_msgs/JointLimits.h>
-#include <franka_core_msgs/SEAJointState.h>
 #include <franka_core_msgs/RobotState.h>
 
 #include <geometry_msgs/Twist.h>

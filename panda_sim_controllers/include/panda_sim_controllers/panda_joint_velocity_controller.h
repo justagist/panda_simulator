@@ -153,7 +153,7 @@ public:
    * \brief Print debug info to console
    */
   void printDebug();
-
+  control_msgs::JointControllerState getCurrentControllerState();
   /**
    * \brief Get the PID parameters
    */
@@ -173,12 +173,12 @@ private:
 
   //friend class JointVelocityControllerNode; // what is this for??
 
-  boost::scoped_ptr<
-    realtime_tools::RealtimePublisher<
-      control_msgs::JointControllerState> > controller_state_publisher_ ;
+  // boost::scoped_ptr<
+  //   realtime_tools::RealtimePublisher<
+  //     control_msgs::JointControllerState> > controller_state_publisher_ ;
 
   ros::Subscriber sub_command_;
-
+  control_msgs::JointControllerState curr_state_;
   /**
    * \brief Callback from /command subscriber for setpoint
    */

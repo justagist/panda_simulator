@@ -87,12 +87,12 @@ bool JointVelocityController::init(panda_hardware_interface::SharedJointInterfac
     return false;
 
   // Start realtime state publisher
-  controller_state_publisher_.reset(
-    new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>
-    (n, "state", 1));
+  // controller_state_publisher_.reset(
+  //   new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>
+  //   (n, "state", 1));
 
   // Start command subscriber
-  sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointVelocityController::setCommandCB, this);
+  // sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointVelocityController::setCommandCB, this);
 
   return true;
 }
@@ -116,6 +116,11 @@ void JointVelocityController::getGains(double &p, double &i, double &d, double &
 void JointVelocityController::printDebug()
 {
   pid_controller_.printValues();
+}
+
+control_msgs::JointControllerState JointVelocityController::getCurrentControllerState()
+{
+  return curr_state_;
 }
 
 std::string JointVelocityController::getJointName()
@@ -152,30 +157,19 @@ void JointVelocityController::update(const ros::Time& time, const ros::Duration&
 
   joint_.setCommand(commanded_effort);
 
-  if(loop_count_ % 10 == 0)
   {
-    if(controller_state_publisher_ && controller_state_publisher_->trylock())
-    {
-      controller_state_publisher_->msg_.header.stamp = time;
-      controller_state_publisher_->msg_.set_point = command_;
-      controller_state_publisher_->msg_.process_value = joint_.getVelocity();
-      controller_state_publisher_->msg_.error = error;
-      controller_state_publisher_->msg_.time_step = period.toSec();
-      controller_state_publisher_->msg_.command = commanded_effort;
+    double dummy;
+    bool antiwindup;
+    curr_state_.header.stamp = time;
+    curr_state_.set_point = command_;
+    curr_state_.process_value = joint_.getVelocity();
+    curr_state_.error = error;
+    curr_state_.time_step = period.toSec();
+    curr_state_.command = commanded_effort;
 
-      double dummy;
-      bool antiwindup;
-      getGains(controller_state_publisher_->msg_.p,
-        controller_state_publisher_->msg_.i,
-        controller_state_publisher_->msg_.d,
-        controller_state_publisher_->msg_.i_clamp,
-        dummy,
-        antiwindup);
-      controller_state_publisher_->msg_.antiwindup = static_cast<char>(antiwindup);
-      controller_state_publisher_->unlockAndPublish();
-    }
+    getGains(curr_state_.p, curr_state_.i, curr_state_.d, curr_state_.i_clamp, dummy, antiwindup);
+    curr_state_.antiwindup = static_cast<char>(antiwindup);
   }
-  loop_count_++;
 }
 
 void JointVelocityController::setCommandCB(const std_msgs::Float64ConstPtr& msg)

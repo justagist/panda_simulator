@@ -38,10 +38,55 @@ namespace panda_sim_controllers {
         ros::NodeHandle nh("~");
         sub_joint_command_ = nh.subscribe(topic_name, 1, &PandaVelocityController::jointCommandCB, this);
       } else {
-        sub_joint_command_ = n.subscribe("joint_command", 1, &PandaVelocityController::jointCommandCB, this);
+        sub_joint_command_ = n.subscribe("arm/joint_command", 1, &PandaVelocityController::jointCommandCB, this);
       }
+      std::string topic_joint_controller_gains;
+      if (n.getParam("topic_joint_controller_gains", topic_joint_controller_gains)) {
+        ros::NodeHandle nh("~");
+        sub_joint_ctrl_gains_ = nh.subscribe(topic_joint_controller_gains, 1, &PandaVelocityController::jointCtrlGainsCB, this);
+      } else {
+        sub_joint_ctrl_gains_ = n.subscribe("arm/joint_velocity_control_gains", 1, &PandaVelocityController::jointCtrlGainsCB, this);
+      }
+              // Start realtime state publisher
+      controller_states_publisher_.reset(
+      new realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>(n, "/arm/joint_controller_states", 1));
+      
+      
+      t_ = boost::thread(&PandaVelocityController::publishControllerState, this);
     }
+    // start joint_controller_states publisher
     return true;
+  }
+
+  void PandaVelocityController::jointCtrlGainsCB(const franka_core_msgs::JointControllerStatesConstPtr& msg) {
+    for (size_t i = 0; i < msg->names.size(); i++)
+    {
+      controllers_[msg->names[i]]->setGains(msg->joint_controller_states[i].p, msg->joint_controller_states[i].i, 
+                                                   msg->joint_controller_states[i].d, msg->joint_controller_states[i].i_clamp, 
+                                                   0, msg->joint_controller_states[i].antiwindup);
+    }
+  }
+
+  void PandaVelocityController::publishControllerState(){
+
+    ros::Rate loop_rate(50);
+
+    // double _unused;
+    while (ros::ok())
+    {
+      if ((controller_states_publisher_->trylock()) && (controller_states_publisher_->msg_.names.size() <= controllers_.size())) {
+        std::vector<control_msgs::JointControllerState> jcs_vec;
+        for (size_t i = 0; i < controller_states_publisher_->msg_.names.size(); i++)
+        {
+            jcs_vec.push_back(controllers_[controller_states_publisher_->msg_.names[i]]->getCurrentControllerState());
+        } 
+        controller_states_publisher_->msg_.joint_controller_states = jcs_vec;
+        controller_states_publisher_->msg_.header.stamp = ros::Time::now();
+        controller_states_publisher_->unlockAndPublish();
+      }
+       
+      loop_rate.sleep();
+    }
   }
 
   void PandaVelocityController::jointCommandCB(const franka_core_msgs::JointCommandConstPtr& msg) {

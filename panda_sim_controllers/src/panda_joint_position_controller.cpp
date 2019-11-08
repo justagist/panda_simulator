@@ -81,11 +81,11 @@ bool JointPositionController::init(panda_hardware_interface::SharedJointInterfac
     return false;
 
   // Start realtime state publisher
-  controller_state_publisher_.reset(
-    new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
+  // controller_state_publisher_.reset(
+  //   new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
 
   // Start command subscriber
-  sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointPositionController::setCommandCB, this);
+  // sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointPositionController::setCommandCB, this);
 
   // Get joint handle from hardware interface
   joint_ = robot->getHandle(joint_name);
@@ -103,6 +103,8 @@ bool JointPositionController::init(panda_hardware_interface::SharedJointInterfac
     ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
     return false;
   }
+
+  // curr_state_ = new control_msgs::JointControllerState()
 
   return true;
 }
@@ -175,6 +177,12 @@ void JointPositionController::starting(const ros::Time& time)
   pid_controller_.reset();
 }
 
+control_msgs::JointControllerState JointPositionController::getCurrentControllerState()
+{
+  return curr_state_;
+}
+
+
 void JointPositionController::update(const ros::Time& time, const ros::Duration& period)
 {
   command_struct_ = *(command_.readFromRT());
@@ -228,32 +236,47 @@ void JointPositionController::update(const ros::Time& time, const ros::Duration&
 
   joint_.setCommand(commanded_effort);
 
-  // publish state
-  if (loop_count_ % 10 == 0)
   {
-    if(controller_state_publisher_ && controller_state_publisher_->trylock())
-    {
-      controller_state_publisher_->msg_.header.stamp = time;
-      controller_state_publisher_->msg_.set_point = command_position;
-      controller_state_publisher_->msg_.process_value = current_position;
-      controller_state_publisher_->msg_.process_value_dot = joint_.getVelocity();
-      controller_state_publisher_->msg_.error = error;
-      controller_state_publisher_->msg_.time_step = period.toSec();
-      controller_state_publisher_->msg_.command = commanded_effort;
+    double dummy;
+    bool antiwindup;
+    curr_state_.header.stamp = time;
+    curr_state_.set_point = command_position;
+    curr_state_.process_value = current_position;
+    curr_state_.process_value_dot = joint_.getVelocity();
+    curr_state_.error = error;
+    curr_state_.time_step = period.toSec();
+    curr_state_.command = commanded_effort;
 
-      double dummy;
-      bool antiwindup;
-      getGains(controller_state_publisher_->msg_.p,
-        controller_state_publisher_->msg_.i,
-        controller_state_publisher_->msg_.d,
-        controller_state_publisher_->msg_.i_clamp,
-        dummy,
-        antiwindup);
-      controller_state_publisher_->msg_.antiwindup = static_cast<char>(antiwindup);
-      controller_state_publisher_->unlockAndPublish();
-    }
+    getGains(curr_state_.p, curr_state_.i, curr_state_.d, curr_state_.i_clamp, dummy, antiwindup);
+    curr_state_.antiwindup = static_cast<char>(antiwindup);
   }
-  loop_count_++;
+
+  // publish state
+  // if (loop_count_ % 10 == 0)
+  // {
+  //   if(controller_state_publisher_ && controller_state_publisher_->trylock())
+  //   {
+  //     controller_state_publisher_->msg_.header.stamp = time;
+  //     controller_state_publisher_->msg_.set_point = command_position;
+  //     controller_state_publisher_->msg_.process_value = current_position;
+  //     controller_state_publisher_->msg_.process_value_dot = joint_.getVelocity();
+  //     controller_state_publisher_->msg_.error = error;
+  //     controller_state_publisher_->msg_.time_step = period.toSec();
+  //     controller_state_publisher_->msg_.command = commanded_effort;
+
+  //     double dummy;
+  //     bool antiwindup;
+  //     getGains(controller_state_publisher_->msg_.p,
+  //       controller_state_publisher_->msg_.i,
+  //       controller_state_publisher_->msg_.d,
+  //       controller_state_publisher_->msg_.i_clamp,
+  //       dummy,
+  //       antiwindup);
+  //     controller_state_publisher_->msg_.antiwindup = static_cast<char>(antiwindup);
+  //     controller_state_publisher_->unlockAndPublish();
+  //   }
+  // }
+  // loop_count_++;
 }
 
 void JointPositionController::setCommandCB(const std_msgs::Float64ConstPtr& msg)

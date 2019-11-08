@@ -179,6 +179,7 @@ public:
    */
   std::string getJointName();
 
+  control_msgs::JointControllerState getCurrentControllerState();
   /**
    * \brief Get the current position of the joint
    * \return current position
@@ -194,11 +195,13 @@ private:
   int loop_count_;
   control_toolbox::Pid pid_controller_;       /**< Internal PID controller. */
 
-  boost::scoped_ptr<
-    realtime_tools::RealtimePublisher<
-      control_msgs::JointControllerState> > controller_state_publisher_ ;
+  // boost::scoped_ptr<
+  //   realtime_tools::RealtimePublisher<
+  //     control_msgs::JointControllerState> > controller_state_publisher_ ;
 
   ros::Subscriber sub_command_;
+
+  control_msgs::JointControllerState curr_state_;
 
   /**
    * \brief Callback from /command subscriber for setpoint
