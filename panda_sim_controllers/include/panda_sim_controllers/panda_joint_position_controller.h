@@ -203,6 +203,7 @@ private:
 
   control_msgs::JointControllerState curr_state_;
 
+
   /**
    * \brief Callback from /command subscriber for setpoint
    */

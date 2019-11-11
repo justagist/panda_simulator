@@ -7,20 +7,26 @@
   <arg name="ns" default="panda_simulator"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find panda_sim_controllers)/config/panda_sim_controllers.yaml" command="load"/>
+  <rosparam file="$(find panda_sim_controllers)/config/panda_sim_controllers.yaml" command="load" ns="$(arg ns)"/>
 
   <!-- load the default "ON" controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false"
         output="screen" ns="$(arg ns)" args="spawn
                                          joint_state_controller
-                                         effort_joint_gravity_controller
-                                         effort_joint_position_controller" />
+                                         effort_joint_position_controller
+                                         effort_joint_gravity_controller  
+                                         " />
+                                         <!-- position_joint_trajectory_controller  -->
+<!-- 
+  <node name="controller_spawner_native" pkg="controller_manager" type="controller_manager" respawn="false"
+        output="screen" ns="native" args="load 
+                                         " />  -->
 
   <!-- load the default "OFF" controllers -->
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
-       output="screen" ns="/robot" args="load
-                                         right_joint_velocity_controller
-                                         right_joint_effort_controller"/>
+       output="screen" ns="$(arg ns)" args="load
+                                         effort_joint_velocity_controller
+                                         effort_joint_effort_controller"/>
 
   <!-- load the Gripper controllers if args set -->
 <!--   <rosparam if="$(arg load_gripper)" command="load"

@@ -65,4 +65,13 @@
         </description>
     </class>
 
+    <class name="panda_sim_controllers/PandaJointTrajectoryController"
+           type="panda_sim_controllers::PandaJointTrajectoryController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The JointEffortController tracks effort commands. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+        </description>
+    </class>
+
+
 </library>

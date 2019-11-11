@@ -122,6 +122,7 @@ namespace panda_sim_controllers {
     else{
       speed_ratio->data = msg.data;
     }
+    ROS_INFO_STREAM(speed_ratio->data);
     speed_ratio_buffer_.set(speed_ratio);
   }
 

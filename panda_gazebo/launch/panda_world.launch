@@ -30,15 +30,15 @@
               -J panda::panda_joint6 1.57
               -J panda::panda_joint7 0.785"/>
 
-<rosparam command="load" file="$(find panda_gazebo)/config/acceleration_limits.yaml" />
+  <!-- <rosparam command="load" file="$(find panda_gazebo)/config/acceleration_limits.yaml" /> -->
 
-<rosparam command="load" file="$(find panda_gazebo)/config/robot_details.yaml" />
+  <rosparam command="load" file="$(find panda_gazebo)/config/robot_details.yaml"/>
 
 
- <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro"/>
- <param name="$(arg ns)/arm/root_name" value="panda_link0" />
- <param name="$(arg ns)/arm/tip_name" value="panda_hand" /> <!-- change to include link8 when configuring load_gripper parameter -->
- <param name="$(arg ns)/arm/gravity_tip_name" value="panda_hand" /> <!-- change to include link8 when configuring load_gripper parameter -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro"/>
+  <param name="$(arg ns)/arm/root_name" value="panda_link0" />
+  <param name="$(arg ns)/arm/tip_name" value="panda_hand" /> <!-- change to include link8 when configuring load_gripper parameter -->
+  <param name="$(arg ns)/arm/gravity_tip_name" value="panda_hand" /> <!-- change to include link8 when configuring load_gripper parameter -->
 
   <!-- We resume the logic in empty_world.launch, changing the name of the world to be launched -->
   <include if="$(arg load_gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch">

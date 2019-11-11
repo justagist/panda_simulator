@@ -67,7 +67,7 @@ namespace panda_sim_controllers
 
     realtime_tools::RealtimeBox< std::shared_ptr<const std_msgs::Float64> > speed_ratio_buffer_;
 
-  /** \brief The callback function to set speed ration
+  /** \brief The callback function to set speed ratio
    *
    * \param msg Speed ratio value.
    */
