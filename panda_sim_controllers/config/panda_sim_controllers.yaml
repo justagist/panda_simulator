@@ -42,7 +42,7 @@ position_joint_trajectory_controller:
 # Panda SDK Controllers: Position --------------------------
 effort_joint_position_controller:
   type: panda_sim_controllers/PandaPositionController
-  topic_joint_command: /panda_simulator/arm/joint_command
+  topic_joint_command: /panda_simulator/motion_controller/arm/joint_commands
   topic_set_speed_ratio: /panda_simulator/arm/set_speed_ratio
   joints:
     panda_joint1_controller:
@@ -75,7 +75,7 @@ effort_joint_position_controller:
 # Panda SDK Controllers: Velocity --------------------------
 effort_joint_velocity_controller:
   type: panda_sim_controllers/PandaVelocityController
-  topic: /panda_simulator/arm/joint_command
+  topic: /panda_simulator/motion_controller/arm/joint_commands
   joints:
     panda_joint1_controller:
       joint: panda_joint1
@@ -100,9 +100,9 @@ effort_joint_velocity_controller:
       pid: {p: 0.05,  i: 0.0, d: 0.01}
 
 # Panda SDK Controllers: Effort --------------------------
-effort_joint_effort_controller:
+effort_joint_torque_controller:
   type: panda_sim_controllers/PandaEffortController
-  topic: /panda_simulator/arm/joint_command
+  topic: /panda_simulator/motion_controller/arm/joint_commands
   joints:
     panda_joint1_controller:
       joint: panda_joint1

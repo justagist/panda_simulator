@@ -26,7 +26,7 @@
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
        output="screen" ns="$(arg ns)" args="load
                                          effort_joint_velocity_controller
-                                         effort_joint_effort_controller"/>
+                                         effort_joint_torque_controller"/>
 
   <!-- load the Gripper controllers if args set -->
 <!--   <rosparam if="$(arg load_gripper)" command="load"

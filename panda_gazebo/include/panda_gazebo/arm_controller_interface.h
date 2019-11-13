@@ -1,5 +1,5 @@
 /***************************************************************************
-* Adapted from sawyer_gazebo.h (sawyer_simulator package)
+* Adapted from arm_controller_interface.h (sawyer_simulator package)
 
 *
 * @package: panda_gazebo

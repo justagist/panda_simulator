@@ -28,7 +28,7 @@
 
 #include <memory>
 
-#include <franka_core_msgs/TipState.h>
+#include <franka_core_msgs/EndPointState.h>
 #include <geometry_msgs/PoseStamped.h>
 
 #include <kdl/frames.hpp>
@@ -67,7 +67,7 @@ bool ArmKinematicsInterface::init(ros::NodeHandle& nh, std::string side)
   gravity_torques_seq_ = 0;
   robot_state_publisher_ = nh.advertise<franka_core_msgs::RobotState>(
                             "custom_franka_state_controller/robot_state", 1);
-  endpoint_state_pub_ = nh.advertise<franka_core_msgs::TipState>(
+  endpoint_state_pub_ = nh.advertise<franka_core_msgs::EndPointState>(
                             "custom_franka_state_controller/tip_state", 1);
   joint_state_sub_ = nh.subscribe("joint_states", 1,
                        &ArmKinematicsInterface::jointStateCallback, this);
@@ -344,14 +344,14 @@ void ArmKinematicsInterface::addGravityToMsg(const std::vector<std::string>& joi
 
   bool use_position = (command_msg.position.size() == command_msg.names.size() &&
                         (command_msg.mode == command_msg.POSITION_MODE ||
-                         command_msg.mode == command_msg.TRAJECTORY_MODE));
+                         command_msg.mode == command_msg.IMPEDANCE_MODE));
   bool use_velocity = (command_msg.velocity.size() == command_msg.names.size() &&
                         (command_msg.mode == command_msg.VELOCITY_MODE ||
-                         command_msg.mode == command_msg.TRAJECTORY_MODE));
+                         command_msg.mode == command_msg.IMPEDANCE_MODE));
   bool use_torque = (command_msg.effort.size() == command_msg.names.size() &&
                      command_msg.mode == command_msg.TORQUE_MODE);
-  bool use_acceleration = (command_msg.acceleration.size() == command_msg.names.size() &&
-                           command_msg.mode == command_msg.TRAJECTORY_MODE);
+  // bool use_acceleration = (command_msg.acceleration.size() == command_msg.names.size() &&
+  //                          command_msg.mode == command_msg.IMPEDANCE_MODE);
   for (auto i = 0; i < num_jnts; i++)
   {
     for (auto j = 0; j < command_msg.names.size(); j++)
@@ -364,8 +364,8 @@ void ArmKinematicsInterface::addGravityToMsg(const std::vector<std::string>& joi
               robot_state.dq_d[i] = command_msg.velocity[j];
         if (use_torque)
             robot_state.tau_J_d[i] = command_msg.effort[j];
-        if (use_acceleration)
-            acc[i] = command_msg.acceleration[j];
+        // if (use_acceleration)
+        //     acc[i] = command_msg.acceleration[j];
       }
     }
   }
@@ -479,7 +479,7 @@ void ArmKinematicsInterface::publishEndpointState()
   joint_state_buffer_.get(joint_state);
   if (joint_state.get())
   {
-    franka_core_msgs::TipState endpoint_state;
+    franka_core_msgs::EndPointState endpoint_state;
     endpoint_state.O_F_ext_hat_K.header.frame_id = "UNDEFINED";
     endpoint_state.O_F_ext_hat_K.wrench.force.x = 0.0;
     endpoint_state.O_F_ext_hat_K.wrench.force.y = 0.0;

@@ -89,7 +89,7 @@ bool ArmControllerInterface::switchControllers(int control_mode) {
     switch (control_mode)
     {
       case franka_core_msgs::JointCommand::POSITION_MODE:
-      case franka_core_msgs::JointCommand::TRAJECTORY_MODE:
+      case franka_core_msgs::JointCommand::IMPEDANCE_MODE:
         start_controllers.push_back(getControllerString("position"));
         start_controllers.push_back(getControllerString("gravity"));
         stop_controllers.push_back(getControllerString("velocity"));

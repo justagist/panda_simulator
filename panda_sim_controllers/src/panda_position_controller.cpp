@@ -203,7 +203,7 @@ namespace panda_sim_controllers {
     if(msg->mode == franka_core_msgs::JointCommand::POSITION_MODE) {
       commands = cmdPositionMode(msg);
     }
-    else if(msg->mode == franka_core_msgs::JointCommand::TRAJECTORY_MODE) {
+    else if(msg->mode == franka_core_msgs::JointCommand::IMPEDANCE_MODE) {
       commands = cmdTrajectoryMode(msg);
     }
     // Only write the command if this is the correct command mode, with a valid CommandPtr
