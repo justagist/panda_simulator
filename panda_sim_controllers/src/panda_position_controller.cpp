@@ -64,7 +64,7 @@ namespace panda_sim_controllers {
       controller_states_publisher_.reset(
     new realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>(n, "/arm/joint_controller_states", 1));
 
-      if (!n.getParam("/franka_control/joint_names", controller_states_publisher_->msg_.names) ) {
+      if (!n.getParam("/robot_config/joint_names", controller_states_publisher_->msg_.names) ) {
       ROS_ERROR(
           "PandaPositionController: Invalid or no joint_names parameters provided, aborting "
           "controller init!");
