@@ -8,7 +8,9 @@
 *
 
 **************************************************************************/
+
 /***************************************************************************
+* Copyright (c) 2019, Saif Sidhik
 * Copyright (c) 2013-2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +34,8 @@ namespace panda_gazebo {
 void PandaGazeboRosControlPlugin::Load(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf) {
   GazeboRosControlPlugin::Load(parent, sdf);
   // assembly_interface_.init(model_nh_);
-  arm_controller_interface_.init(model_nh_, "right", controller_manager_);
-  arm_kinematics_interface_.init(model_nh_, "right");
+  arm_controller_interface_.init(model_nh_, controller_manager_);
+  arm_kinematics_interface_.init(model_nh_);
   // head_interface_.init(model_nh_, controller_manager_);
 }
 

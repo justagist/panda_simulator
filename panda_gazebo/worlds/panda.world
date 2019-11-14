@@ -14,7 +14,7 @@
     </physics>
     
     <gravity>
-      0.0 0.0 0.0
+      0.0 0.0 -9.81
     </gravity>
 
     <gui fullscreen='0'>

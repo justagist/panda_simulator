@@ -10,6 +10,7 @@
 **************************************************************************/
 
 /***************************************************************************
+* Copyright (c) 2019, Saif Sidhik
 * Copyright (c) 2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,7 +66,7 @@ public:
   * \param side string dictating which arm interface to construct
   * \return bool true indicating successful initialization
   */
-bool init(ros::NodeHandle& nh, std::string side);
+bool init(ros::NodeHandle& nh);
 
 struct Kinematics
 {

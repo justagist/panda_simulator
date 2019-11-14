@@ -8,7 +8,9 @@
 *
 
 **************************************************************************/
+
 /***************************************************************************
+* Copyright (c) 2019, Saif Sidhik
 * Copyright (c) 2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,9 +40,8 @@
 namespace panda_gazebo
 {
 
-bool ArmKinematicsInterface::init(ros::NodeHandle& nh, std::string side)
+bool ArmKinematicsInterface::init(ros::NodeHandle& nh)
 {
-  side_ = side;
   if (!parseParams(nh))
   {
     return false;
@@ -71,7 +72,7 @@ bool ArmKinematicsInterface::init(ros::NodeHandle& nh, std::string side)
                             "custom_franka_state_controller/tip_state", 1);
   joint_state_sub_ = nh.subscribe("joint_states", 1,
                        &ArmKinematicsInterface::jointStateCallback, this);
-  joint_command_sub_ = nh.subscribe("arm/joint_command", 1,
+  joint_command_sub_ = nh.subscribe("motion_controller/arm/joint_commands", 1,
                        &ArmKinematicsInterface::jointCommandCallback, this);
   // Update at 100Hz
   update_timer_ = nh.createTimer(100, &ArmKinematicsInterface::update, this);

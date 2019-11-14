@@ -10,6 +10,7 @@
 **************************************************************************/
 
 /***************************************************************************
+* Copyright (c) 2019, Saif Sidhik
 * Copyright (c) 2013-2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +42,7 @@ namespace panda_gazebo {
   class ArmControllerInterface
   {
   public:
-    void init(ros::NodeHandle& nh, std::string side,
+    void init(ros::NodeHandle& nh,
          boost::shared_ptr<controller_manager::ControllerManager> controller_manager);
 
   private:

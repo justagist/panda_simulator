@@ -10,6 +10,7 @@
 **************************************************************************/
 
 /***************************************************************************
+* Copyright (c) 2019, Saif Sidhik
 * Copyright (c) 2013-2018, Rethink Robotics Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,16 +31,16 @@
 
 namespace panda_gazebo {
 
-void ArmControllerInterface::init(ros::NodeHandle& nh, std::string side,
+void ArmControllerInterface::init(ros::NodeHandle& nh,
         boost::shared_ptr<controller_manager::ControllerManager> controller_manager) {
   current_mode_ = -1;
-  side_ = side;
+  
   controller_manager_ = controller_manager;
-  joint_command_sub_ = nh.subscribe("arm/joint_command", 1,
+  joint_command_sub_ = nh.subscribe("motion_controller/arm/joint_commands", 1,
                        &ArmControllerInterface::jointCommandCallback, this);
 
   // Command Timeout
-  joint_command_timeout_sub_ = nh.subscribe("arm/joint_command_timeout", 1,
+  joint_command_timeout_sub_ = nh.subscribe("motion_controller/arm/joint_command_timeout", 1,
                        &ArmControllerInterface::jointCommandTimeoutCallback, this);
   double command_timeout_default;
   nh.param<double>("command_timeout", command_timeout_default, 0.2);
