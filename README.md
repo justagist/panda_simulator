@@ -1,0 +1,64 @@
+# Panda Simulator
+A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, with exposed **controllers** and real-time **robot state feedback**.
+## Features
+  - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics.
+  - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
+  - The franka_ros_interface package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
+  - 
+  ### Dependencies
+
+ - *libfranka* (`sudo apt install ros-<version>-libfranka` or [install from source][libfranka-doc])
+ - *franka-ros* (`sudo apt install ros-<version>-franka-ros` or [install from source][libfranka-doc])
+ - [*franka_ros_interface*][fri-repo] (at least the *franka_core_msgs* package from *franka_ros_interface* should be installed)
+ - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
+ 
+### Installation
+Once the above dependencies are installed, the package can be installed using catkin_make:
+
+    $ cd <catkin_ws>
+    $ git clone https://github.com/justagist/panda_simulator src/panda_simulator
+    $ catkin_make
+    $ source devel/setup.bash
+ 
+### Usage
+
+The simulator can be started by running:
+    
+    $ roslaunch panda_gazebo panda_world.launch
+    
+This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation.
+
+#### Some useful ROS topics
+
+##### Published Topics:
+| ROS Topic | Data |
+| ------ | ------ |
+| */panda_simulator/custom_franka_state_controller/robot_state* | gravity, coriolis, jacobian, cartesian velocity, etc. |
+| */panda_simulator/custom_franka_state_controller/tip_state* | end-effector pose, wrench, etc. |
+| */panda_simulator/joint_states* | joint positions, velocities, efforts |
+
+##### Subscribed Topics:
+| ROS Topic | Data |
+| ------ | ------ |
+| */panda_simulator/motion_controller/arm/joint_commands* | command the robot using the currently active controller |
+
+Other topics for changing the controller gains (also dynamically configurable), command timeout, etc. are also available.
+
+#### ROS Services:
+Controller manager service can be used to switch between all available controllers (joint position, velocity, effort)
+
+## Python API for panda_simulator
+
+The [*franka_ros_interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*franka_ros_interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
+
+#### License
+
+Apache 2.0
+
+
+   [fri-repo]: <https://github.com/justagist/franka_ros_interface>
+   [fpd-repo]: <https://github.com/justagist/franka_panda_description>
+   [libfranka-doc]: <https://frankaemika.github.io/docs/installation_linux.html#building-from-source>
+   
+   
+   
