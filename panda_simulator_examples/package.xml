@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>panda_simulator_examples</name>
+  <version>0.0.1</version>
+  <description>The panda_simulator_examples package</description>
+
+  <maintainer email="sxs1412@bham.ac.uk">
+    Saif Sidhik
+  </maintainer>
+  <license>Apache 2.0</license>
+  <!-- <url type="website"></url> -->
+  <url type="repository">
+    https://github.com/JustaGist/panda_simulator
+  </url>
+
+  <author email="sxs1412@bham.ac.uk"> Saif Sidhik </author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>franka_core_msgs</build_depend>
+  <build_depend>gazebo_msgs</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>rospack</run_depend>
+  <run_depend>franka_core_msgs</run_depend>
+  <run_depend>panda_gazebo</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+
+</package>

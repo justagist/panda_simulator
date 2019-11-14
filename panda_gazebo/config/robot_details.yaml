@@ -19,7 +19,7 @@ robot_config:
         panda_joint4: -2.342050140544315 
         panda_joint5: 0.029840531355804868 
         panda_joint6: 1.5411935298621688 
-        panda_joint7: 0.7534486589746342 
+        panda_joint7: 0.7534486589746342
         
     joint_config:
         joint_acceleration_limit:
