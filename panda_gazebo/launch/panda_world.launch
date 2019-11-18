@@ -13,7 +13,6 @@
   <!-- TODO: This argument should load the electric gripper -->
   <arg name="load_gripper" default="true"/> 
 
-
   <!-- This argument fixes the robot statically to the world -->
   <arg name="static" default="true"/>
 
@@ -25,7 +24,7 @@
     default=" -J panda::panda_joint1 0.000
               -J panda::panda_joint2 -0.785
               -J panda::panda_joint3 0.0
-              -J panda::panda_joint4 -1.9
+              -J panda::panda_joint4 -2.356
               -J panda::panda_joint5 0.0
               -J panda::panda_joint6 1.57
               -J panda::panda_joint7 0.785"/>
