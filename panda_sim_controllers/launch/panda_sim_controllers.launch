@@ -2,7 +2,7 @@
 <launch>
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="load_gripper" default="false"/>
+  <arg name="load_gripper" default="true"/>
   <arg name="gui" default="false"/>
   <arg name="ns" default="panda_simulator"/>
 
@@ -16,11 +16,6 @@
                                          effort_joint_position_controller
                                          effort_joint_gravity_controller  
                                          " />
-                                         <!-- position_joint_trajectory_controller  -->
-<!-- 
-  <node name="controller_spawner_native" pkg="controller_manager" type="controller_manager" respawn="false"
-        output="screen" ns="native" args="load 
-                                         " />  -->
 
   <!-- load the default "OFF" controllers -->
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
@@ -29,11 +24,11 @@
                                          effort_joint_torque_controller"/>
 
   <!-- load the Gripper controllers if args set -->
-<!--   <rosparam if="$(arg load_gripper)" command="load"
-      file="$(find panda_sim_controllers)/config/electric_gripper_controller.yaml"/>
+  <rosparam if="$(arg load_gripper)" command="load"
+      file="$(find panda_sim_controllers)/config/electric_gripper_controller.yaml" ns="$(arg ns)"/>
   <node if="$(arg load_gripper)" name="electric_gripper_controller_spawner_stopped"
         pkg="controller_manager" type="controller_manager" respawn="false" output="screen"
-        ns="/robot" args="spawn electric_gripper_controller"/> -->
+        ns="$(arg ns)" args="spawn panda_gripper_controller"/>
 
   <!-- convert joint states to TF transforms -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
