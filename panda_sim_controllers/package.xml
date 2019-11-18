@@ -24,10 +24,17 @@
   <build_depend>franka_core_msgs</build_depend>
   <build_depend>roslint</build_depend>
   <build_depend>panda_hardware_interface</build_depend>
+  <build_depend>franka_gripper</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
 
   <run_depend>effort_controllers</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>realtime_tools</run_depend>
+  <run_depend>franka_gripper</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
   <run_depend>franka_core_msgs</run_depend>
   <run_depend>controller_interface</run_depend>
   <run_depend>panda_hardware_interface</run_depend>
