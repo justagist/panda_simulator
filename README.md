@@ -1,9 +1,10 @@
 # Panda Simulator
-A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, with exposed **controllers** and real-time **robot state feedback**.
+
+A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, with exposed **controllers** and real-time **robot state feedback** similar to thereal robot when using the [*franka-ros*][franka-ros] package.
 ## Features
-  - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics.
+  - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper).
   - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
-  - The franka_ros_interface package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
+  - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
   - 
   ### Dependencies
 
@@ -41,11 +42,12 @@ This exposes a variety of ROS topics and services for communicating with and con
 | ROS Topic | Data |
 | ------ | ------ |
 | */panda_simulator/motion_controller/arm/joint_commands* | command the robot using the currently active controller |
+| */panda_simulator/franka_gripper/move* | (action msg) command the joints of the gripper |
 
 Other topics for changing the controller gains (also dynamically configurable), command timeout, etc. are also available.
 
 #### ROS Services:
-Controller manager service can be used to switch between all available controllers (joint position, velocity, effort)
+Controller manager service can be used to switch between all available controllers (joint position, velocity, effort). Gripper joints can be controlled using the ROS ActionClient (via the same topics as the real robot and [*franka_ros*][franka-ros]).
 
 ## Python API for panda_simulator
 
@@ -59,6 +61,7 @@ Apache 2.0
    [fri-repo]: <https://github.com/justagist/franka_ros_interface>
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
    [libfranka-doc]: <https://frankaemika.github.io/docs/installation_linux.html#building-from-source>
+   [franka-ros]: <https://frankaemika.github.io/docs/franka_ros.html>
    
    
    
