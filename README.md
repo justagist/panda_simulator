@@ -29,6 +29,8 @@ The simulator can be started by running:
     
 This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation.
 
+A demo node 'move_robot.py' is provided demonstrating (i) controlling the robot (ii) retrieving state information of the robot. 
+
 #### Some useful ROS topics
 
 ##### Published Topics:
