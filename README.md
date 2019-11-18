@@ -1,6 +1,6 @@
 # Panda Simulator
 
-A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, with exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
+A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
 ## Features
   - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper).
   - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
