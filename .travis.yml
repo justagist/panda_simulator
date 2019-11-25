@@ -60,7 +60,7 @@ env:
   global:
     - ROS_CI_DESKTOP="`lsb_release -cs`"  # e.g. [trusty|xenial|...]
     - CI_SOURCE_PATH=$(pwd)
-    - ROSINSTALL_FILE="$CI_SOURCE_PATH/rosinstall/$ROS_DISTRO""_dependencies.rosinstall"
+    - ROSINSTALL_FILE="$CI_SOURCE_PATH/$ROS_DISTRO""_dependencies.rosinstall"
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
     - ROS_PARALLEL_JOBS='-j8 -l6'
     # Set the python path manually to include /usr/-/python2.7/dist-packages
