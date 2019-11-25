@@ -22,6 +22,7 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
  - *franka-ros* (`sudo apt install ros-<version>-franka-ros` or [install from source][libfranka-doc])
  - [*franka_ros_interface*][fri-repo] (at least the *franka_core_msgs* package from *franka_ros_interface* should be installed)
  - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
+ - [*sns_ik*](https://github.com/RethinkRobotics-opensource/sns_ik)
  
 ### Installation
 Once the above dependencies are installed, the package can be installed using catkin_make:
