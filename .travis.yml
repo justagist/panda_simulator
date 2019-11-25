@@ -60,7 +60,7 @@ env:
   global:
     - ROS_CI_DESKTOP="`lsb_release -cs`"  # e.g. [trusty|xenial|...]
     - CI_SOURCE_PATH=$(pwd)
-    - ROSINSTALL_FILE=$CI_SOURCE_PATH/dependencies.rosinstall
+    - ROSINSTALL_FILE="$CI_SOURCE_PATH/rosinstall/$ROS_DISTRO""_dependencies.rosinstall"
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
     - ROS_PARALLEL_JOBS='-j8 -l6'
     # Set the python path manually to include /usr/-/python2.7/dist-packages
@@ -78,7 +78,6 @@ before_install:
   - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
   - source /opt/ros/$ROS_DISTRO/setup.bash
   - sudo apt install ros-$ROS_DISTRO-libfranka ros-$ROS_DISTRO-franka-ros
-  - sudo apt install ros-$ROS_DISTRO-sns-ik-lib
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
   - rosdep update --include-eol-distros  # Support EOL distros.
