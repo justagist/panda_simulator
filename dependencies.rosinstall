@@ -6,3 +6,7 @@
     local-name: franka_panda_description
     uri: https://github.com/JustaGist/franka_panda_description
     version: master
+- git:
+    local-name: sns_ik
+    uri: https://github.com/RethinkRobotics-opensource/sns_ik.git
+    version: kinetic-devel

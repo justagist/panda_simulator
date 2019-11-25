@@ -6,6 +6,12 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
   - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
   - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
   
+  ### Continuous Integration Builds
+  
+  ROS Kinetic (master branch) | ROS Melodic (melodic-devel branch)
+----------- | ----------- 
+[![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) | [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
+  
   ![](_extra/panda_simulator.gif)
  Watch video [here](https://www.youtube.com/watch?v=NdSbXC0r7tU).
  
