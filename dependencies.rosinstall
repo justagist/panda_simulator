@@ -9,4 +9,4 @@
 - git:
     local-name: sns_ik
     uri: https://github.com/RethinkRobotics-opensource/sns_ik.git
-    version: kinetic-devel
+    version: melodic-devel
