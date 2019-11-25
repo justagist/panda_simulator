@@ -1,0 +1,8 @@
+- git:
+    local-name: franka_ros_interface
+    uri: https://github.com/IRLabUoB/franka_ros_interface
+    version: master
+- git:
+    local-name: franka_panda_description
+    uri: https://github.com/JustaGist/franka_panda_description
+    version: master
