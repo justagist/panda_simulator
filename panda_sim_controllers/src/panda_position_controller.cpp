@@ -29,8 +29,6 @@
 #include <panda_sim_controllers/panda_position_controller.h>
 #include <pluginlib/class_list_macros.h>
 
-#include <boost/thread/thread.hpp>
-
 namespace panda_sim_controllers {
   bool PandaPositionController::init(panda_hardware_interface::SharedJointInterface* hw, ros::NodeHandle &n){
     if(!panda_sim_controllers::JointArrayController<panda_effort_controllers::JointPositionController>::init(hw, n)) {

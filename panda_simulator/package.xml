@@ -19,7 +19,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>panda_gazebo</run_depend>
   <run_depend>panda_sim_controllers</run_depend>
-  <run_depend>panda_sim_examples</run_depend>
+  <run_depend>panda_simulator_examples</run_depend>
   <run_depend>panda_hardware_interface</run_depend>
   <export>
     <metapackage/>
