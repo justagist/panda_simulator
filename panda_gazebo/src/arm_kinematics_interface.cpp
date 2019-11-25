@@ -525,7 +525,7 @@ void ArmKinematicsInterface::publishEndpointState()
         Trans.block<3,3>(0,0) = m;
         Trans.block<3,1>(0,3) = t;
 
-        Eigen::Map<RowVectorXd> flattened_mat(Trans.data(), Trans.size());
+        Eigen::Map<Eigen::RowVectorXd> flattened_mat(Trans.data(), Trans.size());
         // endpoint_state.O_T_EE = flattened_mat.data()
         std::vector<double> vec(flattened_mat.data(), flattened_mat.data() + flattened_mat.size());
 
