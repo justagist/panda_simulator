@@ -60,7 +60,7 @@ env:
   global:
     - ROS_CI_DESKTOP="`lsb_release -cs`"  # e.g. [trusty|xenial|...]
     - CI_SOURCE_PATH=$(pwd)
-    - ROSINSTALL_FILE=$CI_SOURCE_PATH/$ROS_DISTRO.rosinstall
+    # - ROSINSTALL_FILE=$CI_SOURCE_PATH/$ROS_DISTRO.rosinstall
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
     - ROS_PARALLEL_JOBS='-j8 -l6'
     # Set the python path manually to include /usr/-/python2.7/dist-packages
@@ -102,7 +102,7 @@ before_script:
   # source dependencies: install using wstool.
   - cd ~/catkin_ws/src
   - wstool init
-  - if [[ -f $ROSINSTALL_FILE ]] ; then wstool merge $ROSINSTALL_FILE ; fi
+  - if [[ -f $CI_SOURCE_PATH/$ROS_DISTRO.rosinstall ]] ; then wstool merge $CI_SOURCE_PATH/$ROS_DISTRO.rosinstall ; fi
   - wstool up
   # package depdencies: install using rosdep.
   - cd ~/catkin_ws
