@@ -37,7 +37,7 @@
 #include <control_msgs/JointControllerState.h>
 #include <panda_sim_controllers/panda_joint_position_controller.h>
 #include <ros/node_handle.h>
-
+#include <boost/thread.hpp>
 #include <control_toolbox/pid.h>
 #include <realtime_tools/realtime_box.h>
 #include <panda_hardware_interface/shared_joint_interface.h>
