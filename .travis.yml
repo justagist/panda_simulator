@@ -47,15 +47,9 @@ cache:
 language: generic
 matrix:
   include:
-  - name: "Trusty indigo"
-    dist: trusty
-    env: ROS_DISTRO=indigo
   - name: "Xenial kinetic"
     dist: xenial
     env: ROS_DISTRO=kinetic
-  - name: "Bionic melodic"
-    dist: bionic
-    env: ROS_DISTRO=melodic
 
 # Configuration variables. All variables are global now, but this can be used to
 # trigger a build matrix for different ROS distributions if desired.
@@ -80,7 +74,7 @@ before_install:
   - sudo apt-get install dpkg
   - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
   - source /opt/ros/$ROS_DISTRO/setup.bash
-  - sudo apt install ros-$ROS_DISTRO-sns-ik-lib ros-$ROS_DISTRO-libfranka ros-$ROS_DISTRO-franka-ros
+  - sudo apt install ros-$ROS_DISTRO-libfranka ros-$ROS_DISTRO-franka-ros
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
   - rosdep update --include-eol-distros  # Support EOL distros.
