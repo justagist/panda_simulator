@@ -11,29 +11,31 @@
 
   <!-- load the default "ON" controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false"
-        output="screen" ns="$(arg ns)" args="spawn
-                                         joint_state_controller
-                                         effort_joint_position_controller
-                                         effort_joint_gravity_controller  
+        output="screen" args="spawn
+                                         panda_simulator/joint_state_controller
+                                         panda_simulator/effort_joint_position_controller
+                                         panda_simulator/effort_joint_gravity_controller  
                                          " />
 
   <!-- load the default "OFF" controllers -->
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
-       output="screen" ns="$(arg ns)" args="load
-                                         effort_joint_velocity_controller
-                                         effort_joint_torque_controller"/>
+       output="screen" args="load
+                                         panda_simulator/effort_joint_velocity_controller
+                                         panda_simulator/effort_joint_torque_controller"/>
 
   <!-- load the Gripper controllers if args set -->
   <rosparam if="$(arg load_gripper)" command="load"
-      file="$(find panda_sim_controllers)/config/electric_gripper_controller.yaml" ns="$(arg ns)"/>
+      file="$(find panda_sim_controllers)/config/panda_gripper_controller.yaml" ns="$(arg ns)"/>
   <node if="$(arg load_gripper)" name="electric_gripper_controller_spawner_stopped"
         pkg="controller_manager" type="controller_manager" respawn="false" output="screen"
-        ns="$(arg ns)" args="spawn panda_gripper_controller"/>
+        args="spawn panda_simulator/panda_gripper_controller"/>
 
   <!-- convert joint states to TF transforms -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
 	respawn="false" output="screen">
-    <remap from="/joint_states" to="/$(arg ns)/joint_states" />
+    <!-- <remap from="/joint_states" to="/$(arg ns)/joint_states" /> -->
   </node>
+
+  <node name="topic_remap" pkg="topic_tools" type="relay" args="joint_states /$(arg ns)/custom_franka_state_controller/joint_states"/>
 
 </launch>

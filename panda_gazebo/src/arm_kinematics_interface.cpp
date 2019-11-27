@@ -67,17 +67,17 @@ bool ArmKinematicsInterface::init(ros::NodeHandle& nh)
   // }
   gravity_torques_seq_ = 0;
   robot_state_publisher_ = nh.advertise<franka_core_msgs::RobotState>(
-                            "custom_franka_state_controller/robot_state", 1);
+                            "panda_simulator/custom_franka_state_controller/robot_state", 1);
   endpoint_state_pub_ = nh.advertise<franka_core_msgs::EndPointState>(
-                            "custom_franka_state_controller/tip_state", 1);
+                            "panda_simulator/custom_franka_state_controller/tip_state", 1);
   joint_state_sub_ = nh.subscribe("joint_states", 1,
                        &ArmKinematicsInterface::jointStateCallback, this);
-  joint_command_sub_ = nh.subscribe("motion_controller/arm/joint_commands", 1,
+  joint_command_sub_ = nh.subscribe("panda_simulator/motion_controller/arm/joint_commands", 1,
                        &ArmKinematicsInterface::jointCommandCallback, this);
   // Update at 100Hz
   update_timer_ = nh.createTimer(100, &ArmKinematicsInterface::update, this);
   joint_limits_pub_ = nh.advertise<franka_core_msgs::JointLimits>(
-                            "joint_limits", 1, true);
+                            "panda_simulator/joint_limits", 1, true);
   joint_limits_pub_.publish(joint_limits_);
   return true;
 }
@@ -190,19 +190,19 @@ bool ArmKinematicsInterface::parseParams(const ros::NodeHandle& nh)
         "Could not load the xml from parameter server: %s", urdf_xml.c_str());
     return false;
   }
-  if (!nh.getParam("arm/root_name", root_name_))
+  if (!nh.getParam("/arm/root_name", root_name_))
   {
     ROS_FATAL_NAMED("kinematics",
         "No root name for Kinematic Chain found on parameter server");
     return false;
   }
-  if (!nh.getParam("arm/tip_name", tip_name_))
+  if (!nh.getParam("/arm/tip_name", tip_name_))
   {
     ROS_FATAL_NAMED("kinematics",
         "No tip name for Kinematic Chain found on parameter server");
     return false;
   }
-  if (!nh.getParam("arm/gravity_tip_name", gravity_tip_name_))
+  if (!nh.getParam("/arm/gravity_tip_name", gravity_tip_name_))
   {
     ROS_FATAL_NAMED("kinematics",
         "No tip name for Kinematic Chain found on parameter server");
