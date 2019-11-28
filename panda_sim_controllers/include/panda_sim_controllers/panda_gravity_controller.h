@@ -29,7 +29,7 @@
 #define PANDA_GRAVITY_CONTROLLER_H
 
 #include <panda_sim_controllers/joint_array_controller.h>
-// #include <franka_core_msgs/SEAJointState.h>
+#include <franka_core_msgs/RobotState.h>
 #include <std_msgs/Empty.h>
 #include <realtime_tools/realtime_box.h>
 #include <panda_sim_controllers/panda_joint_effort_controller.h>
@@ -50,12 +50,14 @@ namespace panda_sim_controllers
     void setCommands();
 
   private:
-    // ros::Subscriber sub_joint_command_;
+    ros::Subscriber sub_joint_command_;
     ros::Subscriber sub_gravity_disable_;
     realtime_tools::RealtimeBox< std::shared_ptr<const ros::Time > > box_disable_time_;
     ros::Duration gravity_disable_timeout_;
 
-    // void gravityCommandCB(const franka_core_msgs::SEAJointStateConstPtr& msg);
+    std::vector<std::string> joint_names_;
+
+    void gravityCommandCB(const franka_core_msgs::RobotStateConstPtr& msg);
     void gravityDisableCB(const std_msgs::Empty& msg);
   };
 }

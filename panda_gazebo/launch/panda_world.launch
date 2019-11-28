@@ -35,12 +35,12 @@
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro load_gripper:=$(arg load_gripper)"/>
 
 
-  <param name="$(arg ns)/arm/root_name" value="panda_link0" />
-  <param if="$(arg load_gripper)" name="$(arg ns)/arm/tip_name" value="panda_hand" /> 
-  <param unless="$(arg load_gripper)" name="$(arg ns)/arm/tip_name" value="panda_link8" /> 
+  <param name="/arm/root_name" value="panda_link0" />
+  <param if="$(arg load_gripper)" name="/arm/tip_name" value="panda_hand" /> 
+  <param unless="$(arg load_gripper)" name="/arm/tip_name" value="panda_link8" /> 
 
-  <param if="$(arg load_gripper)" name="$(arg ns)/arm/gravity_tip_name" value="panda_hand" /> 
-  <param unless="$(arg load_gripper)" name="$(arg ns)/arm/gravity_tip_name" value="panda_link8" /> 
+  <param if="$(arg load_gripper)" name="/arm/gravity_tip_name" value="panda_hand" /> 
+  <param unless="$(arg load_gripper)" name="/arm/gravity_tip_name" value="panda_link8" /> 
 
   <!-- We resume the logic in empty_world.launch, changing the name of the world to be launched -->
   <include if="$(arg load_gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch">

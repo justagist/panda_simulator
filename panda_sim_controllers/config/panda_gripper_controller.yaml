@@ -1,0 +1,13 @@
+
+panda_gripper_controller:
+  type: panda_sim_controllers/PandaGripperController
+  pub_topic:  /franka_gripper/joint_states
+  joints:
+        # main joint
+        panda_finger_joint1_controller:
+          joint: panda_finger_joint1
+          pid: {p: 5000,  i: 50, d: 0.5}
+        # mimic joint
+        panda_finger_joint2_controller:
+          joint: panda_finger_joint2
+          pid: {p: 5000,  i: 50, d: 0.5}
