@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     rospy.init_node("test_node")
 
-    rospy.wait_for_service('/panda_simulator/controller_manager/list_controllers')
+    rospy.wait_for_service('/controller_manager/list_controllers')
 
     rospy.loginfo("Starting node...")
     rospy.sleep(5)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     pub = rospy.Publisher('/panda_simulator/motion_controller/arm/joint_commands',JointCommand, queue_size = 1, tcp_nodelay = True)
 
     # Subscribe to robot joint state
-    rospy.Subscriber('/panda_simulator/joint_states', JointState, callback)
+    rospy.Subscriber('/panda_simulator/custom_franka_state_controller/joint_states', JointState, callback)
 
     # Subscribe to robot state (Refer JointState.msg to find all available data. 
     # Note: All msg fields are not populated when using the simulated environment)
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     rospy.loginfo("Not recieved current joint state msg")
 
-    while len(vals) != 7 and not rospy.is_shutdown():
+    while not rospy.is_shutdown() and len(vals) != 7:
         continue
 
     rospy.loginfo("Sending robot to neutral pose")
