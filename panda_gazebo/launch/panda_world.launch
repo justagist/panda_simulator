@@ -32,7 +32,7 @@
   <rosparam command="load" file="$(find panda_gazebo)/config/robot_details.yaml"/>
 
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro load_gripper:=$(arg load_gripper)"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro load_gripper:=$(arg load_gripper) load_gazebo:=$(arg load_gripper)"/>
 
 
   <param name="/arm/root_name" value="panda_link0" />
