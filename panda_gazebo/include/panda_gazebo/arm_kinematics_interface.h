@@ -45,16 +45,19 @@
 
 #include <Eigen/Geometry>
 
-#include <kdl/chainidsolver_recursive_newton_euler.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
-#include <kdl/chainfksolvervel_recursive.hpp>
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chaindynparam.hpp>
+// #include <kdl/chainidsolver_recursive_newton_euler.hpp>
+// #include <kdl/chainfksolverpos_recursive.hpp>
+// #include <kdl/chainfksolvervel_recursive.hpp>
+// #include <kdl/chainjnttojacsolver.hpp>
+// #include <kdl/chaindynparam.hpp>
 #include <sns_ik/sns_ik.hpp>
 
 #include <kdl/jntarray.hpp>
 #include <kdl/tree.hpp>
 #include <urdf/model.h>
+#include "kdl/chainfksolver.hpp"
+
+#include <panda_gazebo/kdl_methods.h>
 
 namespace panda_gazebo
 {
@@ -72,13 +75,7 @@ struct Kinematics
 {
   KDL::Chain chain;
   std::vector<std::string> joint_names;
-  std::unique_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver;
-  std::unique_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver;
-  std::unique_ptr<KDL::ChainIdSolver_RNE>         gravity_solver;
-  std::unique_ptr<KDL::ChainJntToJacSolver>         jac_solver;
-  std::unique_ptr<KDL::ChainDynParam>         chain_dyn_param;
-  std::unique_ptr<sns_ik::SNS_IK>                     ik_solver;
-  // std::unique_ptr<KDL::ChainFdSolver>           fk_eff_solver;// TODO(imcmahon)
+  
 };
 private:
 std::string side_, root_name_, tip_name_, camera_name_, gravity_tip_name_;
@@ -101,6 +98,11 @@ long endpoint_state_seq_;
 long gravity_torques_seq_;
 
 ros::Timer update_timer_;
+
+KDLMethods* kdl_;
+
+
+  // std::unique_ptr<KDL::ChainFkSolverPos_recursive fk_pos_solver_;
 
 /* Method to be invoked at a regular interval for publishing states
  */
@@ -151,20 +153,12 @@ bool parseParams(const ros::NodeHandle& nh);
  */
 bool computePositionFK(const Kinematics& kin, const KDL::JntArray& jnt_pos, geometry_msgs::Pose& result);
 
-/* Method to calculate the position IK for the required geometry_msg::Pose
- * with the result stored in KDL::JntArray
- *  @returns true if successful
- */
-bool computePositionIK(const Kinematics& kin, const geometry_msgs::Pose& cart_pose,
-                       const KDL::JntArray& jnt_nullspace_bias,
-                       const KDL::JntArray& jnt_seed, KDL::JntArray& result);
-
 
 /* Method to calculate the velocity FK for the required joint velocities in rad/sec
  * with the result stored in geometry_msgs::Twist
  * @returns true if successful
  */
-bool computeVelocityFK(const Kinematics& kin, const KDL::JntArrayVel& jnt_vel, geometry_msgs::Twist& result);
+// bool computeVelocityFK(const Kinematics& kin, const KDL::JntArrayVel& jnt_vel, geometry_msgs::Twist& result);
 
 // bool computeEffortFK(const Kinematics& kin,
 //                                              const KDL::JntArray& jnt_pos,

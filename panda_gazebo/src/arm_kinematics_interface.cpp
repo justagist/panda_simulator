@@ -141,14 +141,7 @@ bool ArmKinematicsInterface::createKinematicChain(std::string tip_name)
       continue;
     kin.joint_names.push_back(kin.chain.getSegment(seg_idx).getJoint().getName());
   }
-  // Construct Solvers
-  KDL::Vector grav_(0.0,0.0,-9.81);
-
-  kin.chain_dyn_param = std::make_unique<KDL::ChainDynParam>(kin.chain, grav_);
-  kin.gravity_solver = std::make_unique<KDL::ChainIdSolver_RNE>(kin.chain, grav_);
-  kin.fk_pos_solver = std::make_unique<KDL::ChainFkSolverPos_recursive>(kin.chain);
-  kin.fk_vel_solver = std::make_unique<KDL::ChainFkSolverVel_recursive>(kin.chain);
-  kin.jac_solver = std::make_unique<KDL::ChainJntToJacSolver>(kin.chain);
+  
   auto num_jnts = kin.joint_names.size();
   KDL::JntArray q_min(num_jnts);
   KDL::JntArray q_max(num_jnts);
@@ -173,9 +166,8 @@ bool ArmKinematicsInterface::createKinematicChain(std::string tip_name)
                      kin.joint_names[i].c_str());
     }
   }
-  kin.ik_solver = std::make_unique<sns_ik::SNS_IK>(kin.chain, q_min, q_max,
-                                                   v_max, a_max, kin.joint_names);
-  kin.ik_solver->setVelocitySolveType(sns_ik::SNS_FastOptimal);
+  kdl_ = new KDLMethods;
+  kdl_->initialise(kin.chain);
   kinematic_chain_map_.insert(std::make_pair(tip_name, std::move(kin)));
   return true;
 }
@@ -256,12 +248,13 @@ void ArmKinematicsInterface::publishRobotState()
   {
     franka_core_msgs::RobotState robot_state_msg;
     auto num_jnts = kinematic_chain_map_[tip_name_].chain.getNrOfJoints();
+    // ROS_WARN_NAMED("this","num_j %d", num_jnts);
     KDL::JntArray jnt_pos(num_jnts), jnt_vel(num_jnts), jnt_eff(num_jnts), jnt_accelerations(num_jnts);
     KDL::JntArray jnt_gravity_model(num_jnts), jnt_gravity_only(num_jnts), jnt_zero(num_jnts);
     jointStateToKDL(*joint_state, kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, jnt_eff);
 
-    std::shared_ptr<const franka_core_msgs::JointCommand> joint_command;
-    joint_command_buffer_.get(joint_command);
+    // std::shared_ptr<const franka_core_msgs::JointCommand> joint_command;
+    // joint_command_buffer_.get(joint_command);
     // if (joint_command)
     // { 
     //   std::array<double, 7> acc;
@@ -269,13 +262,16 @@ void ArmKinematicsInterface::publishRobotState()
     //   for (auto i = 0; i < joint_command->acceleration.size(); i++)
     //     jnt_accelerations(i) = joint_command->acceleration[i];
     // }
-
     // computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_vel, jnt_accelerations, jnt_gravity_model);
+
+
+
     // computeGravity(kinematic_chain_map_[tip_name_], jnt_pos, jnt_zero, jnt_zero, jnt_gravity_only);
     // auto clamp_limit = [](double i, double limit) { return std::max(std::min(limit, i), -limit); };
     // for (size_t jnt_idx = 0; jnt_idx < num_jnts; jnt_idx++)
     // {
     //   auto torque_limit = robot_model_.getJoint(kinematic_chain_map_[tip_name_].joint_names[jnt_idx])->limits->effort;
+    //   // std::cout << jnt_idx << " " << jnt_gravity_model(jnt_idx) << " " << jnt_gravity_only(jnt_idx) << " "<< clamp_limit(jnt_gravity_only(jnt_idx), torque_limit) <<  std::endl;
     //   robot_state_msg.gravity[jnt_idx] = clamp_limit(jnt_gravity_only(jnt_idx), torque_limit);
     //   robot_state_msg.coriolis[jnt_idx] = clamp_limit(jnt_gravity_model(jnt_idx), torque_limit) - robot_state_msg.gravity[jnt_idx];
     // }
@@ -300,9 +296,9 @@ void ArmKinematicsInterface::addDynamicsToMsg(const Kinematics& kin, const KDL::
     KDL::JntArray C(num_jnts); //coriolis matrix
     KDL::JntArray G(num_jnts); //gravity matrix
     KDL::JntSpaceInertiaMatrix H(num_jnts); //inertiamatrix H=square matrix of size= number of joints
-    kin.chain_dyn_param->JntToMass(jnt_pos,H);
-    kin.chain_dyn_param->JntToCoriolis(jnt_pos,jnt_vel,C);
-    kin.chain_dyn_param->JntToGravity(jnt_pos,G);
+    kdl_->JntToMass(jnt_pos,H);
+    kdl_->JntToCoriolis(jnt_pos,jnt_vel,C);
+    kdl_->JntToGravity(jnt_pos,G);
 
     for (size_t jnt_idx = 0; jnt_idx < num_jnts; jnt_idx++)
     {
@@ -322,7 +318,7 @@ void ArmKinematicsInterface::addJacAndVelToMsg(const Kinematics& kin, const KDL:
 {
     KDL::Jacobian J;
     J.resize(kin.chain.getNrOfJoints());
-    kin.jac_solver->JntToJac(jnt_pos, J);
+    kdl_->JacobianJntToJac(jnt_pos, J);
 
     Eigen::Matrix<double, 6, 1> ee_vel = J.data * jnt_vel.data;
 
@@ -420,7 +416,8 @@ bool ArmKinematicsInterface::computeGravity(const Kinematics& kin,
 {
   std::vector<KDL::Wrench> f_ext(kin.chain.getNrOfSegments(), KDL::Wrench::Zero());
   jnt_torques.resize(kin.chain.getNrOfJoints());
-  return !(kin.gravity_solver->CartToJnt(jnt_pos, jnt_vel, jnt_accel, f_ext, jnt_torques) < 0);
+  // return !(kdl_->GravityCartToJnt(jnt_pos, jnt_vel, jnt_accel, f_ext, jnt_torques) < 0);
+  return false;
 }
 
 bool ArmKinematicsInterface::computePositionFK(const Kinematics& kin,
@@ -428,7 +425,7 @@ bool ArmKinematicsInterface::computePositionFK(const Kinematics& kin,
                                                geometry_msgs::Pose& result)
 {
   KDL::Frame p_out;
-  if (kin.fk_pos_solver->JntToCart(jnt_pos, p_out, kin.chain.getNrOfSegments()) < 0)
+  if (kdl_->PosFKJntToCart(jnt_pos, p_out, kin.chain.getNrOfSegments()) < 0)
   {
     return false;
   }
@@ -436,43 +433,6 @@ bool ArmKinematicsInterface::computePositionFK(const Kinematics& kin,
   return true;
 }
 
-
-bool ArmKinematicsInterface::computePositionIK(const Kinematics& kin,
-                                               const geometry_msgs::Pose& cart_pose,
-                                               const KDL::JntArray& jnt_nullspace_bias,
-                                               const KDL::JntArray& jnt_seed, KDL::JntArray& result)
-{
-  KDL::Frame pose_kdl;
-  tf::poseMsgToKDL(cart_pose, pose_kdl);
-  return !(kin.ik_solver->CartToJnt(jnt_seed, pose_kdl, jnt_nullspace_bias, result) < 0);
-}
-
-bool ArmKinematicsInterface::computeVelocityFK(const Kinematics& kin,
-                                               const KDL::JntArrayVel& jnt_vel,
-                                               geometry_msgs::Twist& result)
-{
-  KDL::FrameVel v_out;
-  if (kin.fk_vel_solver->JntToCart(jnt_vel, v_out, kin.chain.getNrOfSegments()) < 0)
-  {
-    return false;
-  }
-  tf::twistKDLToMsg(v_out.GetTwist(), result);
-  return true;
-}
-// TODO(imcmahon): once ChainFDSolverTau is upstreamed
-// bool ArmKinematicsInterface::computeEffortFK(const Kinematics& kin,
-//                                              const KDL::JntArray& jnt_pos,
-//                                              const KDL::JntArray& jnt_eff,
-//                                              geometry_msgs::Wrench& result)
-// {
-//   KDL::Wrench wrench;
-//   if (kin.fk_eff_solver->JntToCart(jnt_pos, jnt_eff, wrench) < 0)
-//   {
-//     return false;
-//   }
-//   tf::wrenchKDLToMsg(wrench, result);
-//   return true;
-// } 
 
 void ArmKinematicsInterface::publishEndpointState()
 {
@@ -534,10 +494,7 @@ void ArmKinematicsInterface::publishEndpointState()
         // t.linear() = q.toRotationMatrix();
 
         KDL::JntArrayVel jnt_array_vel(jnt_pos, jnt_vel);
-        // if (!computeVelocityFK(chain.second, jnt_array_vel, endpoint_state.twist))
-        // {
-        //   endpoint_state.valid &= false;
-        // }
+
         endpoint_state.header.frame_id = root_name_;
         endpoint_state.header.stamp = ros::Time::now();
         endpoint_state_pub_.publish(endpoint_state);

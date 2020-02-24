@@ -54,6 +54,7 @@ add_library(panda_gazebo_ros_control
   src/panda_gazebo_ros_control_plugin.cpp
   src/arm_controller_interface.cpp
   src/arm_kinematics_interface.cpp
+  src/kdl_methods.cpp
 )
 set_property(TARGET panda_gazebo_ros_control PROPERTY CXX_STANDARD 14)
 
