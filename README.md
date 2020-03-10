@@ -32,7 +32,7 @@ Once the above dependencies are installed, the package can be installed using ca
 
     $ cd <catkin_ws>
     $ git clone https://github.com/justagist/panda_simulator src/panda_simulator
-    $ catkin_make
+    $ catkin build # if catkin not found, install catkin tools (apt install ros-$ROS_DISTRO-python-catkin-tools)
     $ source devel/setup.bash
  
 ### Usage
