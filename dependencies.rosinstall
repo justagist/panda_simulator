@@ -10,3 +10,7 @@
     local-name: sns_ik
     uri: https://github.com/RethinkRobotics-opensource/sns_ik.git
     version: melodic-devel
+- git:
+    local-name: orocos_kinematics_dynamics
+    uri: https://github.com/orocos/orocos_kinematics_dynamics
+    version: master
