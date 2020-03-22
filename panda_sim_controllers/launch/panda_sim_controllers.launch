@@ -7,16 +7,17 @@
   <arg name="ns" default="panda_simulator"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find panda_sim_controllers)/config/panda_sim_controllers.yaml" command="load" ns="$(arg ns)"/>
+  <rosparam file="$(find panda_sim_controllers)/config/panda_sim_controllers.yaml" command="load"/>
 
   <!-- load the default "ON" controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false"
         output="screen" args="spawn
-                                         panda_simulator/joint_state_controller
                                          panda_simulator/effort_joint_gravity_controller
                                          panda_simulator/effort_joint_position_controller
-                                         " />
-
+                                         panda_simulator/joint_state_controller
+                                         " /><!-- 
+                                         position_joint_trajectory_controller
+ -->
   <!-- load the default "OFF" controllers -->
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
        output="screen" args="load
