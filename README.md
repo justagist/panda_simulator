@@ -22,16 +22,31 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 
  - *libfranka* (`sudo apt install ros-<version>-libfranka` or [install from source][libfranka-doc])
  - *franka-ros* (`sudo apt install ros-<version>-franka-ros` or [install from source][libfranka-doc])
+
+The following dependencies can be installed using the `.rosinstall` file (instructions in next section)
+
  - [*franka_ros_interface*][fri-repo] (at least the *franka_core_msgs* package from *franka_ros_interface* should be installed)
  - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
  - [*sns_ik*](https://github.com/RethinkRobotics-opensource/sns_ik)
  - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
  
 ### Installation
-Once the above dependencies are installed, the package can be installed using catkin_make:
 
-    $ cd <catkin_ws>
-    $ git clone https://github.com/justagist/panda_simulator src/panda_simulator
+Clone the repo:
+
+    $ cd <catkin_ws>/src
+    $ git clone https://github.com/justagist/panda_simulator 
+
+Update dependency packages:
+
+    $ wstool init
+    $ wstool merge panda_simulator/dependencies.rosinstall
+    $ wstool up
+    $ cd .. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+
+Once the dependencies are met, the package can be installed using catkin_make:
+
+    $ source /opt/ros/$ROS_DISTRO/setup.bash
     $ catkin build # if catkin not found, install catkin tools (apt install ros-$ROS_DISTRO-python-catkin-tools)
     $ source devel/setup.bash
  

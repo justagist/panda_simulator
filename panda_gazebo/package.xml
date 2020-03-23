@@ -24,7 +24,6 @@
   <build_depend>gazebo_ros_control</build_depend>
   <build_depend>franka_core_msgs</build_depend>
   <build_depend>image_transport</build_depend>
-  <build_depend>orocos_kinematics_dynamics</build_depend>
   <build_depend>libgazebo9-dev</build_depend>
   <build_depend>realtime_tools</build_depend>
   <build_depend>roscpp</build_depend>
@@ -43,7 +42,6 @@
   <run_depend>image_transport</run_depend>
   <run_depend>realtime_tools</run_depend>
   <run_depend>roscpp</run_depend>
-  <run_depend>orocos_kinematics_dynamics</run_depend>
   <run_depend>franka_panda_description</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>kdl_parser</run_depend>
