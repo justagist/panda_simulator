@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>panda_simulator</name>
-  <version>0.0.1</version>
+  <version>0.9.0</version>
   <description>
     Metapackage - Panda Robot Gazebo Simulation and Controllers
   </description>

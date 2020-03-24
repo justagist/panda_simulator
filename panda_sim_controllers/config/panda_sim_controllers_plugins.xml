@@ -4,7 +4,7 @@
 	 type="panda_sim_controllers::PandaGripperController"
 	 base_class_type="controller_interface::ControllerBase">
         <description>
-           The ElectricGripperController tracks position commands for the electric grippers. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
+           The PandaGripperController tracks position commands for the electric grippers. It expects a SharedJointInterface (EffortJointInterface) type of hardware interface.
         </description>
     </class>
 

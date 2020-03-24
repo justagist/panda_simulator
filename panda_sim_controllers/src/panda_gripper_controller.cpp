@@ -88,7 +88,7 @@ bool PandaGripperController::init(panda_hardware_interface::SharedJointInterface
 
   // Get number of joints
   n_joints_ = xml_struct.size();
-  ROS_ASSERT_MSG(n_joints_ == 2, "Electric Gripper expects exactly 2 joints and %zu found. Exiting.", n_joints_);
+  ROS_ASSERT_MSG(n_joints_ == 2, "PandaGripperController expects exactly 2 joints and %zu found. Exiting.", n_joints_);
   ROS_INFO_STREAM(
       "Initializing PandaGripperController with "<<n_joints_<<" joints.");
 
@@ -267,7 +267,7 @@ void PandaGripperController::move(const franka_gripper::MoveGoalConstPtr& goal) 
 }
 
 void PandaGripperController::homing(const franka_gripper::HomingGoalConstPtr& /*goal*/) {
-  
+  ROS_WARN_STREAM("Homing not implemented for simulator.");
 }
 
 void PandaGripperController::stop(const franka_gripper::StopGoalConstPtr& /*goal*/) {

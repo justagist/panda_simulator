@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+*(version 0.9)*
+
 A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
 ## Features
   - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper).
@@ -87,7 +89,16 @@ Controller manager service can be used to switch between all available controlle
 
 The [*franka_ros_interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*franka_ros_interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
 
-#### License
+### Version Update:
+
+#### v0.9
+
+ - Joint position, velocity, torque, gravity, gripper controllers fixed
+ - Controller names specified through parameter server and config file
+ - Bug in controller switching interface fixed
+ - Removed redundant impedance controller support
+
+### License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 

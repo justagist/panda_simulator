@@ -67,6 +67,7 @@ namespace panda_sim_controllers {
   void PandaEffortController::setCommands() {
     // set the new commands for each controller
     std::vector<Command> command = *(command_buffer_.readFromRT());
+
     for (auto it = command.begin(); it != command.end(); it++) {
       controllers_[it->name_]->command_buffer_.writeFromNonRT(it->effort_);
     }

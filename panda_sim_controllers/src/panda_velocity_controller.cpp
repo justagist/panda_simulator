@@ -117,6 +117,7 @@ namespace panda_sim_controllers {
 
   void PandaVelocityController::setCommands() {
     // set the new commands for each controller
+
     std::vector<Command> command = *(command_buffer_.readFromRT());
     for (auto it = command.begin(); it != command.end(); it++) {
       controllers_[it->name_]->setCommand(it->velocity_);

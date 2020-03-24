@@ -60,12 +60,25 @@ namespace panda_gazebo {
     ros::Subscriber joint_command_sub_;
     boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
 
+    std::string position_controller_name_;
+    std::string velocity_controller_name_;
+    std::string torque_controller_name_;
+    std::string impedance_controller_name_;
+    std::string trajectory_controller_name_;
+
+    std::string default_controller_name_;
+    std::string current_controller_name_;
+    std::vector<std::string> all_controllers_;
+
+    std::map<std::string,int> controller_name_to_mode_map_;
+
   protected:
     void jointCommandTimeoutCallback(const std_msgs::Float64 msg);
     void jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg);
     std::string getControllerString(std::string mode_str);
     bool switchControllers(int control_mode);
-    void commandTimeoutCheck(const ros::TimerEvent& e);
+    void commandTimeoutCheck(const ros::TimerEvent& e);  
+    bool switchToDefaultController();
 
 
   };
