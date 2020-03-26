@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <name>panda_sim_moveit</name>
+  <version>0.9.1</version>
+  <description>
+    MoveIt support for Panda Simulator
+  </description>
+
+  <maintainer email="sxs1412@bham.ac.uk">
+    Saif Sidhik
+  </maintainer>
+  <license>Apache 2.0</license>
+  <url type="repository">
+    https://github.com/Justagist/panda_simulator
+  </url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>panda_moveit_config</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>panda_moveit_config</run_depend>
+  <run_depend>xacro</run_depend>
+
+</package>
