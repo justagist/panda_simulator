@@ -83,7 +83,5 @@ gripper_config:
 controllers_config:
     position_controller: "panda_simulator/position_joint_position_controller"
     torque_controller: "panda_simulator/effort_joint_torque_controller"
-    impedance_controller: "panda_simulator/effort_joint_impedance_controller"
     velocity_controller: "panda_simulator/velocity_joint_velocity_controller"
-    trajectory_controller: "position_joint_trajectory_controller"
     default_controller: "panda_simulator/position_joint_position_controller" 

@@ -33,7 +33,7 @@ namespace panda_gazebo {
 
 void ArmControllerInterface::init(ros::NodeHandle& nh,
         boost::shared_ptr<controller_manager::ControllerManager> controller_manager) {
-    current_mode_ = -1;
+    current_mode_ = 5;
 
   if (!nh.getParam("/controllers_config/position_controller", position_controller_name_)) {
         position_controller_name_ = "position_joint_position_controller";
@@ -41,14 +41,8 @@ void ArmControllerInterface::init(ros::NodeHandle& nh,
   if (!nh.getParam("/controllers_config/torque_controller", torque_controller_name_)) {
         torque_controller_name_ = "effort_joint_torque_controller";
     }
-  if (!nh.getParam("/controllers_config/impedance_controller", impedance_controller_name_)) {
-        impedance_controller_name_ = "effort_joint_impedance_controller";
-    }
   if (!nh.getParam("/controllers_config/velocity_controller", velocity_controller_name_)) {
         velocity_controller_name_ = "velocity_joint_velocity_controller";
-    }
-  if (!nh.getParam("/controllers_config/trajectory_controller", trajectory_controller_name_)) {
-        trajectory_controller_name_ = "position_joint_trajectory_controller";
     }
   if (!nh.getParam("/controllers_config/default_controller", default_controller_name_)) {
         default_controller_name_ = "position_joint_trajectory_controller";
@@ -59,9 +53,7 @@ void ArmControllerInterface::init(ros::NodeHandle& nh,
   all_controllers_.clear();
   all_controllers_.push_back(position_controller_name_);
   all_controllers_.push_back(torque_controller_name_);
-  all_controllers_.push_back(impedance_controller_name_);
   all_controllers_.push_back(velocity_controller_name_);
-  all_controllers_.push_back(trajectory_controller_name_);
 
   bool default_defined = false;
 
@@ -74,9 +66,7 @@ void ArmControllerInterface::init(ros::NodeHandle& nh,
 
   controller_name_to_mode_map_[position_controller_name_] = franka_core_msgs::JointCommand::POSITION_MODE;
   controller_name_to_mode_map_[torque_controller_name_] = franka_core_msgs::JointCommand::TORQUE_MODE;
-  controller_name_to_mode_map_[impedance_controller_name_] = franka_core_msgs::JointCommand::IMPEDANCE_MODE;
   controller_name_to_mode_map_[velocity_controller_name_] = franka_core_msgs::JointCommand::VELOCITY_MODE;
-  controller_name_to_mode_map_[trajectory_controller_name_] = -1;
 
   if (! default_defined){
     ROS_ERROR_STREAM_NAMED("ArmControllerInterface", "Default controller not present in the provided controllers!");
@@ -138,9 +128,7 @@ bool ArmControllerInterface::switchToDefaultController() {
   current_mode_ = controller_name_to_mode_map_[current_controller_name_];
   ROS_INFO_STREAM("ArmControllerInterface: Controller " << start_controllers[0]
                           << " started; Controllers " << stop_controllers[0] <<
-                          ", " << stop_controllers[1] <<
-                          ", " << stop_controllers[2] <<
-                          ", " << stop_controllers[3] << " stopped.");
+                          ", " << stop_controllers[1] << " stopped.");
   return true;
 }
 
@@ -161,33 +149,24 @@ bool ArmControllerInterface::switchControllers(int control_mode) {
     {
       case franka_core_msgs::JointCommand::POSITION_MODE:
         start_controllers.push_back(position_controller_name_);
-        stop_controllers.push_back(impedance_controller_name_);
         stop_controllers.push_back(torque_controller_name_);
         stop_controllers.push_back(velocity_controller_name_);
-        stop_controllers.push_back(trajectory_controller_name_);
         break;
       case franka_core_msgs::JointCommand::IMPEDANCE_MODE:
-      ROS_ERROR_STREAM_NAMED("ArmControllerInterface", "Impedance control Mode not implemented in simulator.");
-        // start_controllers.push_back(impedance_controller_name_);
-        // stop_controllers.push_back(position_controller_name_);
-        // stop_controllers.push_back(torque_controller_name_);
-        // stop_controllers.push_back(velocity_controller_name_);
-        // stop_controllers.push_back(trajectory_controller_name_);
+        start_controllers.push_back(position_controller_name_);
+        stop_controllers.push_back(torque_controller_name_);
+        stop_controllers.push_back(velocity_controller_name_);
         break;
       case franka_core_msgs::JointCommand::TORQUE_MODE:
         start_controllers.push_back(torque_controller_name_);
         stop_controllers.push_back(position_controller_name_);
-        stop_controllers.push_back(impedance_controller_name_);
         stop_controllers.push_back(velocity_controller_name_);
-        stop_controllers.push_back(trajectory_controller_name_);
         break;
       case franka_core_msgs::JointCommand::VELOCITY_MODE:
         start_controllers.push_back(velocity_controller_name_);
         stop_controllers.push_back(position_controller_name_);
-        stop_controllers.push_back(impedance_controller_name_);
         stop_controllers.push_back(torque_controller_name_);
-        stop_controllers.push_back(trajectory_controller_name_);
-        break;        
+        break;      
       default:
         ROS_ERROR_STREAM_NAMED("ArmControllerInterface", "Unknown JointCommand mode "
                                 << control_mode << ". Ignoring command.");
@@ -203,9 +182,7 @@ bool ArmControllerInterface::switchControllers(int control_mode) {
     current_controller_name_ = start_controllers[0];
     ROS_INFO_STREAM("ArmControllerInterface: Controller " << start_controllers[0]
                             << " started; Controllers " << stop_controllers[0] <<
-                            ", " << stop_controllers[1] <<
-                            ", " << stop_controllers[2] <<
-                            ", " << stop_controllers[3] << " stopped.");
+                            ", " << stop_controllers[1] << " stopped.");
   }
   return true;
 }

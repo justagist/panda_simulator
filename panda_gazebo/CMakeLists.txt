@@ -16,6 +16,8 @@ find_package(catkin
     kdl_parser
     tf_conversions
     sns_ik_lib
+    panda_sim_controllers
+    panda_joint_trajectory_server
 )
 
 # Depend on system install of Gazebo
@@ -34,6 +36,8 @@ catkin_package(
   kdl_parser
   tf_conversions
   sns_ik_lib
+  panda_sim_controllers
+  panda_joint_trajectory_server
  INCLUDE_DIRS include
  LIBRARIES    panda_robot_hw_sim
 )

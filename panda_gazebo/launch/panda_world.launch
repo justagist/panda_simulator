@@ -2,6 +2,12 @@
 <launch>
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="load_gripper" default="true"/> 
+  <arg name="start_joint_trajectory_server" default="true"/>
+  <arg name="start_moveit" default="true"/>
+  <arg name="load_demo_planning_scene" default="false"/>
+
+  
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
@@ -11,7 +17,6 @@
 
   <arg name="ns" default="panda_simulator"/>
   <!-- TODO: This argument should load the electric gripper -->
-  <arg name="load_gripper" default="true"/> 
 
   <!-- This argument fixes the robot statically to the world -->
   <arg name="static" default="true"/>
@@ -64,5 +69,21 @@
       <arg name="ns" value="$(arg ns)" />
       <arg name="load_gripper" value="$(arg load_gripper)" />
   </include>
+
+  <group if="$(eval arg('start_joint_trajectory_server') == true)">
+    <node pkg="panda_joint_trajectory_server" type="start_joint_trajectory_server.py" name="joint_trajectory_server_emulator"/>
+
+    <group if="$(eval arg('start_moveit') == true)">
+      <include file="$(find panda_sim_moveit)/launch/sim_move_group.launch">
+        <arg name="load_gripper" value="$(arg load_gripper)" />
+        <arg name="info" value="true" />
+      </include>
+    </group>
+
+  </group>   
+
+   <group if="$(eval arg('load_demo_planning_scene') == true)">
+    <node name="demo_scene_loader" pkg="franka_moveit" type="create_demo_planning_scene.py" respawn="false" output="screen" />
+  </group>   
 
 </launch>

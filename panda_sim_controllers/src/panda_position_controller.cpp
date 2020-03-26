@@ -177,6 +177,7 @@ namespace panda_sim_controllers {
 
   PandaPositionController::CommandsPtr PandaPositionController::cmdTrajectoryMode(const franka_core_msgs::JointCommandConstPtr& msg) {
       CommandsPtr commands(new std::vector<Command>());
+      // ROS_WARN_STREAM(msg->names.size() << " " << msg->position.size() << " " << msg->velocity.size());
       if (msg->names.size() != msg->position.size() || msg->names.size() != msg->velocity.size()) {
         ROS_ERROR_STREAM_NAMED(JOINT_ARRAY_CONTROLLER_NAME, "Trajectory commands size does not match joints size");
       }
@@ -202,9 +203,9 @@ namespace panda_sim_controllers {
     if(msg->mode == franka_core_msgs::JointCommand::POSITION_MODE) {
       commands = cmdPositionMode(msg);
     }
-    // else if(msg->mode == franka_core_msgs::JointCommand::IMPEDANCE_MODE) {
-    //   commands = cmdTrajectoryMode(msg);
-    // }
+    else if(msg->mode == franka_core_msgs::JointCommand::IMPEDANCE_MODE) {
+      commands = cmdTrajectoryMode(msg);
+    }
     // Only write the command if this is the correct command mode, with a valid CommandPtr
     if(commands.get()) {
       command_buffer_.writeFromNonRT(*commands.get());
