@@ -17,7 +17,7 @@ find_package(catkin
     tf_conversions
     sns_ik_lib
     panda_sim_controllers
-    panda_joint_trajectory_server
+    panda_sim_custom_action_server
 )
 
 # Depend on system install of Gazebo
@@ -37,7 +37,7 @@ catkin_package(
   tf_conversions
   sns_ik_lib
   panda_sim_controllers
-  panda_joint_trajectory_server
+  panda_sim_custom_action_server
  INCLUDE_DIRS include
  LIBRARIES    panda_robot_hw_sim
 )

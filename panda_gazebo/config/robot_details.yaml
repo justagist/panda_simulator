@@ -80,6 +80,9 @@ gripper_config:
     inner: 0.005 # [m]
     outer: 0.005 # [m]
 
+franka_gripper:
+    robot_ip: "sim"
+
 controllers_config:
     position_controller: "panda_simulator/position_joint_position_controller"
     torque_controller: "panda_simulator/effort_joint_torque_controller"
