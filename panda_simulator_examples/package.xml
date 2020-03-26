@@ -20,6 +20,9 @@
   <build_depend>rospy</build_depend>
   <build_depend>franka_core_msgs</build_depend>
   <build_depend>gazebo_msgs</build_depend>
+  <build_depend>franka_moveit</build_depend>
+  <build_depend>panda_sim_moveit</build_depend>
+  <build_depend>panda_gazebo</build_depend>
 
   <run_depend>rospy</run_depend>
   <run_depend>rospack</run_depend>
@@ -27,5 +30,8 @@
   <run_depend>panda_gazebo</run_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>gazebo_msgs</run_depend>
+  <run_depend>franka_moveit</run_depend>
+  <run_depend>panda_sim_moveit</run_depend>
+  <run_depend>panda_gazebo</run_depend>
 
 </package>
