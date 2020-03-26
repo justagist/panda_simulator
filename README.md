@@ -2,13 +2,14 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-*(version 0.9)*
+*(version 1.0)* - **Now Supports [MoveIt!](https://moveit.ros.org/)** (See [version log](https://github.com/justagist/panda_simulator/blob/melodic-devel/versionLog.md) for details)
 
 A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
 ## Features
   - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper).
   - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
   - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
+  - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
   
   ### Continuous Integration Builds
   
@@ -27,7 +28,7 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section)
 
- - [*franka_ros_interface*][fri-repo] (at least the *franka_core_msgs* package from *franka_ros_interface* should be installed)
+ - [*franka_ros_interface*][fri-repo]
  - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
  - [*sns_ik*](https://github.com/RethinkRobotics-opensource/sns_ik)
  - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
@@ -91,12 +92,7 @@ The [*franka_ros_interface*][fri-repo] package provides Python API and interface
 
 ### Version Update:
 
-#### v0.9
-
- - Joint position, velocity, torque, gravity, gripper controllers fixed
- - Controller names specified through parameter server and config file
- - Bug in controller switching interface fixed
- - Removed redundant impedance controller support
+Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-devel/versionLog.md).
 
 ### License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>panda_sim_moveit</name>
-  <version>0.9.1</version>
+  <version>1.0.0</version>
   <description>
     MoveIt support for Panda Simulator
   </description>

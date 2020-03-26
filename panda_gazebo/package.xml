@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>panda_gazebo</name>
-  <version>0.9.1</version>
+  <version>1.0.0</version>
   <description>The panda_gazebo package for simulating the Panda 
     Robot from Franka Emika.
   </description>
@@ -22,6 +22,7 @@
   <build_depend>cv_bridge</build_depend>
   <build_depend>gazebo_ros</build_depend>
   <build_depend>gazebo_ros_control</build_depend>
+  <build_depend>joint_state_controller</build_depend>
   <build_depend>franka_core_msgs</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>libgazebo9-dev</build_depend>
@@ -40,6 +41,7 @@
   <run_depend>gazebo</run_depend>
   <run_depend>gazebo_ros</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>joint_state_controller</run_depend>
   <run_depend>franka_core_msgs</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>realtime_tools</run_depend>
