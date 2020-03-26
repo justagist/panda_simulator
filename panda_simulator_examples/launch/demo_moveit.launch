@@ -11,7 +11,7 @@
 
     <include file="$(find panda_gazebo)/launch/panda_world.launch">
       <arg name="load_gripper" value="$(arg load_gripper)" />
-      <arg name="start_joint_trajectory_server" value="true" />
+      <arg name="use_custom_action_servers" value="true" />
       <arg name="start_moveit" value="true" />
     </include>
 
