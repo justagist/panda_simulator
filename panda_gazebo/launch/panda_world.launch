@@ -44,6 +44,8 @@
   <param if="$(arg load_gripper)" name="/arm/tip_name" value="panda_hand" /> 
   <param unless="$(arg load_gripper)" name="/arm/tip_name" value="panda_link8" /> 
 
+  <param if="$(arg load_gripper)" name="/franka_gripper/robot_ip" value="sim" /> 
+
   <param if="$(arg load_gripper)" name="/arm/gravity_tip_name" value="panda_hand" /> 
   <param unless="$(arg load_gripper)" name="/arm/gravity_tip_name" value="panda_link8" /> 
 

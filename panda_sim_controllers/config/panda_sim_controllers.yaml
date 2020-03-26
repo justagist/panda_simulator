@@ -13,25 +13,25 @@ panda_simulator:
     joints:
       panda_joint1_controller:
         joint: panda_joint1
-        pid: {p: 5000,  i: 10.0, d: 25.0}
+        pid: {p: 3000,  i: 10.0, d: 25.0}
       panda_joint2_controller:
         joint: panda_joint2
-        pid: {p: 5000,  i: 10.0, d: 30.0}
+        pid: {p: 3000,  i: 10.0, d: 30.0}
       panda_joint3_controller:
         joint: panda_joint3
-        pid: {p: 5000,  i: 10.0, d: 30.0}
+        pid: {p: 3000,  i: 10.0, d: 30.0}
       panda_joint4_controller:
         joint: panda_joint4
-        pid: {p: 5000,  i: 10.0, d: 50.0}
+        pid: {p: 3000,  i: 10.0, d: 50.0}
       panda_joint5_controller:
         joint: panda_joint5
-        pid: {p: 5000,  i: 10.0, d: 8.0}
+        pid: {p: 3000,  i: 10.0, d: 8.0}
       panda_joint6_controller:
         joint: panda_joint6
-        pid: {p: 5000,  i: 1.0, d: 5.0}
+        pid: {p: 3000,  i: 1.0, d: 5.0}
       panda_joint7_controller:
         joint: panda_joint7
-        pid: {p: 5000,  i: 10.0, d: 4.0}
+        pid: {p: 3000,  i: 10.0, d: 4.0}
 
   # Panda SDK Controllers: Velocity --------------------------
   velocity_joint_velocity_controller:
