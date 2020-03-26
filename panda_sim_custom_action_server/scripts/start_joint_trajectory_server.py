@@ -37,11 +37,11 @@ import importlib
 import rospy
 from dynamic_reconfigure.server import Server
 
-from panda_joint_trajectory_server import (
+from panda_sim_custom_action_server import (
     JointTrajectoryActionServer,
 )
 
-import panda_joint_trajectory_server.cfg.PandaPositionFFJointTrajectoryActionServerConfig as ActionServerConfig
+import panda_sim_custom_action_server.cfg.PandaPositionFFJointTrajectoryActionServerConfig as ActionServerConfig
 
 def start_server(rate):
     rospy.loginfo("Initializing node... ")

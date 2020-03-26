@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(panda_joint_trajectory_server)
+project(panda_sim_custom_action_server)
 
 find_package(catkin
   REQUIRED

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package>
-  <name>panda_joint_trajectory_server</name>
+  <name>panda_sim_custom_action_server</name>
   <version>0.9.1</version>
   <description>
-    Joint Trajectory action server for panda simulator
+    Custom action server for panda simulator
   </description>
 
   <maintainer email="sxs1412@bham.ac.uk">
