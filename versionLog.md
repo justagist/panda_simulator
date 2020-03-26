@@ -7,7 +7,7 @@
  - Added [MoveIt!](https://moveit.ros.org/) and [follow trajectory service](http://wiki.ros.org/joint_trajectory_controller) support.
  - Action client and MoveIt! support for Franka Gripper.
  - Now fully compatible with [PandaMoveGroupInterface](https://justagist.github.io/franka_ros_interface/DOC.html#pandamovegroupinterface) and [JointTrajectoryActionClient](https://justagist.github.io/franka_ros_interface/DOC.html#jointtrajectoryactionclient) interface classes of the [franka_ros_interface](https://github.com/justagist/franka_ros_interface) and [panda_robot](http://github.com/justagist/panda_robot) packages.
- - Several other methods from the franka_ros_interface](https://github.com/justagist/franka_ros_interface) such as [`move_to_joint_positions`](https://justagist.github.io/franka_ros_interface/DOC.html?highlight=move_to_joint_positions#franka_interface.ArmInterface.move_to_joint_positions) are now available for the simulator (make sure to use the newest version of the interface package).
+ - Several other methods from the [franka_ros_interface](https://github.com/justagist/franka_ros_interface) such as [`move_to_joint_positions`](https://justagist.github.io/franka_ros_interface/DOC.html?highlight=move_to_joint_positions#franka_interface.ArmInterface.move_to_joint_positions) are now available for the simulator (make sure to use the newest version of the interface package).
  - Now depends on franka_ros_interface's `franka_moveit` subpackage as well (included in `franka_ros_inteface`).
 
  - **MoveIt! and TrajectoryActionServer usage**:
