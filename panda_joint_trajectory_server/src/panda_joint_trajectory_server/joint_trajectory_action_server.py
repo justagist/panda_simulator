@@ -218,7 +218,7 @@ class JointTrajectoryActionServer(object):
         self._arm._command_msg.position = positions
         self._arm._command_msg.velocity = velocities
         self._arm._command_msg.acceleration = accelerations
-        self._arm._command_msg.mode = -1
+        self._arm._command_msg.mode = self._arm._command_msg.IMPEDANCE_MODE
         self._arm._command_msg.header.stamp = rospy.Time.now()
         self._arm._joint_command_publisher.publish(self._arm._command_msg)
 
