@@ -1,4 +1,5 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator)
+# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644)
+
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -97,6 +98,9 @@ Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-
 ### License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+Copyright (c) 2019-2020, Saif Sidhik
+
+If you use this software, please cite it using [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644).
 
    [fri-repo]: <https://github.com/justagist/franka_ros_interface>
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
