@@ -1,5 +1,6 @@
 /***************************************************************************
 * Methods from orocos_kdl library. Isolated to avoid memory leak bugs.
+* Removing sns_ik_lib dependency
 
 *
 * @package: panda_gazebo
@@ -17,12 +18,11 @@
 #include <kdl/chainfksolvervel_recursive.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl/chaindynparam.hpp>
-#include <sns_ik/sns_ik.hpp>
 
 #include <kdl/jntarray.hpp>
 #include <kdl/tree.hpp>
 #include <urdf/model.h>
-#include "kdl/chainfksolver.hpp"
+#include <kdl/chainfksolver.hpp>
 
 #include <kdl/frames.hpp>
 #include <kdl_parser/kdl_parser.hpp>

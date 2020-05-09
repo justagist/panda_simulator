@@ -45,13 +45,6 @@
 
 #include <Eigen/Geometry>
 
-// #include <kdl/chainidsolver_recursive_newton_euler.hpp>
-// #include <kdl/chainfksolverpos_recursive.hpp>
-// #include <kdl/chainfksolvervel_recursive.hpp>
-// #include <kdl/chainjnttojacsolver.hpp>
-// #include <kdl/chaindynparam.hpp>
-#include <sns_ik/sns_ik.hpp>
-
 #include <kdl/jntarray.hpp>
 #include <kdl/tree.hpp>
 #include <urdf/model.h>

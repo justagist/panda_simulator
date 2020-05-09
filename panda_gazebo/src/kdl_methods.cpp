@@ -1,5 +1,6 @@
 /***************************************************************************
-* Methods from orocos_kdl library. Isolated to avoid memory leak bugs.
+* Methods from orocos_kdl and sns_ik library. Isolated to avoid 
+* memory leak bugs. Removed dependency on sns_ik.
 
 *
 * @package: panda_gazebo
@@ -57,7 +58,7 @@ int KDLMethods::PosFKJntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out, int
     else{
         int j=0;
         for(unsigned int i=0;i<segmentNr;i++){
-            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None){
+            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed){
                 p_out = p_out*chain_.getSegment(i).pose(q_in(j));
                 j++;
             }else{
@@ -77,7 +78,7 @@ int KDLMethods::RNECartToJnt(const KDL::JntArray &q, const KDL::JntArray &q_dot,
         //Sweep from root to leaf
         for(unsigned int i=0;i<ns;i++){
             double q_,qdot_,qdotdot_;
-            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None){
+            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed){
                 q_=q(j);
                 qdot_=q_dot(j);
                 qdotdot_=q_dotdot(j);
@@ -113,7 +114,7 @@ int KDLMethods::RNECartToJnt(const KDL::JntArray &q, const KDL::JntArray &q_dot,
         //Sweep from leaf to root
         j=nj-1;
         for(int i=ns-1;i>=0;i--){
-            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None){
+            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed){
                 torques(j)=dot(S[i],f[i]);
                 torques(j)+=chain_.getSegment(i).getJoint().getInertia()*q_dotdot(j);  // add torque from joint inertia
                 --j;
@@ -151,7 +152,7 @@ int KDLMethods::JacobianJntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, 
         KDL::Frame total;
         for (unsigned int i=0;i<segmentNr;i++) {
             //Calculate new Frame_base_ee
-            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None){
+            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed){
                 //pose of the new end-point expressed in the base
                 total = T_tmp*chain_.getSegment(i).pose(q_in(j));
                 //changing base of new segment's twist to base frame if it is not locked
@@ -167,7 +168,7 @@ int KDLMethods::JacobianJntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, 
             KDL::changeRefPoint(jac,total.p-T_tmp.p,jac);
 
             //Only increase jointnr if the segment has a joint
-            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None){
+            if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed){
                 //Only put the twist inside if it is not locked
                 if(!locked_joints_[j])
                     jac.setColumn(k++,t_tmp);
@@ -195,7 +196,7 @@ int KDLMethods::JacobianJntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, 
     {
       //Collect RigidBodyInertia
           Ic[i]=chain_.getSegment(i).getInertia();
-          if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None)
+          if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed)
       {
           q_=q(k);
           k++;
@@ -220,7 +221,7 @@ int KDLMethods::JacobianJntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, 
         } 
 
       F=Ic[i]*S[i];
-      if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::None)
+      if(chain_.getSegment(i).getJoint().getType()!=KDL::Joint::Fixed)
       {
           H(k,k)=dot(S[i],F);
           H(k,k)+=chain_.getSegment(i).getJoint().getInertia();  // add joint inertia
@@ -232,7 +233,7 @@ int KDLMethods::JacobianJntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, 
           F=X[l]*F; //calculate the unit force (cfr S) for every segment: F[l-1]=X[l]*F[l]
           l--; //go down a segment
           
-          if(chain_.getSegment(l).getJoint().getType()!=KDL::Joint::None) //if the joint connected to segment is not a fixed joint
+          if(chain_.getSegment(l).getJoint().getType()!=KDL::Joint::Fixed) //if the joint connected to segment is not a fixed joint
           {    
             j--;
             H(k,j)=dot(F,S[l]); //here you actually match a certain not fixed joint with a segment 

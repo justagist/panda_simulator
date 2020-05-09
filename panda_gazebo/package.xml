@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<!-- <?xml version="1.0"?> -->
 <package>
   <name>panda_gazebo</name>
   <version>1.0.0</version>
@@ -24,6 +24,7 @@
   <build_depend>gazebo_ros_control</build_depend>
   <build_depend>joint_state_controller</build_depend>
   <build_depend>franka_core_msgs</build_depend>
+  <build_depend>franka_tools</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>libgazebo9-dev</build_depend>
   <build_depend>realtime_tools</build_depend>
@@ -32,7 +33,7 @@
   <build_depend>kdl_parser</build_depend>
   <build_depend>tf_conversions</build_depend>
   <build_depend>roslint</build_depend>
-  <build_depend>sns_ik_lib</build_depend>
+  <!-- <build_depend>orocos_kdl</build_depend> -->
   <build_depend>panda_hardware_interface</build_depend>
   <build_depend>panda_sim_controllers</build_depend>
   <build_depend>panda_sim_custom_action_server</build_depend>
@@ -43,6 +44,7 @@
   <run_depend>gazebo_ros_control</run_depend>
   <run_depend>joint_state_controller</run_depend>
   <run_depend>franka_core_msgs</run_depend>
+  <run_depend>franka_tools</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>realtime_tools</run_depend>
   <run_depend>roscpp</run_depend>
@@ -54,7 +56,7 @@
   <run_depend>panda_sim_controllers</run_depend>
   <run_depend>panda_sim_custom_action_server</run_depend>
   <run_depend>image_proc</run_depend>
-  <run_depend>sns_ik_lib</run_depend>
+  <run_depend>orocos_kdl</run_depend>
   <run_depend>nodelet</run_depend>
 
 

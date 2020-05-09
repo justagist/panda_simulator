@@ -15,7 +15,7 @@ find_package(catkin
     std_msgs
     kdl_parser
     tf_conversions
-    sns_ik_lib
+    orocos_kdl
     panda_sim_controllers
     panda_sim_custom_action_server
 )
@@ -35,11 +35,10 @@ catkin_package(
   roscpp
   kdl_parser
   tf_conversions
-  sns_ik_lib
   panda_sim_controllers
   panda_sim_custom_action_server
  INCLUDE_DIRS include
- LIBRARIES    panda_robot_hw_sim
+ LIBRARIES panda_robot_hw_sim
 )
 
 roslint_cpp()

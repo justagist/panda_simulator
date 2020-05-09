@@ -89,7 +89,7 @@ franka_core_msgs::JointLimits ArmKinematicsInterface::retrieveJointLimits()
   for (const auto& kv : tree_.getSegments())
   {
     auto jnt = kv.second.segment.getJoint();
-    if (jnt.getTypeName() == "None" || jnt.getTypeName() == "Unknown")
+    if (jnt.getTypeName() == "None" || jnt.getTypeName() == "Unknown" || jnt.getTypeName() == "Fixed")
       continue;
     auto joint_name = kv.second.segment.getJoint().getName();
     auto joint_limits_ptr = robot_model_.getJoint(joint_name)->limits;
@@ -137,7 +137,7 @@ bool ArmKinematicsInterface::createKinematicChain(std::string tip_name)
   for (size_t seg_idx = 0; seg_idx < kin.chain.getNrOfSegments(); seg_idx++)
   {
     const auto& jnt = kin.chain.getSegment(seg_idx).getJoint();
-    if (jnt.getTypeName() == "None" || jnt.getTypeName() == "Unknown")
+    if (jnt.getTypeName() == "None" || jnt.getTypeName() == "Unknown" || jnt.getTypeName() == "Fixed")
       continue;
     kin.joint_names.push_back(kin.chain.getSegment(seg_idx).getJoint().getName());
   }
