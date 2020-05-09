@@ -1,15 +1,16 @@
 # Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644)
 
+Latest version: ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+Latest Stable Release: ![GitHub release (latest by date)](https://img.shields.io/github/v/release/justagist/panda_simulator?style=flat)
 
-*(version 1.0)* - **Now Supports [MoveIt!](https://moveit.ros.org/)** (See [version log](https://github.com/justagist/panda_simulator/blob/melodic-devel/versionLog.md) for details)
+*(version 1.0.0)* - **Now Supports [MoveIt!](https://moveit.ros.org/)** (See [version log](https://github.com/justagist/panda_simulator/blob/melodic-devel/versionLog.md) for details)
 
 A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
 ## Features
   - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper).
   - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
-  - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct *sim-to-real* code transfer.
+  - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
   - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
   
   ### Continuous Integration Builds
@@ -31,7 +32,6 @@ The following dependencies can be installed using the `.rosinstall` file (instru
 
  - [*franka_ros_interface*][fri-repo]
  - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
- - [*sns_ik*](https://github.com/RethinkRobotics-opensource/sns_ik)
  - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
  
 ### Installation
@@ -106,6 +106,5 @@ If you use this software, please cite it using [![DOI](https://zenodo.org/badge/
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
    [libfranka-doc]: <https://frankaemika.github.io/docs/installation_linux.html#building-from-source>
    [franka-ros]: <https://frankaemika.github.io/docs/franka_ros.html>
-   
    
    

@@ -1,5 +1,13 @@
 ### Version Log:
 
+#### v1.0.1 (UNRELEASED)
+
+*BREAKING: Requires latest version of [orocos_dynamics_kdl](https://github.com/orocos/orocos_kinematics_dynamics)*
+ 
+ - Compatible with updated [orocos_dynamics_kdl](https://github.com/orocos/orocos_kinematics_dynamics) package (Tested with kdl package commit: [@c43e2de](https://github.com/orocos/orocos_kinematics_dynamics/commit/c43e2de722a9f6288dc4ef8f9d3d2525bf3ab947)).
+ - Removed dependency on sns_ik library.
+ - Uses updated (franka_panda_description)[https://github.com/justagist/franka_panda_description] package.
+
 #### v1.0.0
 
 *Note: If you have an older version of the package, you may have to do a clean build of the package; several breaking changes in package.*
