@@ -8,13 +8,6 @@
   <arg name="debug" default="false" />
   <arg name="load_gripper" default="true" />
   <arg name="pipeline" default="ompl" />
-
-    <include file="$(find panda_gazebo)/launch/panda_world.launch">
-      <arg name="load_gripper" value="$(arg load_gripper)" />
-      <arg name="use_custom_action_servers" value="true" />
-      <arg name="start_moveit" value="true" />
-    </include>
-
   <arg name="db_path" default="$(find panda_moveit_config)/default_warehouse_mongo_db" />
   <!--
   By default, hide joint_state_publisher's GUI
@@ -52,6 +45,5 @@
   <include file="$(find panda_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
-  <node name="demo_boxes_scene_loader" pkg="franka_moveit" type="test_scene_interface.py" respawn="false" output="screen" />
 
 </launch>
