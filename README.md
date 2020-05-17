@@ -16,10 +16,10 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
   
 ### Continuous Integration Builds
-  
-  ROS Kinetic (master branch) | ROS Melodic (melodic-devel branch)
------------ | -----------
-[![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) | [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
+
+ROS Melodic (melodic-devel branch): [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
+
+ROS Kinetic (master branch) [*NOT MAINTAINED, OUTDATED*]: [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator)
   
   ![vid](_extra/panda_simulator.gif)
  Watch video [here](https://www.youtube.com/watch?v=NdSbXC0r7tU).
