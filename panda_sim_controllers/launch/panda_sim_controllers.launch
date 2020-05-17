@@ -12,16 +12,17 @@
   <!-- load the default "ON" controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false"
         output="screen" args="spawn
-                                         panda_simulator/effort_joint_gravity_controller
                                          panda_simulator/position_joint_position_controller
                                          panda_simulator/joint_state_controller
-                                         " /><!-- 
+                                         " />
+ <!-- 
                                          position_joint_trajectory_controller
  -->
   <!-- load the default "OFF" controllers -->
   <node name="controller_spawner_stopped" pkg="controller_manager" type="controller_manager" respawn="false"
        output="screen" args="load
                                          panda_simulator/velocity_joint_velocity_controller
+                                         panda_simulator/effort_joint_gravity_controller
                                          panda_simulator/effort_joint_torque_controller  
                                          "/>
 

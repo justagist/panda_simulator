@@ -48,7 +48,8 @@ Update dependency packages:
     wstool init
     wstool merge panda_simulator/dependencies.rosinstall
     wstool up
-    cd .. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+    cd orocos_kinematics_dynamics && git submodule update --recursive --init 
+    cd ../.. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 
 Once the dependencies are met, the package can be installed using catkin_make:
 
