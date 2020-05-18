@@ -1,4 +1,4 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644)
+# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
 Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags)
 
@@ -19,7 +19,7 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 
 ROS Melodic (melodic-devel branch): [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
 
-ROS Kinetic (master branch) [*NOT MAINTAINED, OUTDATED*]: [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator)
+ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=kinetic-devel)](https://travis-ci.org/justagist/panda_simulator)
   
   ![vid](_extra/panda_simulator.gif)
  Watch video [here](https://www.youtube.com/watch?v=NdSbXC0r7tU).
@@ -129,7 +129,7 @@ Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-
 
 Copyright (c) 2019-2020, Saif Sidhik
 
-If you use this software, please cite it using [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644).
+If you use this software, please cite it using [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459).
 
    [fri-repo]: <https://github.com/justagist/franka_ros_interface>
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
