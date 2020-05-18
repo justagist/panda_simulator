@@ -1,4 +1,4 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644)
+# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
 Note: **THIS PACKAGE IS NOT FULLY TESTED FOR ROS KINETIC. MAY BE UNSTABLE.**
 
@@ -133,7 +133,7 @@ Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-
 
 Copyright (c) 2019-2020, Saif Sidhik
 
-If you use this software, please cite it using [![DOI](https://zenodo.org/badge/220040644.svg)](https://zenodo.org/badge/latestdoi/220040644).
+If you use this software, please cite it using [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459).
 
    [fri-repo]: <https://github.com/justagist/franka_ros_interface>
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
