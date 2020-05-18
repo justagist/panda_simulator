@@ -59,7 +59,7 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
     wstool up
 
     # use old ros-compatible version of kdl
-    cd orocos_kinematics_dynamics && git checkout b35c424e77ebc5b7e6f1c5e5c34f8a4666fbf5bc && cd ..
+    cd orocos_kinematics_dynamics && git checkout b35c424e77ebc5b7e6f1c5e5c34f8a4666fbf5bc
     cd ../.. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 ```
 
