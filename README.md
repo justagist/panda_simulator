@@ -73,9 +73,9 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
 
 **Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
 
-To build the docker image of the package, run `docker build docker/ -t ps:melodic`.
+To build the docker image of the package, run `docker build docker/ -t ps:kinetic`.
 
-To run the built image interactively, use the script `run_docker.sh`. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_melodic_ws`). When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`). Any edits made to this directory in the host machine will be reflected in the docker container (and vice-versa). If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below). This also allows for running ROS nodes and scripts without having any ROS installation on the host machine.
+To run the built image interactively, use the script `run_docker.sh`. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_kinetic_ws`). When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`). Any edits made to this directory in the host machine will be reflected in the docker container (and vice-versa). If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below). This also allows for running ROS nodes and scripts without having any ROS installation on the host machine.
 
 ### Usage
 

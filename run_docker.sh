@@ -5,7 +5,7 @@ command_exists () {
     type "$1" &> /dev/null ;
 }
 
-distro_type="melodic"
+distro_type="kinetic"
 
 if command_exists nvidia-docker; then
       extra_params="--runtime nvidia"
@@ -24,7 +24,18 @@ echo -e "\n\t[STATUS] Loading image: ${IMAGE_NAME} ..."
 if ! [ -d "$HOME/.panda_sim_${distro_type}_ws/src" ]; then
     mkdir -p $HOME/.panda_sim_${distro_type}_ws/src
 fi
-
+# XAUTH=/tmp/.docker.xauth
+# if [ ! -f $XAUTH ]
+# then
+#     xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
+#     if [ ! -z "$xauth_list" ]
+#     then
+#         echo $xauth_list | xauth -f $XAUTH nmerge -
+#     else
+#         sudo touch $XAUTH
+#     fi
+#     sudo chmod a+r $XAUTH
+# fi
 $xdocker run -it \
        --user=$(id -u) \
        --env="DISPLAY" \

@@ -1,5 +1,5 @@
-# FROM osrf/ros:kinetic-desktop-full-xenial
-FROM osrf/ros:melodic-desktop-full-bionic
+FROM osrf/ros:kinetic-desktop-full
+# FROM osrf/ros:melodic-desktop-full-bionic
 
 ENV ROS_DISTRO=${ROS_DISTRO}
 
@@ -15,17 +15,21 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN pip install --upgrade numpy numpy-quaternion rospy-message-converter 
+RUN pip install --upgrade numpy numpy-quaternion rospy-message-converter && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get upgrade -y
 
-# setup entrypoint, need entrypoint.sh in the same folder with Dockerfile
 # nvidia-container-runtime
 ENV NVIDIA_VISIBLE_DEVICES \
     ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES \
     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
+RUN apt-get update && \
+    apt-get -y install libgl1-mesa-glx libgl1-mesa-dri mesa-utils && \
+    rm -rf /var/lib/apt/lists/*
+
+# setup entrypoint, need entrypoint.sh in the same folder with Dockerfile
 COPY ./ros_entrypoint.sh /
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
