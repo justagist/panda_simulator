@@ -16,10 +16,10 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
   
 ### Continuous Integration Builds
-  
-  ROS Kinetic (master branch) | ROS Melodic (melodic-devel branch)
------------ | -----------
-[![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) | [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
+
+ROS Melodic (melodic-devel branch): [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
+
+ROS Kinetic (master branch) [*NOT MAINTAINED, OUTDATED*]: [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator)
   
   ![vid](_extra/panda_simulator.gif)
  Watch video [here](https://www.youtube.com/watch?v=NdSbXC0r7tU).
@@ -48,7 +48,9 @@ Update dependency packages:
     wstool init
     wstool merge panda_simulator/dependencies.rosinstall
     wstool up
-    cd orocos_kinematics_dynamics && git submodule update --recursive --init 
+
+    # use old ros-compatible version of kdl
+    cd orocos_kinematics_dynamics && git checkout b35c424e77ebc5b7e6f1c5e5c34f8a4666fbf5bc && cd ..
     cd ../.. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 
 Once the dependencies are met, the package can be installed using catkin_make:
