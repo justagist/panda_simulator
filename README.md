@@ -26,9 +26,11 @@ ROS Kinetic (master branch) [*NOT MAINTAINED, OUTDATED*]: [![Build Status](https
 
 ### Dependencies
 
-- *libfranka* (`sudo apt install ros-<version>-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* (`sudo apt install ros-<version>-franka-ros` or [install from source][libfranka-doc])
-- `pip install numpy numpy-quaternion`
+- *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
+- *franka-ros* (`apt install ros-${ROS_DISTRO}-franka-ros` or [install from source][libfranka-doc])
+- `pip install -r requirements.txt`
+
+For other possible missing dependencies, check the `apt` packages specified in Dockerfile.
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section)
 
@@ -38,13 +40,18 @@ The following dependencies can be installed using the `.rosinstall` file (instru
 
 ### Installation
 
-Clone the repo:
+1.Clone the repo:
 
+```bash
     cd <catkin_ws>/src
-    git clone https://github.com/justagist/panda_simulator 
+    git clone https://github.com/justagist/panda_simulator
+```
 
-Update dependency packages:
+Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/panda_simulator`.
 
+2.Update dependency packages:
+
+```bash
     wstool init
     wstool merge panda_simulator/dependencies.rosinstall
     wstool up
@@ -52,18 +59,31 @@ Update dependency packages:
     # use old ros-compatible version of kdl
     cd orocos_kinematics_dynamics && git checkout b35c424e77ebc5b7e6f1c5e5c34f8a4666fbf5bc && cd ..
     cd ../.. && rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+```
 
-Once the dependencies are met, the package can be installed using catkin_make:
+3.Once the dependencies are met, the package can be installed using catkin_make:
 
+```bash
     source /opt/ros/$ROS_DISTRO/setup.bash
-    catkin build # if catkin not found, install catkin tools (apt install ros-$ROS_DISTRO-python-catkin-tools)
+    catkin build # if catkin not found, install catkin tools (apt install python-catkin-tools)
     source devel/setup.bash
+```
+
+### Docker Build
+
+**Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
+
+To build the docker image of the package, run `docker build docker/ -t ps:melodic`.
+
+To run the built image interactively, use the script `run_docker.sh`. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_melodic_ws`). When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`). Any edits made to this directory in the host machine will be reflected in the docker container (and vice-versa). If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below). This also allows for running ROS nodes and scripts without having any ROS installation on the host machine.
 
 ### Usage
 
 The simulator can be started by running:
 
+```bash
     roslaunch panda_gazebo panda_world.launch
+```
 
 This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation.
 
