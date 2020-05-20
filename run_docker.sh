@@ -17,9 +17,10 @@ else
       echo -e "\t[INFO] nvidia-docker does not exist (falling back to docker). Rviz and Gazebo most likely will not work!"
 fi
 
-IMAGE_NAME="ps:${distro_type}"
+IMAGE_NAME=`docker images -f "label=PS_VERSION=v1.0.0-${distro_type}" -q`
+IMAGE_NAME=($IMAGE_NAME dummy) # make it into list for dealing with single and multiple entry from above output
 
-echo -e "\n\t[STATUS] Loading image: ${IMAGE_NAME} ..."
+echo -e "\n\t[STATUS] Loading image: ${IMAGE_NAME[0]} ..."
 
 if ! [ -d "$HOME/.panda_sim_${distro_type}_ws/src" ]; then
     mkdir -p $HOME/.panda_sim_${distro_type}_ws/src
