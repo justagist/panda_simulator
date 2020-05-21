@@ -1,8 +1,8 @@
 # Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
-Note: **THIS PACKAGE IS NOT FULLY TESTED FOR ROS KINETIC. MAY BE UNSTABLE.**
+<!-- Note: **THIS PACKAGE IS NOT FULLY TESTED FOR ROS KINETIC. MAY BE UNSTABLE.** -->
 
-Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags)
+<!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
 
 Latest Stable Release: [![GitHub release (latest by date)](https://img.shields.io/github/v/release/justagist/panda_simulator?style=flat)](https://github.com/justagist/panda_simulator/tags)
 
@@ -73,13 +73,17 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
 
 ### Docker Build (experimental!)
 
-Note: *There are issues with Kinetic build of docker image.*
-
 **Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
 
-To build the docker image of the package, run `docker build docker/ -t ps:kinetic`.
+NOTE: This image is larger than the melodic version (~6 GB). This is because it uses [cudagl](https://hub.docker.com/r/nvidia/cudagl) image as base to facilitate rendering (without this, opengl does not seem to work for kinetic docker image, and rviz and gazebo fails to load).
 
-To run the built image interactively, use the script `run_docker.sh`. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_kinetic_ws`). When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`). Any edits made to this directory in the host machine will be reflected in the docker container (and vice-versa). If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below). This also allows for running ROS nodes and scripts without having any ROS installation on the host machine.
+- To build the docker image of the package, run `docker build docker/ -t ps_kinetic:v1.0.0`, or pull built image from github (`docker pull docker.pkg.github.com/justagist/panda_simulator/ps_kinetic:v1.0.0`).
+Note: Even when using the docker image, this repository has to be cloned on to the host machine.
+- To run the built image interactively, run the script `./run_docker.sh` from the cloned repository. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_kinetic_ws`). The host's home directory is also mounted in the container for access to `.ros/` and for making the catkin workspace writable.
+- When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`).
+- If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below).
+
+Any edits made to the host directory will be reflected in the docker container (and vice-versa). You can also run and build other ROS nodes and packages without having any ROS installation on the host machine.
 
 ### Usage
 
@@ -89,7 +93,11 @@ The simulator can be started by running:
     roslaunch panda_gazebo panda_world.launch
 ```
 
-This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation.
+This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation. The robot can also be controlled using the [franka_ros_interface](https://github.com/justagist/franka_ros_interface) and/or [panda_robot](https://github.com/justagist/panda_robot) APIs.
+
+#### Demos
+
+Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot.
 
 A demo node 'move_robot.py' is provided demonstrating (i) controlling the robot (ii) retrieving state information of the robot.
 
