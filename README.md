@@ -14,7 +14,7 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
 - The [*franka_ros_interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
-  
+
 ### Continuous Integration Builds
 
 ROS Melodic (melodic-devel branch): [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator)
@@ -89,7 +89,11 @@ The simulator can be started by running:
     roslaunch panda_gazebo panda_world.launch
 ```
 
-This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation.
+This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation. The robot can also be controlled using the [franka_ros_interface](https://github.com/justagist/franka_ros_interface) and/or [panda_robot](https://github.com/justagist/panda_robot) APIs.
+
+#### Demos
+
+Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot.
 
 A demo node 'move_robot.py' is provided demonstrating (i) controlling the robot (ii) retrieving state information of the robot.
 

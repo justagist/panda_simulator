@@ -46,4 +46,5 @@ $xdocker run -it \
        ${IMAGE_NAME[0]} \
        bash 
 
+rm -rf $HOME/panda_sim_ws
 echo -e "\nBye the byee!\n"
