@@ -1,4 +1,4 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
+# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
 <!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
 
@@ -93,9 +93,12 @@ This exposes a variety of ROS topics and services for communicating with and con
 
 #### Demos
 
-Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot.
+- Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot. This script starts the simulator and the demo interface.
 
-A demo node 'move_robot.py' is provided demonstrating (i) controlling the robot (ii) retrieving state information of the robot.
+- Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. Note: This demo requires the simulator to be running (see [Usage](#usage)). By default, the demo uses the (franka_ros_interface) API to retrieve state information, and to control it using torque control (see [script](panda_example_controllers/scripts/task_space_control_with_fri.py)). Another script demonstrating the same functionality without using the franka_ros_interface API, and only the ROS 
+topics from the simulation is also [provided](panda_example_controllers/scripts/task_space_control_using_sim_only.py).
+
+- Another (much simpler) demo ['move_robot.py'](panda_example_controllers/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
 
 #### Some useful ROS topics
 
