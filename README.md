@@ -1,4 +1,4 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=master)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
+# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=kinetic-devel)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
 <!-- Note: **THIS PACKAGE IS NOT FULLY TESTED FOR ROS KINETIC. MAY BE UNSTABLE.** -->
 
@@ -75,7 +75,7 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
 
 **Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
 
-NOTE: This image is larger than the melodic version (~6 GB). This is because it uses [cudagl](https://hub.docker.com/r/nvidia/cudagl) image as base to facilitate rendering (without this, opengl does not seem to work for kinetic docker image, and rviz and gazebo fails to load).
+NOTE: This image is larger than the melodic version (~ 1.5x). This is because it uses [cudagl](https://hub.docker.com/r/nvidia/cudagl) image as base to facilitate rendering (without this, opengl does not seem to work for kinetic docker image, and rviz and gazebo fails to load).
 
 - To build the docker image of the package, run `docker build docker/ -t ps_kinetic:v1.0.0`, or pull built image from github (`docker pull docker.pkg.github.com/justagist/panda_simulator/ps_kinetic:v1.0.0`).
 Note: Even when using the docker image, this repository has to be cloned on to the host machine.
@@ -97,9 +97,12 @@ This exposes a variety of ROS topics and services for communicating with and con
 
 #### Demos
 
-Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot.
+- Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot. This script starts the simulator and the demo interface.
 
-A demo node 'move_robot.py' is provided demonstrating (i) controlling the robot (ii) retrieving state information of the robot.
+- Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. Note: This demo requires the simulator to be running (see [Usage](#usage)). By default, the demo uses the (franka_ros_interface) API to retrieve state information, and to control it using torque control (see [script](panda_example_controllers/scripts/task_space_control_with_fri.py)). Another script demonstrating the same functionality without using the franka_ros_interface API, and only the ROS 
+topics from the simulation is also [provided](panda_example_controllers/scripts/task_space_control_using_sim_only.py).
+
+- Another (much simpler) demo ['move_robot.py'](panda_example_controllers/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
 
 #### Some useful ROS topics
 

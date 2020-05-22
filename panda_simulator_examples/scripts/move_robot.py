@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
         pubmsg.position = vals # JointCommand msg has other fields (velocities, efforts) for
                                # when controlling in other control mode
-        # pubmsg.efforts = [0.,0.,0.,0.,0.,0.,0.]
+        # pubmsg.effort = [0.,0.,0.,0.,0.,0.,0.]
         pubmsg.mode = pubmsg.POSITION_MODE # Specify control mode (POSITION_MODE, VELOCITY_MODE, IMPEDANCE_MODE (not available in sim), TORQUE_MODE)
 
         pub.publish(pubmsg)
