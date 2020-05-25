@@ -50,13 +50,15 @@ namespace panda_sim_controllers {
       }
               // Start realtime state publisher
       controller_states_publisher_.reset(
-      new realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>(n, "/arm/joint_controller_states", 1));
+      new realtime_tools::RealtimePublisher<franka_core_msgs::JointControllerStates>(n, "/panda_simulator/motion_controller/arm/joint_controller_states", 1));
       if (!n.getParam("/robot_config/joint_names", controller_states_publisher_->msg_.names) ) {
       ROS_ERROR(
           "PandaVelocityController: Invalid or no joint_names parameters provided, aborting "
           "controller init!");
       return false;
       }
+      controller_states_publisher_->msg_.controller_name = "velocity_joint_velocity_controller";
+
       
       t_ = boost::thread(&PandaVelocityController::publishControllerState, this);
     }

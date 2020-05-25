@@ -83,9 +83,6 @@ panda_simulator:
   # Panda SDK Controllers: Gravity Compensation ------------
   effort_joint_gravity_controller:
     type: panda_sim_controllers/PandaGravityController
-    command_topic: /panda_simulator/arm/gravity_compensation_torques
-    disable_topic: /panda_simulator/arm/suppress_gravity_compensation
-    disable_timeout: 0.2
     joints:
       panda_joint1_controller:
         joint: panda_joint1

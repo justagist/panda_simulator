@@ -51,9 +51,6 @@ namespace panda_sim_controllers
 
   private:
     ros::Subscriber sub_joint_command_;
-    ros::Subscriber sub_gravity_disable_;
-    realtime_tools::RealtimeBox< std::shared_ptr<const ros::Time > > box_disable_time_;
-    ros::Duration gravity_disable_timeout_;
 
     std::vector<std::string> joint_names_;
 
