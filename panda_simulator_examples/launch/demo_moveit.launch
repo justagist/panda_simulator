@@ -9,12 +9,6 @@
   <arg name="load_gripper" default="true" />
   <arg name="pipeline" default="ompl" />
 
-    <include file="$(find panda_gazebo)/launch/panda_world.launch">
-      <arg name="load_gripper" value="$(arg load_gripper)" />
-      <arg name="use_custom_action_servers" value="true" />
-      <arg name="start_moveit" value="true" />
-    </include>
-
   <arg name="db_path" default="$(find panda_moveit_config)/default_warehouse_mongo_db" />
   <!--
   By default, hide joint_state_publisher's GUI
@@ -31,14 +25,6 @@
   <include file="$(find panda_moveit_config)/launch/planning_context.launch">
     <arg name="load_gripper" value="$(arg load_gripper)"/>
   </include>
-
-  <!-- If needed, broadcast static tf for robot root -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world base" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_2" args="0 0 0 0 0 0 base panda_link0" />
-
-
-
-  <!-- <node name="topic_remap" pkg="topic_tools" type="relay" args="/franka_ros_interface/franka_gripper /franka_gripper"/> -->
 
 <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
