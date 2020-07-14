@@ -103,10 +103,10 @@ To run these demos, launch the simulator first.
 
 - Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot. This script starts a moveit RViz GUI for motion planning and terminal interface for modifying planning scene.
 
-- Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. By default, the demo uses the (franka_ros_interface) API to retrieve state information, and to control it using torque control (see [script](panda_example_controllers/scripts/task_space_control_with_fri.py)). Another script demonstrating the same functionality without using the franka_ros_interface API, and only the ROS
-topics from the simulation is also [provided](panda_example_controllers/scripts/task_space_control_using_sim_only.py).
+- Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. By default, the demo uses the (franka_ros_interface) API to retrieve state information, and to control it using torque control (see [script](panda_simulator_examples/scripts/task_space_control_with_fri.py)). Another script demonstrating the same functionality without using the franka_ros_interface API, and only the ROS
+topics from the simulation is also [provided](panda_simulator_examples/scripts/task_space_control_using_sim_only.py).
 
-- Another (much simpler) demo ['move_robot.py'](panda_example_controllers/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
+- Another (much simpler) demo ['move_robot.py'](panda_simulator_examples/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
 
 #### Some useful ROS topics
 
@@ -131,13 +131,6 @@ Other topics for changing the controller gains (also dynamically configurable), 
 
 Controller manager service can be used to switch between all available controllers (joint position, velocity, effort). Gripper joints can be controlled using the ROS ActionClient (via the same topics as the real robot and [*franka_ros*][franka-ros]).
 
-## Related Packages
-
-- [*franka_ros_interface*][fri-repo] : A ROS API for controlling and managing the Franka Emika Panda robot (real and simulated). Contains controllers for the robot (joint position, velocity, torque), interfaces for the gripper, controller manager, coordinate frames interface, etc.. Provides almost complete sim-to-real transfer of code.
-- [*panda_robot*](https://github.com/justagist/panda_robot) : Python interface providing higher-level control of the robot integrated with its gripper, controller manager, coordinate frames manager, etc. It also provides access to the kinematics and dynamics of the robot using the [KDL library](http://wiki.ros.org/kdl).
-
-The [*franka_ros_interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*franka_ros_interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
-
 ### Known Issues
 
 1. In some computers, the launch file starts the required nodes in a different order. This may result in different errors with the moveit servers, or with the controller manager. In this case, the simplest option is to start the simulator without moveit (`roslaunch panda_gazebo panda_world.launch start_moveit:=false`), and then start the moveit server separately once the simulator is fully loaded (`roslaunch panda_sim_moveit sim_move_group.launch`).
@@ -149,6 +142,13 @@ The [*franka_ros_interface*][fri-repo] package provides Python API and interface
 ### Version Update
 
 Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-devel/versionLog.md).
+
+## Related Packages
+
+- [*franka_ros_interface*][fri-repo] : A ROS API for controlling and managing the Franka Emika Panda robot (real and simulated). Contains controllers for the robot (joint position, velocity, torque), interfaces for the gripper, controller manager, coordinate frames interface, etc.. Provides almost complete sim-to-real transfer of code.
+- [*panda_robot*](https://github.com/justagist/panda_robot) : Python interface providing higher-level control of the robot integrated with its gripper, controller manager, coordinate frames manager, etc. It also provides access to the kinematics and dynamics of the robot using the [KDL library](http://wiki.ros.org/kdl).
+
+The [*franka_ros_interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*franka_ros_interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
 
 ### License
 
