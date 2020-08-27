@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN pip install --upgrade numpy numpy-quaternion rospy-message-converter 
+RUN pip install --upgrade numpy numpy-quaternion
 
 RUN apt-get update && apt-get upgrade -y
 
