@@ -73,7 +73,7 @@ before_install:
   - sudo apt-get install dpkg
   - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
   - source /opt/ros/$ROS_DISTRO/setup.bash
-  - sudo apt install ros-$ROS_DISTRO-libfranka ros-$ROS_DISTRO-franka-ros
+  - sudo apt install ros-$ROS_DISTRO-libfranka
   - sudo apt install python-catkin-tools
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
@@ -98,6 +98,7 @@ install:
 before_script:
   # source dependencies: install using wstool.
   - cd ~/catkin_ws/src
+  - git clone https://github.com/frankaemika/franka_ros && cd franka_ros && git checkout 49e5ac1
   - wstool init
   - if [[ -f $ROSINSTALL_FILE ]] ; then wstool merge $ROSINSTALL_FILE ; fi
   - wstool up

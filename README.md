@@ -12,7 +12,7 @@ Latest Stable Release (ROS Melodic): [![GitHub release (latest by date)](https:/
 
 - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper) or [Python API][fri-repo].
 - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
-- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) and [PandaRobot][https://github.com/justagist/panda_robot] Python API can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
+- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) and [PandaRobot](https://github.com/justagist/panda_robot) Python API can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
 
 ### Control and Monitor robot using Python API
@@ -39,7 +39,7 @@ ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justa
 #### Dependencies
 
 - *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* (`apt install ros-${ROS_DISTRO}-franka-ros` or [install from source][libfranka-doc])
+- *franka-ros* v0.6.0 ([install from source][libfranka-doc]). *Make sure to use the [v0.6.0 release version](https://github.com/frankaemika/franka_ros/commit/49e5ac1055e332581b4520a1bd9ac8aaf4580fb1) if building from source. (`git checkout 49e5ac1` from the cloned franka_ros github repo.)*
 - `pip install -r requirements.txt`
 
 For other possible missing dependencies, check the `apt` packages specified in Dockerfile.
