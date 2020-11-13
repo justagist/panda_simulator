@@ -38,9 +38,9 @@ ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justa
 
 #### Dependencies
 
-- *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* v0.6.0 ([install from source][libfranka-doc]). *Make sure to use the [v0.6.0 release version](https://github.com/frankaemika/franka_ros/commit/49e5ac1055e332581b4520a1bd9ac8aaf4580fb1) if building from source. (`git checkout 49e5ac1` from the cloned franka_ros github repo.)*
 - `pip install -r requirements.txt`
+- *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
+- *franka-ros* v0.7.1 (`sudo apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee).
 
 For other possible missing dependencies, check the `apt` packages specified in Dockerfile.
 
