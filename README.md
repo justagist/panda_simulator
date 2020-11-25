@@ -1,5 +1,7 @@
 # Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
+[![franka_ros_version](https://img.shields.io/badge/franka_ros-v0.6.0,%20v0.7.0,%20v0.7.1-blue.svg)](https://github.com/frankaemika/franka_ros) [![franka_ros_interface_version](https://img.shields.io/badge/franka_ros_interface-v0.6.0,%20v0.7.1-yellow.svg)](https://github.com/justagist/franka_ros_interface)
+
 <!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
 
 A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
@@ -46,7 +48,7 @@ For other possible missing dependencies, check the `apt` packages specified in D
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section)
 
-- [*Franka ROS Interface*][fri-repo]
+- [*Franka ROS Interface*][fri-repo] ([`v0.7.1`](https://github.com/justagist/franka_ros_interface/tree/v0.7.1) branch)
 - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
 - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
 
