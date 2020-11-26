@@ -1,10 +1,10 @@
 - git:
     local-name: franka_ros_interface
-    uri: https://github.com/JustaGist/franka_ros_interface
-    version: master
+    uri: https://github.com/martihmy/franka_ros_interface
+    version: melodic
 - git:
     local-name: franka_panda_description
-    uri: https://github.com/martihmy/franka_panda_description
+    uri: https://github.com/JustaGist/franka_panda_description
     version: master
 - git:
     local-name: orocos_kinematics_dynamics
