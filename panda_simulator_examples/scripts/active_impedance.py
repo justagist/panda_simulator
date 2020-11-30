@@ -14,12 +14,12 @@ from franka_interface import ArmInterface
 #from rviz_markers import RvizMarkers
 
 # --------- Tunable control parameters ------------
-K_Pt = 10*np.array([[3,0,0],
+K_Pt = 7*np.array([[3,0,0],
                     [0,3,0],
-                    [0,0,1]])
+                    [0,0,3]])
 K_Po =60*np.identity(3)
-K_m = np.identity(6)
-K_d = 2*np.identity(6)
+K_m = 1*np.identity(6)
+K_d = 2*2*np.identity(6)
 
 
 # --------------------  Helper functions ---------------------
@@ -59,18 +59,21 @@ def get_joint_velocities():
 def get_endpoint_velocities():
     return np.append(robot.endpoint_velocity()['linear'],robot.endpoint_velocity()['angular']).reshape((6,1))
 
-def virtual_external_force(interval_start,interval_end, iteration,f):
+def virtual_external_force(interval_start,interval_end, iteration,f,axis):
     if iteration > interval_start and iteration < interval_end :
-        return np.array([
+        force = np.array([
             0, #Fx
-            f, #Fy
+            0, #Fy
             0, #Fz,
             0, #Torque x
             0, #Torque Y
             0 # Torque z
         ]).reshape((6,1))
+        force[axis]=f#%6
+        return force
     else:
         return np.zeros((6,1))
+ 
 """
 def _on_shutdown():
     
@@ -93,98 +96,104 @@ def impedance_control(rate,K_Pt,K_Po,K_m,K_d):
     pos_d = robot.endpoint_pose()['position'] 
     Rot_d = robot.endpoint_pose()['orientation_R']
 
-    max_x,max_y,max_z = 0,0,0
-    for _iterations in range(400):
+    
+    for num_loop in range(3):
+        max_x,max_y,max_z = 0,0,0
+        print('------------------------')
+        print('Entering loop number ',num_loop+1)
+        print('------------------------')
 
-        #   --------- updating parameters ---------
-        J = np.array(robot.zero_jacobian())
-        J_weighted_psudu_inv = np.array(np.linalg.multi_dot([np.linalg.inv(robot.joint_inertia_matrix()),J.T,np.linalg.inv(np.linalg.multi_dot([J,np.linalg.inv(robot.joint_inertia_matrix()),J.T]))]))
+        for _iterations in range(175):
 
-        J_dot = np.zeros((6,7))#undefined
+            #   --------- updating parameters ---------
+            J = np.array(robot.zero_jacobian())
+            J_weighted_psudu_inv = np.array(np.linalg.multi_dot([np.linalg.inv(robot.joint_inertia_matrix()),J.T,np.linalg.inv(np.linalg.multi_dot([J,np.linalg.inv(robot.joint_inertia_matrix()),J.T]))]))
+
+            J_dot = np.zeros((6,7))#undefined
 
 
-        """
-        setting force-sensor-readings = virtual external force
-        """
-        this_virtual_external_force = virtual_external_force(50,250,_iterations,4)
-        h_e = np.append(robot.endpoint_effort()['force'],robot.endpoint_effort()['torque']) #external wrench
-        #h_e = -this_virtual_external_force
-        h_e = np.array(h_e).reshape((6,1))
-        Rot_e = robot.endpoint_pose()['orientation_R']
-        Rot_e_bigdim = from_three_to_six_dim(Rot_e)
-        Rot_e_dot = np.dot(skew(robot.endpoint_velocity()['angular']),Rot_e) #not a 100 % sure about this one
-        Rot_e_dot_bigdim = from_three_to_six_dim(Rot_e_dot)
-        
-        quat = quaternion.from_rotation_matrix(np.dot(Rot_e.T,Rot_d))
-        #quat = robot.endpoint_pose()['orientation']
-        quat_e_e = np.array([quat.x,quat.y,quat.z])
-        quat_e = np.dot(Rot_e.T,quat_e_e)
-        quat_n = quat.w
-        
-        p_delta = pos_d-robot.endpoint_pose()['position']
+            """
+            setting force-sensor-readings = virtual external force
+            """
+            this_virtual_external_force = virtual_external_force(25,50,_iterations,3,num_loop)
+            #h_e = np.append(robot.endpoint_effort()['force'],robot.endpoint_effort()['torque']) #external wrench
+            h_e = -this_virtual_external_force
+            h_e = np.array(h_e).reshape((6,1))
+            Rot_e = robot.endpoint_pose()['orientation_R']
+            Rot_e_bigdim = from_three_to_six_dim(Rot_e)
+            Rot_e_dot = np.dot(skew(robot.endpoint_velocity()['angular']),Rot_e) #not a 100 % sure about this one
+            Rot_e_dot_bigdim = from_three_to_six_dim(Rot_e_dot)
+            
+            quat = quaternion.from_rotation_matrix(np.dot(Rot_e.T,Rot_d))
+            #quat = robot.endpoint_pose()['orientation']
+            quat_e_e = np.array([quat.x,quat.y,quat.z])
+            quat_e = np.dot(Rot_e.T,quat_e_e)
+            quat_n = quat.w
+            
+            p_delta = pos_d-robot.endpoint_pose()['position']
 
-        K_Pt_dot = get_K_Pt_dot(Rot_d,K_Pt,Rot_e)
-        K_Pt_ddot = get_K_Pt_ddot(pos_d,Rot_d,K_Pt)
-        K_Po_dot = get_K_Po_dot(quat_n,quat_e,Rot_e,K_Po)
+            K_Pt_dot = get_K_Pt_dot(Rot_d,K_Pt,Rot_e)
+            K_Pt_ddot = get_K_Pt_ddot(pos_d,Rot_d,K_Pt)
+            K_Po_dot = get_K_Po_dot(quat_n,quat_e,Rot_e,K_Po)
 
-        h_delta_e = np.array(np.dot(Rot_e_bigdim,get_h_delta(K_Pt_dot,K_Pt_ddot,p_delta,K_Po_dot,quat_e)))
-        h_e_e = np.array(np.dot(Rot_e_bigdim,h_e))
+            h_delta_e = np.array(np.dot(Rot_e_bigdim,get_h_delta(K_Pt_dot,K_Pt_ddot,p_delta,K_Po_dot,quat_e)))
+            h_e_e = np.array(np.dot(Rot_e_bigdim,h_e))
 
-        alpha_e = a_d_e + np.dot(np.linalg.inv(K_m),(np.dot(K_d,v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities()))+h_delta_e-h_e_e))
-        alpha = np.dot(Rot_e_bigdim.T,alpha_e)+np.dot(Rot_e_dot_bigdim.T,np.dot(Rot_e_bigdim,get_endpoint_velocities()))
+            alpha_e = a_d_e + np.dot(np.linalg.inv(K_m),(np.dot(K_d,v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities()))+h_delta_e-h_e_e))
+            alpha = np.dot(Rot_e_bigdim.T,alpha_e)+np.dot(Rot_e_dot_bigdim.T,np.dot(Rot_e_bigdim,get_endpoint_velocities()))
 
-        j_dot_j_inv = np.dot(J_dot,J_weighted_psudu_inv)
-        
-        # --------------------  Setting torque ---------------------
+            #j_dot_j_inv = np.dot(J_dot,J_weighted_psudu_inv)
+            
+            # --------------------  Setting torque ---------------------
 
-        #   parameters
-        cartesian_inertia = np.linalg.inv(np.linalg.multi_dot([J,np.linalg.inv(robot.joint_inertia_matrix()),J.T]))
-        #print(np.shape(np.linalg.multi_dot([J_weighted_psudu_inv.T,J_weighted_psudu_inv,np.array([robot.coriolis_comp()]*6)])))
-   
-        coriolis_wrench = np.linalg.multi_dot([J_weighted_psudu_inv.T,J_weighted_psudu_inv,np.array([robot.coriolis_comp()]*6)]) # - np.dot(cartesian_inertia,j_dot_j_inv) #problematic part!!!!!
-        gravitational_wrench = np.array(np.dot(J_weighted_psudu_inv.T,robot.gravity_comp())) #should gravity and coriolis gave a negative sign? since its called comp(ensation)
+            #   parameters
+            cartesian_inertia = np.linalg.inv(np.linalg.multi_dot([J,np.linalg.inv(robot.joint_inertia_matrix()),J.T]))
+            #print(np.shape(np.linalg.multi_dot([J_weighted_psudu_inv.T,J_weighted_psudu_inv,np.array([robot.coriolis_comp()]*6)])))
+    
+            #coriolis_wrench = np.linalg.multi_dot([J_weighted_psudu_inv.T,J_weighted_psudu_inv,np.array([robot.coriolis_comp()]*6)]) # - np.dot(cartesian_inertia,j_dot_j_inv) #problematic part!!!!!
+            #gravitational_wrench = np.array(np.dot(J_weighted_psudu_inv.T,robot.gravity_comp()))
 
-        #   calculating and setting torque
-        h_c = np.dot(cartesian_inertia,alpha) + np.dot(coriolis_wrench,get_joint_velocities()).reshape((6,1))+h_e
-        tau = np.dot(J.T,h_c).reshape((7,1))+np.array(robot.gravity_comp().reshape((7,1)))
-        total_torque = tau + np.dot(J.T,this_virtual_external_force)
+            #   calculating and setting torque
+            h_c = np.dot(cartesian_inertia,alpha) + h_e# + np.dot(coriolis_wrench,get_joint_velocities()).reshape((6,1))
+            tau = np.dot(J.T,h_c).reshape((7,1))+np.array([robot.coriolis_comp()]).reshape((7,1)) #+np.array(robot.gravity_comp().reshape((7,1)))
+            total_torque = tau + np.dot(J.T,this_virtual_external_force)
 
-        """
-        print('h_c-test: ',np.shape(np.dot(cartesian_inertia,alpha)),np.shape(np.dot(coriolis_wrench,get_joint_velocities())),np.shape(gravitational_wrench))
-        print('h_delta_e',np.shape(h_delta_e))
-        print('h_e',np.shape(h_e))
-        print('h_e_e',np.shape(h_e_e))
-        print('v_delta: ',np.shape(v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities())))
-        print('hele parantesen etter K_m_inv: ',np.shape(np.dot(K_d,v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities()))+h_delta_e-h_e_e))
-        print('sum av to 6x1 matriser: ', np.array(h_delta_e-h_e_e))
-        print('dim a_d_e: ', np.shape(a_d_e))
-        print('dim alpha_e: ',np.shape(alpha_e))
-        print('dim alpha1: ',np.shape(np.dot(Rot_e_bigdim.T,alpha_e)))
-        print('dim alpha2: ',np.shape(np.dot(Rot_e_dot_bigdim.T,np.dot(Rot_e_bigdim,get_endpoint_velocities()))))
-        
-        print(h_c)
-        """
-        robot.set_joint_torques(dict(list(zip(robot.joint_names(),total_torque))))
+            """
+            print('h_c-test: ',np.shape(np.dot(cartesian_inertia,alpha)),np.shape(np.dot(coriolis_wrench,get_joint_velocities())),np.shape(gravitational_wrench))
+            print('h_delta_e',np.shape(h_delta_e))
+            print('h_e',np.shape(h_e))
+            print('h_e_e',np.shape(h_e_e))
+            print('v_delta: ',np.shape(v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities())))
+            print('hele parantesen etter K_m_inv: ',np.shape(np.dot(K_d,v_d_e-np.dot(Rot_e_bigdim,get_endpoint_velocities()))+h_delta_e-h_e_e))
+            print('sum av to 6x1 matriser: ', np.array(h_delta_e-h_e_e))
+            print('dim a_d_e: ', np.shape(a_d_e))
+            print('dim alpha_e: ',np.shape(alpha_e))
+            print('dim alpha1: ',np.shape(np.dot(Rot_e_bigdim.T,alpha_e)))
+            print('dim alpha2: ',np.shape(np.dot(Rot_e_dot_bigdim.T,np.dot(Rot_e_bigdim,get_endpoint_velocities()))))
+            
+            print(h_c)
+            """
+            robot.set_joint_torques(dict(list(zip(robot.joint_names(),total_torque))))
 
-        rate.sleep()
+            rate.sleep()
 
-        if _iterations % 10 == 0:
-            print(_iterations,':    deviation fom desired position = ',p_delta)
-            print('')
+            if _iterations % 10 == 0:
+                print(_iterations,':    deviation fom desired position = ',p_delta)
+                print('')
 
-        #evaluation
-        if abs(p_delta[0])>max_x:
-            max_x = abs(p_delta[0])
-        if abs(p_delta[1])>max_y:
-            max_y = abs(p_delta[1])
-        if abs(p_delta[2])>max_z:
-            max_z = abs(p_delta[2])
+            #evaluation
+            if abs(p_delta[0])>max_x:
+                max_x = abs(p_delta[0])
+            if abs(p_delta[1])>max_y:
+                max_y = abs(p_delta[1])
+            if abs(p_delta[2])>max_z:
+                max_z = abs(p_delta[2])
 
-    print('Just exited the control-loop')
-    print('maximum deviation from equalibrium:')
-    print(' x: ',max_x)
-    print(' y: ',max_y)
-    print(' z: ',max_z)
+        print('Just exited the control-loop')
+        print('maximum deviation from equalibrium:')
+        print(' x: ',max_x)
+        print(' y: ',max_y)
+        print(' z: ',max_z)
 
 
 
@@ -194,7 +203,7 @@ if __name__ == "__main__":
     rospy.init_node("ts_control_sim_only")
 
     #rospy.on_shutdown(_on_shutdown)
-    publish_rate = 100
+    publish_rate = 300
     rate = rospy.Rate(publish_rate)
 
     robot = ArmInterface()
