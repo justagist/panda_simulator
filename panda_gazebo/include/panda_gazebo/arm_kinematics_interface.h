@@ -42,6 +42,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Wrench.h>
+#include <geometry_msgs/WrenchStamped.h>
 
 #include <Eigen/Geometry>
 
@@ -71,7 +72,7 @@ struct Kinematics
   
 };
 private:
-std::string side_, root_name_, tip_name_, camera_name_, gravity_tip_name_;
+std::string root_name_, tip_name_, gravity_tip_name_;
 urdf::Model robot_model_;
 franka_core_msgs::JointLimits joint_limits_;
 KDL::Tree tree_;
@@ -80,9 +81,11 @@ std::map<std::string, Kinematics> kinematic_chain_map_;
 
 realtime_tools::RealtimeBox< std::shared_ptr<const franka_core_msgs::JointCommand> > joint_command_buffer_;
 realtime_tools::RealtimeBox< std::shared_ptr<const sensor_msgs::JointState> > joint_state_buffer_;
+realtime_tools::RealtimeBox<std::shared_ptr<const geometry_msgs::Wrench>> ft_msg_buffer_;
 
 ros::Subscriber joint_command_sub_;
 ros::Subscriber joint_state_sub_;
+ros::Subscriber ft_sensor_sub_;
 
 ros::Publisher joint_limits_pub_;
 ros::Publisher endpoint_state_pub_;
@@ -116,6 +119,10 @@ void jointCommandCallback(const franka_core_msgs::JointCommandConstPtr& msg);
 /* Callback to capture and store the current joint states of the robot
  */
 void jointStateCallback(const sensor_msgs::JointStateConstPtr& msg);
+
+/* Callback to capture and store the current force torque values from wrist sensor
+ */
+void ftSensorCallback(const geometry_msgs::WrenchStampedConstPtr &msg);
 
 /* Compute Jacobian and end effector velocity and add to Robot State message
  */
