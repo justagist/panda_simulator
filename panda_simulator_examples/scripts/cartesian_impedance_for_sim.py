@@ -76,11 +76,11 @@ def impedance_control(rate,K_Pt,K_Po,K_m,K_d):
     # --------- desired state ------------
     a_d_e = np.zeros((6,1)) # desired acceleration relative to fram e
     v_d_e = np.zeros((6,1))#.reshape((6,1))
-    pos_d = np.array([0.5,0.5,0.05]) # Randomly chosen desired position
+    pos_d = np.array([0.5,0.5,0.5]) # Randomly chosen desired position
     Rot_d = np.identity(3)
 
     #   Desired=Current state
-    #pos_d = robot.endpoint_pose()['position'] 
+    pos_d = robot.endpoint_pose()['position'] 
     Rot_d = robot.endpoint_pose()['orientation_R']
 
     max_x,max_y,max_z = 0,0,0
