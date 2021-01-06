@@ -1,6 +1,7 @@
 # Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
 
 [![franka_ros_version](https://img.shields.io/badge/franka_ros-v0.6.0,%20v0.7.0,%20v0.7.1-blue.svg)](https://github.com/frankaemika/franka_ros) [![franka_ros_interface_version](https://img.shields.io/badge/franka_ros_interface-v0.6.0,%20v0.7.1-yellow.svg)](https://github.com/justagist/franka_ros_interface)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjustagist%2Fpanda_simulator.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjustagist%2Fpanda_simulator?ref=badge_shield)
 
 <!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
 
@@ -181,3 +182,6 @@ If you use this software, please cite it using [![DOI](https://zenodo.org/badge/
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
    [libfranka-doc]: <https://frankaemika.github.io/docs/installation_linux.html#building-from-source>
    [franka-ros]: <https://frankaemika.github.io/docs/franka_ros.html>
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjustagist%2Fpanda_simulator.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjustagist%2Fpanda_simulator?ref=badge_large)
