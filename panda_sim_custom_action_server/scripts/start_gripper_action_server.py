@@ -2,7 +2,7 @@
 
 # /***************************************************************************
 
-# 
+#
 # @package: panda_joint_trajectory_action
 # @metapackage: panda_simulator
 # @author: Saif Sidhik <sxs1412@bham.ac.uk>
@@ -11,8 +11,8 @@
 # **************************************************************************/
 
 # /***************************************************************************
-# Copyright (c) 2019-2020, Saif Sidhik
- 
+# Copyright (c) 2019-2021, Saif Sidhik
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -25,8 +25,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # **************************************************************************/
-
-import argparse
 
 import rospy
 

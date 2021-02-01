@@ -17,6 +17,8 @@ Latest Stable Release (ROS Melodic): [![GitHub release (latest by date)](https:/
 - The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) and [PandaRobot](https://github.com/justagist/panda_robot) Python API can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
 
+*For a simple bare-bone Gazebo simulator created using inbuilt Gazebo ROS controllers and transmission interfaces, see [Gazebo Panda](https://github.com/justagist/gazebo_panda).*
+
 ### Control and Monitor robot using Python API
 
 Python API: [Franka ROS Interface][fri-repo], [PandaRobot](https://github.com/justagist/panda_robot)
@@ -46,10 +48,10 @@ ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justa
 
 For other possible missing dependencies, check the `apt` packages specified in Dockerfile.
 
-The following dependencies can be installed using the `.rosinstall` file (instructions in next section)
+The following dependencies can be installed using the `.rosinstall` file (instructions in next section: [Building the Package](#building-the-package)).
 
 - [*Franka ROS Interface*][fri-repo] ([`v0.7.1`](https://github.com/justagist/franka_ros_interface/tree/v0.7.1) branch)
-- [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, and with the custom controllers)
+- [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, with the custom controllers, and more realistic dynamics parameters)
 - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
 
 #### Building the Package
@@ -105,9 +107,17 @@ The simulator can be started by running:
     roslaunch panda_gazebo panda_world.launch # (use argument load_gripper:=false for starting without gripper; see other available arguments in launch file)
 ```
 
-To start without moveit server, add the argument `start_moveit:=false` to the command. This is sometimes necessary for starting nodes in the right order
-
 This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation. The robot can also be controlled using the [Franka ROS Interface](https://github.com/justagist/franka_ros_interface) package and/or [PandaRobot](https://github.com/justagist/panda_robot) APIs.
+
+~To start without moveit server, add the argument `start_moveit:=false` to the command. This is sometimes necessary for starting nodes in the right order.~
+
+**Update: The above roslaunch command does not start the moveit server automatically anymore. If using Panda Simulator in ROS Melodic environment, the moveit server now has to be started manually by running the following command in a new terminal:**
+
+```bash
+    roslaunch panda_sim_moveit sim_move_group.launch # (use argument load_gripper:=false for starting without gripper
+```
+
+For known errors and issues, please see [Issues](#known-issues) section below.
 
 #### Demos
 
@@ -150,11 +160,12 @@ Controller manager service can be used to switch between all available controlle
 
 ### Known Issues
 
-1. In some computers, the launch file fails to start the trajectory controller server, or starts the required nodes in a different order. This may result in different errors with the moveit servers, or with the controller manager. In this case, the simplest option is to start the simulator without moveit (`roslaunch panda_gazebo panda_world.launch start_moveit:=false`), and then start the moveit server separately once the simulator is fully loaded (`roslaunch panda_sim_moveit sim_move_group.launch`).
+1. ~In some computers, the launch file fails to start the trajectory controller server, or starts the required nodes in a different order. This may result in different errors with the moveit servers, or with the controller manager. In this case, the simplest option is to start the simulator without moveit (`roslaunch panda_gazebo panda_world.launch start_moveit:=false`), and then start the moveit server separately once the simulator is fully loaded (`roslaunch panda_sim_moveit sim_move_group.launch`).~
+*This is the default behaviour now.*
 
 2. `[ERROR] Exception while loading planning adapter plugin 'default_planner_request_adapters/ResolveConstraintFrames` in melodic. This can be [safely ignored](https://github.com/ros-planning/moveit/issues/1655).
 
-3. Gripper control and model definition is not completely developed, and gripper control may not produce the required performance.
+3. ~Gripper control and model definition is not completely developed, and gripper control may not produce the required performance.~ *Update: robot and gripper model definitions have now been improved in the [franka_panda_description][fpd-repo] package*.
 
 4. Gravity compensation when using velocity or torque controller with gripper is not very good. This is bypassed by deactivating simulator gravity by default (see [`panda.world`](panda_gazebo/worlds/panda.world)).
 
@@ -166,6 +177,7 @@ Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-
 
 - [*Franka ROS Interface*][fri-repo] : A ROS API for controlling and managing the Franka Emika Panda robot (real and simulated). Contains controllers for the robot (joint position, velocity, torque), interfaces for the gripper, controller manager, coordinate frames interface, etc.. Provides almost complete sim-to-real transfer of code.
 - [*PandaRobot*](https://github.com/justagist/panda_robot) : Python interface providing higher-level control of the robot integrated with its gripper, controller manager, coordinate frames manager, etc. It also provides access to the kinematics and dynamics of the robot using the [KDL library](http://wiki.ros.org/kdl).
+- [*Gazebo Panda*](https://github.com/justagist/gazebo_panda): A simple bare-bone gazebo simulator using in-built gazebo controllers and transmissions. No custom controllers or interfaces.
 
 The [*Franka ROS Interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*Franka ROS Interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
 
@@ -173,7 +185,7 @@ The [*Franka ROS Interface*][fri-repo] package provides Python API and interface
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Copyright (c) 2019-2020, Saif Sidhik
+Copyright (c) 2019-2021, Saif Sidhik
 
 If you use this software, please cite it using [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459).
 

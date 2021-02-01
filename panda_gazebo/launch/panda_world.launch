@@ -4,9 +4,9 @@
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="load_gripper" default="true"/> 
   <arg name="use_custom_action_servers" default="true"/>
-  <arg name="start_moveit" default="true"/>
+  <arg name="start_moveit" default="false"/>
   <arg name="load_demo_planning_scene" default="false"/>
-
+  <arg name="force_neutral_pose" default="true"/> <!-- Use a separate script to send robot to the neutral pose in the beginning of simulation -->
   
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -87,10 +87,14 @@
       </include>
     </group>
 
-  </group>   
+  </group>
 
    <group if="$(eval arg('load_demo_planning_scene') == true)">
     <node name="demo_scene_loader" pkg="franka_moveit" type="create_demo_planning_scene.py" respawn="false" output="screen" />
+  </group>
+
+  <group if="$(eval arg('force_neutral_pose') == true)">
+      <node pkg="panda_gazebo" type="force_neutral_pose.py" name="startup_script"/>
   </group>   
 
 </launch>

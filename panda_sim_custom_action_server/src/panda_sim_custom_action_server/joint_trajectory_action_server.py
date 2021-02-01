@@ -2,16 +2,16 @@
 
 # /***************************************************************************
 
-# 
-# @package: panda_joint_trajectory_action
+#
+# @package: panda_sim_custom_action_server
 # @metapackage: panda_simulator
 # @author: Saif Sidhik <sxs1412@bham.ac.uk>
-# 
+#
 
 # **************************************************************************/
 
 # /***************************************************************************
-# Copyright (c) 2019-2020, Saif Sidhik
+# Copyright (c) 2019-2021, Saif Sidhik
 # Copyright (c) 2013-2018, Rethink Robotics Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,9 +48,7 @@ from control_msgs.msg import (
     FollowJointTrajectoryFeedback,
     FollowJointTrajectoryResult,
 )
-from std_msgs.msg import (
-    UInt16,
-)
+
 from trajectory_msgs.msg import (
     JointTrajectoryPoint,
 )
@@ -58,6 +56,108 @@ from trajectory_msgs.msg import (
 import pid
 import franka_dataflow
 import franka_interface
+
+
+def _get_bezier_point(b_matrix, idx, t, cmd_time, dimensions_dict):
+    pnt = JointTrajectoryPoint()
+    pnt.time_from_start = rospy.Duration(cmd_time)
+    num_joints = b_matrix.shape[0]
+    pnt.positions = [0.0] * num_joints
+    if dimensions_dict['velocities']:
+        pnt.velocities = [0.0] * num_joints
+    if dimensions_dict['accelerations']:
+        pnt.accelerations = [0.0] * num_joints
+    for jnt in range(num_joints):
+        b_point = bezier.bezier_point(b_matrix[jnt, :, :, :], idx, t)
+        # Positions at specified time
+        pnt.positions[jnt] = b_point[0]
+        # Velocities at specified time
+        if dimensions_dict['velocities']:
+            pnt.velocities[jnt] = b_point[1]
+        # Accelerations at specified time
+        if dimensions_dict['accelerations']:
+            pnt.accelerations[jnt] = b_point[-1]
+    return pnt
+
+
+def _get_minjerk_point(m_matrix, idx, t, cmd_time, dimensions_dict):
+    pnt = JointTrajectoryPoint()
+    pnt.time_from_start = rospy.Duration(cmd_time)
+    num_joints = m_matrix.shape[0]
+    pnt.positions = [0.0] * num_joints
+    if dimensions_dict['velocities']:
+        pnt.velocities = [0.0] * num_joints
+    if dimensions_dict['accelerations']:
+        pnt.accelerations = [0.0] * num_joints
+    for jnt in range(num_joints):
+        m_point = minjerk.minjerk_point(m_matrix[jnt, :, :, :], idx, t)
+        # Positions at specified time
+        pnt.positions[jnt] = m_point[0]
+        # Velocities at specified time
+        if dimensions_dict['velocities']:
+            pnt.velocities[jnt] = m_point[1]
+        # Accelerations at specified time
+        if dimensions_dict['accelerations']:
+            pnt.accelerations[jnt] = m_point[-1]
+    return pnt
+
+
+def _compute_bezier_coeff(joint_names, trajectory_points, dimensions_dict):
+    # Compute Full Bezier Curve
+    num_joints = len(joint_names)
+    num_traj_pts = len(trajectory_points)
+    num_traj_dim = sum(dimensions_dict.values())
+    num_b_values = len(['b0', 'b1', 'b2', 'b3'])
+    b_matrix = np.zeros(shape=(num_joints, num_traj_dim,
+                               num_traj_pts-1, num_b_values))
+    for jnt in xrange(num_joints):
+        traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
+        for idx, point in enumerate(trajectory_points):
+            current_point = list()
+            current_point.append(point.positions[jnt])
+            if dimensions_dict['velocities']:
+                current_point.append(point.velocities[jnt])
+            if dimensions_dict['accelerations']:
+                current_point.append(point.accelerations[jnt])
+            traj_array[idx, :] = current_point
+        d_pts = bezier.de_boor_control_pts(traj_array)
+        b_matrix[jnt, :, :, :] = bezier.bezier_coefficients(traj_array, d_pts)
+    return b_matrix
+
+
+def _compute_minjerk_coeff(joint_names, trajectory_points, point_duration, dimensions_dict):
+    # Compute Full Minimum Jerk Curve
+    num_joints = len(joint_names)
+    num_traj_pts = len(trajectory_points)
+    num_traj_dim = sum(dimensions_dict.values())
+    num_m_values = len(['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'tm'])
+    m_matrix = np.zeros(shape=(num_joints, num_traj_dim,
+                               num_traj_pts-1, num_m_values))
+    for jnt in xrange(num_joints):
+        traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
+        for idx, point in enumerate(trajectory_points):
+            current_point = list()
+            current_point.append(point.positions[jnt])
+            if dimensions_dict['velocities']:
+                current_point.append(point.velocities[jnt])
+            if dimensions_dict['accelerations']:
+                current_point.append(point.accelerations[jnt])
+            traj_array[idx, :] = current_point
+        m_matrix[jnt, :, :, :] = minjerk.minjerk_coefficients(
+            traj_array, point_duration)
+    return m_matrix
+
+
+def _determine_dimensions(trajectory_points):
+    # Determine dimensions supplied
+    position_flag = True
+    velocity_flag = (len(trajectory_points[0].velocities) != 0 and
+                     len(trajectory_points[-1].velocities) != 0)
+    acceleration_flag = (len(trajectory_points[0].accelerations) != 0 and
+                         len(trajectory_points[-1].accelerations) != 0)
+    return {'positions': position_flag,
+            'velocities': velocity_flag,
+            'accelerations': acceleration_flag}
 
 
 class JointTrajectoryActionServer(object):
@@ -149,7 +249,6 @@ class JointTrajectoryActionServer(object):
             else:
                 self._goal_error[jnt] = goal_error
 
-
     def _get_current_position(self, joint_names):
         return [self._arm.joint_angle(joint) for joint in joint_names]
 
@@ -171,13 +270,13 @@ class JointTrajectoryActionServer(object):
         self._fdbk.error.positions = map(operator.sub,
                                          self._fdbk.desired.positions,
                                          self._fdbk.actual.positions
-                                        )
+                                         )
         self._fdbk.error.time_from_start = rospy.Duration.from_sec(cur_time)
         self._server.publish_feedback(self._fdbk)
 
     def _command_stop(self, joint_names, joint_angles, start_time, dimensions_dict):
         if (self._arm.has_collided() or
-              not self.robot_is_enabled() or not self._alive):
+                not self.robot_is_enabled() or not self._alive):
             self._arm.exit_control_mode()
         else:
             pnt = JointTrajectoryPoint()
@@ -187,9 +286,10 @@ class JointTrajectoryActionServer(object):
                 pnt.velocities = [0.0] * len(joint_names)
                 pnt.accelerations = [0.0] * len(joint_names)
                 self._publish_joint_trajectory(joint_names,
-                                        pnt.positions,
-                                        pnt.velocities,
-                                        pnt.accelerations)
+                                               pnt.positions,
+                                               pnt.velocities,
+                                               pnt.accelerations)
+
     def _publish_joint_trajectory(self, names, positions, velocities, accelerations):
         """
         Commands the joints of this limb to the specified positions using
@@ -224,127 +324,35 @@ class JointTrajectoryActionServer(object):
 
     def _command_joints(self, joint_names, point, start_time, dimensions_dict):
         if (self._arm.has_collided() or not self.robot_is_enabled()
-             or not self._alive):
-           rospy.logerr("JointTrajectoryActionServer: Robot arm in Error state. Stopping execution.")
-           self._arm.exit_control_mode()
-           self._result.error_code = self._result.PATH_TOLERANCE_VIOLATED
-           self._server.set_aborted(self._result)
-           return False
+                or not self._alive):
+            rospy.logerr(
+                "JointTrajectoryActionServer: Robot arm in Error state. Stopping execution.")
+            self._arm.exit_control_mode()
+            self._result.error_code = self._result.PATH_TOLERANCE_VIOLATED
+            self._server.set_aborted(self._result)
+            return False
         elif self._server.is_preempt_requested():
-           rospy.logwarn("JointTrajectoryActionServer: Trajectory execution Preempted. Stopping execution.")
-           self._arm.exit_control_mode()
-           self._server.set_preempted()
-           return False
+            rospy.logwarn(
+                "JointTrajectoryActionServer: Trajectory execution Preempted. Stopping execution.")
+            self._arm.exit_control_mode()
+            self._server.set_preempted()
+            return False
         velocities = []
         deltas = self._get_current_error(joint_names, point.positions)
         for delta in deltas:
             if ((math.fabs(delta[1]) >= self._path_thresh[delta[0]]
-                  and self._path_thresh[delta[0]] >= 0.0)):
+                 and self._path_thresh[delta[0]] >= 0.0)):
                 rospy.logerr("JointTrajectoryActionServer: Exceeded Error Threshold on %s: %s" %
                              (delta[0], str(delta[1]),))
                 self._result.error_code = self._result.PATH_TOLERANCE_VIOLATED
                 self._server.set_aborted(self._result)
                 self._arm.exit_control_mode()
                 return False
-        self._publish_joint_trajectory( joint_names,
-                                        point.positions,
-                                        point.velocities,
-                                        point.accelerations )
+        self._publish_joint_trajectory(joint_names,
+                                       point.positions,
+                                       point.velocities,
+                                       point.accelerations)
         return True
-
-    def _get_bezier_point(self, b_matrix, idx, t, cmd_time, dimensions_dict):
-        pnt = JointTrajectoryPoint()
-        pnt.time_from_start = rospy.Duration(cmd_time)
-        num_joints = b_matrix.shape[0]
-        pnt.positions = [0.0] * num_joints
-        if dimensions_dict['velocities']:
-            pnt.velocities = [0.0] * num_joints
-        if dimensions_dict['accelerations']:
-            pnt.accelerations = [0.0] * num_joints
-        for jnt in range(num_joints):
-            b_point = bezier.bezier_point(b_matrix[jnt, :, :, :], idx, t)
-            # Positions at specified time
-            pnt.positions[jnt] = b_point[0]
-            # Velocities at specified time
-            if dimensions_dict['velocities']:
-                pnt.velocities[jnt] = b_point[1]
-            # Accelerations at specified time
-            if dimensions_dict['accelerations']:
-                pnt.accelerations[jnt] = b_point[-1]
-        return pnt
-
-    def _compute_bezier_coeff(self, joint_names, trajectory_points, dimensions_dict):
-        # Compute Full Bezier Curve
-        num_joints = len(joint_names)
-        num_traj_pts = len(trajectory_points)
-        num_traj_dim = sum(dimensions_dict.values())
-        num_b_values = len(['b0', 'b1', 'b2', 'b3'])
-        b_matrix = np.zeros(shape=(num_joints, num_traj_dim, num_traj_pts-1, num_b_values))
-        for jnt in xrange(num_joints):
-            traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
-            for idx, point in enumerate(trajectory_points):
-                current_point = list()
-                current_point.append(point.positions[jnt])
-                if dimensions_dict['velocities']:
-                    current_point.append(point.velocities[jnt])
-                if dimensions_dict['accelerations']:
-                    current_point.append(point.accelerations[jnt])
-                traj_array[idx, :] = current_point
-            d_pts = bezier.de_boor_control_pts(traj_array)
-            b_matrix[jnt, :, :, :] = bezier.bezier_coefficients(traj_array, d_pts)
-        return b_matrix
-
-    def _get_minjerk_point(self, m_matrix, idx, t, cmd_time, dimensions_dict):
-        pnt = JointTrajectoryPoint()
-        pnt.time_from_start = rospy.Duration(cmd_time)
-        num_joints = m_matrix.shape[0]
-        pnt.positions = [0.0] * num_joints
-        if dimensions_dict['velocities']:
-            pnt.velocities = [0.0] * num_joints
-        if dimensions_dict['accelerations']:
-            pnt.accelerations = [0.0] * num_joints
-        for jnt in range(num_joints):
-            m_point = minjerk.minjerk_point(m_matrix[jnt, :, :, :], idx, t)
-            # Positions at specified time
-            pnt.positions[jnt] = m_point[0]
-            # Velocities at specified time
-            if dimensions_dict['velocities']:
-                pnt.velocities[jnt] = m_point[1]
-            # Accelerations at specified time
-            if dimensions_dict['accelerations']:
-                pnt.accelerations[jnt] = m_point[-1]
-        return pnt
-
-    def _compute_minjerk_coeff(self, joint_names, trajectory_points, point_duration, dimensions_dict):
-        # Compute Full Minimum Jerk Curve
-        num_joints = len(joint_names)
-        num_traj_pts = len(trajectory_points)
-        num_traj_dim = sum(dimensions_dict.values())
-        num_m_values = len(['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'tm'])
-        m_matrix = np.zeros(shape=(num_joints, num_traj_dim, num_traj_pts-1, num_m_values))
-        for jnt in xrange(num_joints):
-            traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
-            for idx, point in enumerate(trajectory_points):
-                current_point = list()
-                current_point.append(point.positions[jnt])
-                if dimensions_dict['velocities']:
-                    current_point.append(point.velocities[jnt])
-                if dimensions_dict['accelerations']:
-                    current_point.append(point.accelerations[jnt])
-                traj_array[idx, :] = current_point
-            m_matrix[jnt, :, :, :] = minjerk.minjerk_coefficients(traj_array, point_duration)
-        return m_matrix
-
-    def _determine_dimensions(self, trajectory_points):
-        # Determine dimensions supplied
-        position_flag = True
-        velocity_flag = (len(trajectory_points[0].velocities) != 0 and
-                         len(trajectory_points[-1].velocities) != 0)
-        acceleration_flag = (len(trajectory_points[0].accelerations) != 0 and
-                             len(trajectory_points[-1].accelerations) != 0)
-        return {'positions':position_flag,
-                'velocities':velocity_flag,
-                'accelerations':acceleration_flag}
 
     def _on_trajectory_action(self, goal):
 
@@ -358,19 +366,20 @@ class JointTrajectoryActionServer(object):
             rospy.logerr("JointTrajectoryActionServer: Empty Trajectory")
             self._server.set_aborted()
             return
-        rospy.loginfo("JointTrajectoryActionServer: Executing requested joint trajectory")
+        rospy.loginfo(
+            "JointTrajectoryActionServer: Executing requested joint trajectory")
         rospy.logdebug("Trajectory Points: {0}".format(trajectory_points))
         for jnt_name, jnt_value in self._get_current_error(
                 joint_names, trajectory_points[0].positions):
             if abs(self._path_thresh[jnt_name]) < abs(jnt_value):
                 rospy.logerr(("JointTrajectoryActionServer: Initial Trajectory point violates "
-                             "threshold on joint {0} with delta {1} radians. "
-                             "Aborting trajectory execution.").format(jnt_name, jnt_value))
+                              "threshold on joint {0} with delta {1} radians. "
+                              "Aborting trajectory execution.").format(jnt_name, jnt_value))
                 self._server.set_aborted()
                 return
 
         control_rate = rospy.Rate(self._control_rate)
-        dimensions_dict = self._determine_dimensions(trajectory_points)
+        dimensions_dict = _determine_dimensions(trajectory_points)
 
         # Force Velocites/Accelerations to zero at the final timestep
         # if they exist in the trajectory
@@ -387,16 +396,17 @@ class JointTrajectoryActionServer(object):
         try:
             if self._interpolation == 'minjerk':
                 # Compute Full MinJerk Curve Coefficients for all 7 joints
-                point_duration = [pnt_times[i+1] - pnt_times[i] for i in range(len(pnt_times)-1)]
-                m_matrix = self._compute_minjerk_coeff(joint_names,
-                                                       trajectory_points,
-                                                       point_duration,
-                                                       dimensions_dict)
+                point_duration = [pnt_times[i+1] - pnt_times[i]
+                                  for i in range(len(pnt_times)-1)]
+                m_matrix = _compute_minjerk_coeff(joint_names,
+                                                  trajectory_points,
+                                                  point_duration,
+                                                  dimensions_dict)
             else:
                 # Compute Full Bezier Curve Coefficients for all 7 joints
-                b_matrix = self._compute_bezier_coeff(joint_names,
-                                                      trajectory_points,
-                                                      dimensions_dict)
+                b_matrix = _compute_bezier_coeff(joint_names,
+                                                 trajectory_points,
+                                                 dimensions_dict)
 
             # for i in range(-5,0):
             # if dimensions_dict['velocities']:
@@ -408,8 +418,8 @@ class JointTrajectoryActionServer(object):
 
         except Exception as ex:
             rospy.logerr(("JointTrajectoryActionServer: Failed to compute a Bezier trajectory for panda"
-                         " arm with error \"{}: {}\"").format(
-                                                  type(ex).__name__, ex))
+                          " arm with error \"{}: {}\"").format(
+                type(ex).__name__, ex))
             self._server.set_aborted()
             return
         # Wait for the specified execution time, if not provided use now
@@ -430,7 +440,7 @@ class JointTrajectoryActionServer(object):
             now = rospy.get_time()
             now_from_start = now - start_time
             idx = bisect.bisect(pnt_times, now_from_start)
-            #Calculate percentage of time passed in this interval
+            # Calculate percentage of time passed in this interval
             if idx >= num_points:
                 cmd_time = now_from_start - pnt_times[-1]
                 t = 1.0
@@ -442,15 +452,16 @@ class JointTrajectoryActionServer(object):
                 t = 0
 
             if self._interpolation == 'minjerk':
-                point = self._get_minjerk_point(m_matrix, idx,
-                                                t, cmd_time,
-                                                dimensions_dict)
+                point = _get_minjerk_point(m_matrix, idx,
+                                           t, cmd_time,
+                                           dimensions_dict)
             else:
-                point = self._get_bezier_point(b_matrix, idx,
-                                               t, cmd_time,
-                                               dimensions_dict)
+                point = _get_bezier_point(b_matrix, idx,
+                                          t, cmd_time,
+                                          dimensions_dict)
             # Command Joint Position, Velocity, Acceleration
-            command_executed = self._command_joints(joint_names, point, start_time, dimensions_dict)
+            command_executed = self._command_joints(
+                joint_names, point, start_time, dimensions_dict)
             self._update_feedback(point, joint_names, now_from_start)
             if not command_executed:
                 return
@@ -484,7 +495,7 @@ class JointTrajectoryActionServer(object):
 
         now_from_start = rospy.get_time() - start_time
         self._update_feedback(deepcopy(last), joint_names,
-                                  now_from_start)
+                              now_from_start)
 
         # Verify goal constraint
         result = check_goal_state()
@@ -496,15 +507,17 @@ class JointTrajectoryActionServer(object):
             self._server.set_succeeded(self._result)
         elif result is False:
             msg = "JointTrajectoryActionServer: Exceeded Max Goal Velocity Threshold for panda arm"
-            rospy.logerr(msg)
+            rospy.logwarn(msg)
             self._result.error_code = self._result.GOAL_TOLERANCE_VIOLATED
             self._result.error_string = msg
             self._server.set_aborted(self._result)
         else:
-            msg = "JointTrajectoryActionServer: Exceeded Goal Threshold Error %s for panda arm"%(result)
+            msg = "JointTrajectoryActionServer: Exceeded Goal Threshold Error %s for panda arm" % (
+                result)
             rospy.logerr(msg)
             self._result.error_code = self._result.GOAL_TOLERANCE_VIOLATED
             self._result.error_string = msg
             self._server.set_aborted(self._result)
-        # print "NOW THiS"
-        # self._command_stop(goal.trajectory.joint_names, end_angles, start_time, dimensions_dict)
+
+        self._command_stop(goal.trajectory.joint_names,
+                           end_angles, start_time, dimensions_dict)
