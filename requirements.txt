@@ -1,3 +1,5 @@
 numpy 
 numpy-quaternion 
 rospy-message-converter
+scipy
+numba
