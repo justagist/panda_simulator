@@ -37,6 +37,7 @@ def start_server():
 
     GripperActionServer()
     rospy.spin()
+    rospy.loginfo("Gripper action server running...")
 
 
 def main():

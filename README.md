@@ -42,11 +42,10 @@ ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justa
 
 #### Dependencies
 
-- `pip install -r requirements.txt`
+- `pip install -r requirements.txt #(to install numpy and numpy-quaternion)`
 - *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* v0.7.1 (`sudo apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee).
-
-For other possible missing dependencies, check the `apt` packages specified in Dockerfile.
+- *franka-ros* v0.7.1 (`sudo apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee). The newer features and functionalities may not be available in the older versions.
+- Most of the other basic dependencies can be met by running the following `apt-get` command (you may have to use `sudo`): `apt install ros-$ROS_DISTRO-gazebo-ros-control ros-${ROS_DISTRO}-rospy-message-converter ros-${ROS_DISTRO}-effort-controllers ros-${ROS_DISTRO}-joint-state-controller ros-${ROS_DISTRO}-moveit ros-${ROS_DISTRO}-moveit-commander ros-${ROS_DISTRO}-moveit-visual-tools`.
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section: [Building the Package](#building-the-package)).
 
