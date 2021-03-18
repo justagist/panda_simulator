@@ -60,9 +60,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN pip install --upgrade numpy numpy-quaternion
+RUN pip install --upgrade numpy numpy-quaternion==2020.5.11.13.33.35
 
-RUN apt-get update && apt-get upgrade -y
+# RUN apt-get update && apt-get upgrade -y
 
 # nvidia-container-runtime
 ENV NVIDIA_VISIBLE_DEVICES \
