@@ -14,7 +14,7 @@ Latest Stable Release (ROS Melodic): [![GitHub release (latest by date)](https:/
 
 - Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper) or [Python API][fri-repo].
 - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
-- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) and [PandaRobot](https://github.com/justagist/panda_robot) Python API can also be used with the panda_simulator, providing kinematics and dynamics computation for the robot, and direct *sim-to-real* code transfer.
+- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct sim-to-real code transfer. The [PandaRobot](https://github.com/justagist/panda_robot) package which provides simplified python API for the robot can also be used for direct sim-to-real code transfer, as well as for performing real-time kinematics and dynamics computation.
 - Supports MoveIt planning and control for Franka Panda Emika robot and arm and Franka Gripper.
 
 *For a simple bare-bone Gazebo simulator created using inbuilt Gazebo ROS controllers and transmission interfaces, see [Gazebo Panda](https://github.com/justagist/gazebo_panda).*
@@ -52,6 +52,8 @@ The following dependencies can be installed using the `.rosinstall` file (instru
 - [*Franka ROS Interface*][fri-repo] ([`v0.7.1`](https://github.com/justagist/franka_ros_interface/tree/v0.7.1) branch)
 - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, with the custom controllers, and more realistic dynamics parameters)
 - [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
+
+**NOTE**: The franka_panda_description package above has to be independently updated regularly (using `git pull`) to get the latest robot description, visual and dynamics parameters.
 
 #### Building the Package
 
@@ -122,12 +124,13 @@ For known errors and issues, please see [Issues](#known-issues) section below.
 
 To run these demos, launch the simulator first: `roslaunch panda_gazebo panda_world.launch`. The following demos can then be tested:
 
-- Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot. This script starts a moveit RViz GUI for motion planning and terminal interface for modifying planning scene.
+- Moveit Demo: The moveit server must be running (see [usage](#usage)). Run `roslaunch panda_simulator_examples demo_moveit.launch` to run a demo for testing the moveit planner interface with the simulated robot. This script starts a moveit RViz GUI for motion planning and terminal interface for modifying planning scene.
 
-- Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. By default, the demo uses the (Franka ROS Interface) API to retrieve state information, and to control it using torque control (see [script](panda_simulator_examples/scripts/task_space_control_with_fri.py)). Another script demonstrating the same functionality without using the Franka ROS Interface API, and only the ROS
-topics from the simulation is also [provided](panda_simulator_examples/scripts/task_space_control_using_sim_only.py).
+- Task-space control using Franka ROS Interface (or PandaRobot) API: Run `roslaunch panda_simulator_examples demo_task_space_control.launch` to run a demo showing the task-space control. By default, the demo uses the (Franka ROS Interface) API to retrieve state information, and to control it using torque control (see [script](panda_simulator_examples/scripts/task_space_control_with_fri.py)).
 
-- Another (much simpler) demo ['move_robot.py'](panda_simulator_examples/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
+- Task-space control using ROS topics directly: Another script demonstrating the same functionality without using the Franka ROS Interface API, and only the ROS topics from the simulation is also [provided](panda_simulator_examples/scripts/task_space_control_using_sim_only.py). This can be run interactively by running `roslaunch panda_simulator_examples demo_task_space_control.launch use_fri:=False`.
+
+- API usage demo: Another (much simpler) demo ['move_robot.py'](panda_simulator_examples/scripts/task_space_control_using_sim_only.py) is provided demonstrating (i) controlling the robot in the joint space, (ii) retrieving state information of the robot.
 
 ##### Task-space Impedance Control Demo
 
