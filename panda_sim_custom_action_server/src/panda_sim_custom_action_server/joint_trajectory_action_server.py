@@ -36,8 +36,9 @@ import math
 import operator
 import numpy as np
 
-import bezier
-import minjerk
+from .bezier import *
+from .minjerk import *
+from .pid import *
 
 import rospy
 
@@ -53,7 +54,6 @@ from trajectory_msgs.msg import (
     JointTrajectoryPoint,
 )
 
-import pid
 import franka_dataflow
 import franka_interface
 
@@ -192,7 +192,7 @@ class JointTrajectoryActionServer(object):
         # Create our PID controllers
         self._pid = dict()
         for joint in self._arm.joint_names():
-            self._pid[joint] = pid.PID()
+            self._pid[joint] = PID()
 
         # Create our spline coefficients
         self._coeff = [None] * len(self._arm.joint_names())

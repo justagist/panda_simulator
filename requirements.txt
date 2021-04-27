@@ -1,2 +1,4 @@
 numpy 
 numpy-quaternion==2020.5.11.13.33.35
+scipy
+numba

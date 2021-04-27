@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (c) 2011, Ian McMahon
 # Modifications Copyright (c) 2014-2018, Rethink Robotics Inc.
 #

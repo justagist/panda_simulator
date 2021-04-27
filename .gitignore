@@ -30,3 +30,8 @@
 
 # Linux
 *.swp
+
+# ROS Stuff
+.rosinstall
+.rosinstall.bak
+
