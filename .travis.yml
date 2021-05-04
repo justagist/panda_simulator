@@ -47,9 +47,9 @@ cache:
 language: generic
 matrix:
   include:
-  - name: "Bionic melodic"
-    dist: bionic
-    env: ROS_DISTRO=melodic
+  - name: "focal noetic"
+    dist: focal
+    env: ROS_DISTRO=noetic
 
 # Configuration variables. All variables are global now, but this can be used to
 # trigger a build matrix for different ROS distributions if desired.
@@ -61,7 +61,7 @@ env:
     - ROS_PARALLEL_JOBS='-j8 -l6'
     # Set the python path manually to include /usr/-/python2.7/dist-packages
     # as this is where apt-get installs python packages.
-    - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
+    - PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages:/usr/local/lib/python3/dist-packages
 
 ################################################################################
 
@@ -71,10 +71,10 @@ before_install:
   - sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
   - sudo apt-get update -qq
   - sudo apt-get install dpkg
-  - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
+  - sudo apt-get install -y python3-catkin-pkg python3-rosdep python3-wstool ros-$ROS_DISTRO-desktop-full
   - source /opt/ros/$ROS_DISTRO/setup.bash
-  - sudo apt install ros-$ROS_DISTRO-libfranka ros-$ROS_DISTRO-franka-ros
-  - sudo apt install python-catkin-tools
+  - sudo apt install ros-$ROS_DISTRO-libfranka
+  - sudo apt install python3-catkin-tools python3-osrf-pycommon
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
   - rosdep update --include-eol-distros  # Support EOL distros.
@@ -103,7 +103,7 @@ before_script:
   - wstool up
   # package depdencies: install using rosdep.
   - cd ~/catkin_ws
-  - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+  # - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 
 # Compile and test (mark the build as failed if any step fails). If the
 # CATKIN_OPTIONS file exists, use it as an argument to catkin_make, for example

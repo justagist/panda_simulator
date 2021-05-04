@@ -1,10 +1,10 @@
-# Panda Simulator [![Build Status](https://travis-ci.org/justagist/panda_simulator.svg?branch=melodic-devel)](https://travis-ci.org/justagist/panda_simulator) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3747459.svg)](https://doi.org/10.5281/zenodo.3747459)
+# Panda Simulator (Under construction!)
 
-[![franka_ros_version](https://img.shields.io/badge/franka_ros-v0.6.0,%20v0.7.0,%20v0.7.1-blue.svg)](https://github.com/frankaemika/franka_ros) [![franka_ros_interface_version](https://img.shields.io/badge/franka_ros_interface-v0.6.0,%20v0.7.1-yellow.svg)](https://github.com/justagist/franka_ros_interface)
+**Experimental Branch to test Python 3 + ROS Noetic. May be unstable!**6
 
 <!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
 
-A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
+A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*Franka ROS Interface*][fri-repo] package.
 
 Latest Stable Release (ROS Melodic): [![GitHub release (latest by date)](https://img.shields.io/github/v/release/justagist/panda_simulator?style=flat)](https://github.com/justagist/panda_simulator/tags)
 
@@ -43,15 +43,16 @@ ROS Kinetic (kinetic-devel branch): [![Build Status](https://travis-ci.org/justa
 #### Dependencies
 
 - `pip install -r requirements.txt #(to install numpy and numpy-quaternion)`
-- *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* v0.7.1 (`sudo apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee). The newer features and functionalities may not be available in the older versions.
+- *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc]).
 - Most of the other basic dependencies can be met by running the following `apt-get` command (you may have to use `sudo`): `apt install ros-$ROS_DISTRO-gazebo-ros-control ros-${ROS_DISTRO}-rospy-message-converter ros-${ROS_DISTRO}-effort-controllers ros-${ROS_DISTRO}-joint-state-controller ros-${ROS_DISTRO}-moveit ros-${ROS_DISTRO}-moveit-commander ros-${ROS_DISTRO}-moveit-visual-tools`.
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section: [Building the Package](#building-the-package)).
 
-- [*Franka ROS Interface*][fri-repo] ([`v0.7.1`](https://github.com/justagist/franka_ros_interface/tree/v0.7.1) branch)
+- [*franka-ros*][libfranka-doc]
+- [*panda_moveit_config*](https://github.com/ros-planning/panda_moveit_config)
+- [*Franka ROS Interface*][fri-repo] (branch [`_py3_dev`](https://github.com/justagist/franka_ros_interface/tree/_py3_dev) branch)
 - [*franka_panda_description*][fpd-repo] (urdf and model files from *panda_description* package modified to work in Gazebo, with the custom controllers, and more realistic dynamics parameters)
-- [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics)
+- [*orocos-kinematics-dynamics*](https://github.com/orocos/orocos_kinematics_dynamics) (requires a specific commit; see instructions below)
 
 **NOTE**: The franka_panda_description package above has to be independently updated regularly (using `git pull`) to get the latest robot description, visual and dynamics parameters.
 
@@ -88,7 +89,7 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
 
 ### Docker Build (experimental!)
 
-**Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
+**Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0)). Gazebo and RViz may not work without nvidia-docker.**
 
 *NOTE: The image for kinetic version is larger than that of the melodic version (~ 1.5x). This is because it uses [cudagl](https://hub.docker.com/r/nvidia/cudagl) image as base to facilitate rendering (without this, opengl does not seem to work for kinetic docker image, and rviz and gazebo fails to load).*
 

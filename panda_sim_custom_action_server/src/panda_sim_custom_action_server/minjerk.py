@@ -1,4 +1,11 @@
-#!/usr/bin/env python
+#!/bin/sh
+''':'
+if [ "$ROS_PYTHON_VERSION" = "3" ]; then
+  exec python3 "$0" "$@"
+else
+  exec python2 "$0" "$@"
+fi
+'''
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2016, Kei Okada
@@ -184,7 +191,7 @@ def minjerk_trajectory(m_coeffs, num_intervals, duration_array=None):
     if len(duration_array) != num_mpts:
          raise ValueError("Invalid number of intervals chosen (must be equal to N={})".format(num_mpts))
     for current_mpt in range(num_mpts):
-         m_coeff_set = m_coeffs[:, current_mpt, range(7)]
+         m_coeff_set = m_coeffs[:, current_mpt, list(range(7))]
          for iteration, t in enumerate(np.linspace(interval, 1,
                                                    num_intervals)):
               m_curve[(current_mpt *
@@ -260,11 +267,11 @@ def minjerk_point(m_coeffs, m_index, t):
         m_point = m_coeffs[:, 0, 0]
     elif m_index > m_coeffs.shape[1]:
         t = 1
-        m_coeff_set = m_coeffs[:,m_coeffs.shape[1]-1, range(7)]
+        m_coeff_set = m_coeffs[:,m_coeffs.shape[1]-1, list(range(7))]
         m_point = _minjerk_trajectory_point(m_coeff_set, t)
     else:
         t = 0.0 if t < 0.0 else t
         t = 1.0 if t > 1.0 else t
-        m_coeff_set = m_coeffs[:,m_index-1, range(7)]
+        m_coeff_set = m_coeffs[:,m_index-1, list(range(7))]
         m_point = _minjerk_trajectory_point(m_coeff_set, t)
     return m_point

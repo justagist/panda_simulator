@@ -4,7 +4,7 @@ ROOT_DIR="$(cd $( dirname ${BASH_SOURCE[0]} ) && pwd)"
 command_exists () {
     type "$1" &> /dev/null ;
 }
-distro_type="melodic"
+distro_type="noetic"
 
 # path where the catkin ws will be stored for the docker to use
 HOST_WS_PATH="$HOME/.panda_sim_${distro_type}_ws"

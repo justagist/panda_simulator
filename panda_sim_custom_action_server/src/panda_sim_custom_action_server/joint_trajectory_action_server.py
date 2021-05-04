@@ -1,4 +1,11 @@
-#!/usr/bin/env python
+#!/bin/sh
+''':'
+if [ "$ROS_PYTHON_VERSION" = "3" ]; then
+  exec python3 "$0" "$@"
+else
+  exec python2 "$0" "$@"
+fi
+'''
 
 # /***************************************************************************
 
@@ -36,8 +43,8 @@ import math
 import operator
 import numpy as np
 
-import bezier
-import minjerk
+from . import bezier
+from . import minjerk
 
 import rospy
 
@@ -53,7 +60,7 @@ from trajectory_msgs.msg import (
     JointTrajectoryPoint,
 )
 
-import pid
+from . import pid
 import franka_dataflow
 import franka_interface
 
@@ -110,7 +117,7 @@ def _compute_bezier_coeff(joint_names, trajectory_points, dimensions_dict):
     num_b_values = len(['b0', 'b1', 'b2', 'b3'])
     b_matrix = np.zeros(shape=(num_joints, num_traj_dim,
                                num_traj_pts-1, num_b_values))
-    for jnt in xrange(num_joints):
+    for jnt in range(num_joints):
         traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
         for idx, point in enumerate(trajectory_points):
             current_point = list()
@@ -133,7 +140,7 @@ def _compute_minjerk_coeff(joint_names, trajectory_points, point_duration, dimen
     num_m_values = len(['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'tm'])
     m_matrix = np.zeros(shape=(num_joints, num_traj_dim,
                                num_traj_pts-1, num_m_values))
-    for jnt in xrange(num_joints):
+    for jnt in range(num_joints):
         traj_array = np.zeros(shape=(len(trajectory_points), num_traj_dim))
         for idx, point in enumerate(trajectory_points):
             current_point = list()
@@ -257,8 +264,8 @@ class JointTrajectoryActionServer(object):
 
     def _get_current_error(self, joint_names, set_point):
         current = self._get_current_position(joint_names)
-        error = map(operator.sub, set_point, current)
-        return zip(joint_names, error)
+        error = list(map(operator.sub, set_point, current))
+        return list(zip(joint_names, error))
 
     def _update_feedback(self, cmd_point, jnt_names, cur_time):
         self._fdbk.header.stamp = rospy.Duration.from_sec(rospy.get_time())
@@ -267,10 +274,10 @@ class JointTrajectoryActionServer(object):
         self._fdbk.desired.time_from_start = rospy.Duration.from_sec(cur_time)
         self._fdbk.actual.positions = self._get_current_position(jnt_names)
         self._fdbk.actual.time_from_start = rospy.Duration.from_sec(cur_time)
-        self._fdbk.error.positions = map(operator.sub,
+        self._fdbk.error.positions = list(map(operator.sub,
                                          self._fdbk.desired.positions,
                                          self._fdbk.actual.positions
-                                         )
+                                         ))
         self._fdbk.error.time_from_start = rospy.Duration.from_sec(cur_time)
         self._server.publish_feedback(self._fdbk)
 
