@@ -71,10 +71,11 @@ before_install:
   - sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
   - sudo apt-get update -qq
   - sudo apt-get install dpkg
-  - sudo apt-get install -y python3-catkin-pkg python3-rosdep python3-wstool ros-$ROS_DISTRO-desktop-full
+  - sudo apt-get install -y python3-catkin-pkg python3-rosdep python3-wstool ros-$ROS_DISTRO-desktop-full ros-$ROS_DISTRO-combined-robot-hw
   - source /opt/ros/$ROS_DISTRO/setup.bash
   - sudo apt install ros-$ROS_DISTRO-libfranka
   - sudo apt install python3-catkin-tools python3-osrf-pycommon
+  - sudo apt install ros-${ROS_DISTRO}-effort-controllers
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
   - rosdep update --include-eol-distros  # Support EOL distros.
@@ -102,7 +103,9 @@ before_script:
   - if [[ -f $ROSINSTALL_FILE ]] ; then wstool merge $ROSINSTALL_FILE ; fi
   - wstool up
   # package depdencies: install using rosdep.
-  - cd ~/catkin_ws
+  # - cd src/orocos_kinematics_dynamics && git checkout b35c424e77ebc5b7e6f1c5e5c34f8a4666fbf5bc
+  - cd ~/catkin_ws/src/orocos_kinematics_dynamics/ && rm -rf * && git checkout b35c424e && git reset --hard
+  # - cd ~/catkin_ws
   # - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 
 # Compile and test (mark the build as failed if any step fails). If the
@@ -116,7 +119,10 @@ before_script:
 script:
   - source /opt/ros/$ROS_DISTRO/setup.bash
   - cd ~/catkin_ws
-  - catkin build
+  - catkin build franka_msgs
+  - source devel/setup.bash
+  - catkin build franka_ros
+  - source devel/setup.bash
   # Run the tests, ensuring the path is set correctly.
   - source devel/setup.bash
-  - catkin build --catkin-make-args run_tests && catkin_test_results
+  - catkin build panda_simulator # --catkin-make-args run_tests && catkin_test_results
