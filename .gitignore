@@ -5,6 +5,7 @@
 *.obj
 
 *.py[cod]
+__pycache__
 # Precompiled Headers
 *.gch
 *.pch

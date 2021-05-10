@@ -1,11 +1,4 @@
-#!/bin/sh
-''':'
-if [ "$ROS_PYTHON_VERSION" = "3" ]; then
-  exec python3 "$0" "$@"
-else
-  exec python2 "$0" "$@"
-fi
-'''
+#!/usr/bin/env python
 import rospy
 from sensor_msgs.msg import JointState
 from franka_core_msgs.msg import JointCommand, RobotState

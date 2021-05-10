@@ -101,3 +101,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   USE_SOURCE_PERMISSIONS
 )
+
+catkin_python_setup()
+catkin_install_python(PROGRAMS startup_scripts/force_neutral_pose.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

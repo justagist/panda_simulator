@@ -20,8 +20,8 @@ catkin_package(
     panda_gazebo
 )
 
-install(PROGRAMS
-   scripts/move_robot.py
-   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
+catkin_python_setup()
+catkin_install_python(PROGRAMS scripts/move_robot.py
+                               scripts/task_space_control_using_sim_only.py
+                               scripts/task_space_control_with_fri.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

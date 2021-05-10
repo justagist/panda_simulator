@@ -20,7 +20,7 @@ catkin_python_setup()
 
 generate_dynamic_reconfigure_options(
   cfg/PandaPositionFFJointTrajectoryActionServer.cfg
-)
+  )
 
 add_dependencies(${PROJECT_NAME}_gencfg franka_core_msgs_generate_messages_py)
 
@@ -38,8 +38,6 @@ catkin_package(
   panda_moveit_config
 )
 
-install(
-  DIRECTORY scripts/
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  USE_SOURCE_PERMISSIONS
-)
+catkin_install_python(PROGRAMS scripts/start_gripper_action_server.py
+scripts/start_joint_trajectory_server.py
+DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
