@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 import rospy
 from franka_core_msgs.msg import JointCommand

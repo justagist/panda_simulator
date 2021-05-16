@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 # /***************************************************************************
 
@@ -49,6 +49,11 @@ from geometry_msgs.msg import Point
 from visualization_msgs.msg import *
 from interactive_markers.interactive_marker_server import *
 from franka_core_msgs.msg import EndPointState, JointCommand, RobotState
+
+# -- add to pythonpath for finding rviz_markers.py 
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# -------------------------------------------------
 
 from rviz_markers import RvizMarkers
 
