@@ -2,15 +2,15 @@
 
 [![franka_ros_version](https://img.shields.io/badge/franka_ros-v0.6.0,%20v0.7.0,%20v0.7.1-blue.svg)](https://github.com/frankaemika/franka_ros) [![franka_ros_interface_version](https://img.shields.io/badge/franka_ros_interface-v0.6.0,%20v0.7.1-yellow.svg)](https://github.com/justagist/franka_ros_interface)
 
-<!-- Latest version: [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/justagist/panda_simulator?include_prereleases&style=flat)](https://github.com/justagist/panda_simulator/tags) -->
+A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*Franka ROS Interface*][fri-repo] package.
 
-A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, providing exposed **controllers** and real-time **robot state feedback** similar to the real robot when using the [*franka-ros*][franka-ros] package.
+**:sparkles: _NEW_ :sparkles:: ROS Noetic now supported. See '[noetic_devel](https://github.com/justagist/panda_simulator/tree/noetic-devel)' branch.**
 
 ## Features
 
-- Low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper) or [Python API][fri-repo].
+- Customisable low-level *controllers* (joint position, velocity, torque) available that can be controlled through ROS topics (including position control for gripper) or [Python API][fri-repo].
 - Real-time *robot state* (end-effector state, joint state, controller state, etc.) available through ROS topics.
-- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct sim-to-real code transfer. The [PandaRobot](https://github.com/justagist/panda_robot) package which provides simplified python API for the robot can also be used for direct sim-to-real code transfer, as well as for performing real-time kinematics and dynamics computation.
+- The [*Franka ROS Interface*][fri-repo] package (which is a ROS interface for controlling the real Panda robot) can also be used with the panda_simulator, providing direct sim-to-real code transfer. The [PandaRobot][pr-repo] package which provides simplified python API for the robot can also be used for direct sim-to-real code transfer, as well as for performing real-time kinematics and dynamics computation.
 - Supports MoveIt planning and control for Franka Panda Emika robot arm and Franka Gripper, as well as smooth motion control using customisable ROS JointTrajectoryAction service.
 
 *For a simple bare-bone Gazebo simulator created using inbuilt Gazebo ROS controllers and transmission interfaces, see [Gazebo Panda](https://github.com/justagist/gazebo_panda).*
@@ -19,7 +19,7 @@ A **Gazebo simulator** for the Franka Emika Panda robot with ROS interface, prov
 
 ### Control and Monitor robot using Python API
 
-Python API: [Franka ROS Interface][fri-repo], [PandaRobot](https://github.com/justagist/panda_robot)
+Python API: [Franka ROS Interface][fri-repo], [PandaRobot][pr-repo]
 
   ![vid](https://github.com/justagist/franka_ros_interface/blob/master/assets/panda_robot_demo.gif)
  Watch video [here](https://youtu.be/4bEVysUIvOY)
@@ -44,9 +44,9 @@ ROS Kinetic (kinetic-devel branch; *not maintained*): [![Build Status](https://t
 
 - `pip install -r requirements.txt #(to install numpy and numpy-quaternion)`
 - *libfranka* (`apt install ros-${ROS_DISTRO}-libfranka` or [install from source][libfranka-doc])
-- *franka-ros* v0.7.1 (`sudo apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee). The newer features and functionalities may not be available in the older versions.
-- *panda_moveit_config* (`sudo apt install ros-$ROS_DISTRO-panda-moveit-config` or [install from source](https://github.com/ros-planning/panda_moveit_config))
-- Most of the other basic dependencies can be met by running the following `apt-get` command (you may have to use `sudo`): `apt install ros-$ROS_DISTRO-gazebo-ros-control ros-${ROS_DISTRO}-rospy-message-converter ros-${ROS_DISTRO}-effort-controllers ros-${ROS_DISTRO}-joint-state-controller ros-${ROS_DISTRO}-moveit ros-${ROS_DISTRO}-moveit-commander ros-${ROS_DISTRO}-moveit-visual-tools`.
+- *franka-ros* v0.7.1 (`apt install ros-$ROS_DISTRO-franka-ros` or [install from source][libfranka-doc]). *Make sure to use the [release version](https://github.com/frankaemika/franka_ros/tree/902fdbba0f7c6036a84a688712a454b9e622863b) if building from source. (`git checkout 902fdbb` from the cloned franka_ros github repo.)* **Note:** For using simulator with older version of *franka_ros* (v0.6.0), the last supported version of Panda Simulator was in commit [04dd906](https://github.com/justagist/panda_simulator/tree/04dd906f1923aa286fc5a1593b04bd35bfba78ee). The newer features and functionalities may not be available in the older version.
+- *panda_moveit_config* (`apt install ros-$ROS_DISTRO-panda-moveit-config` or [install from source](https://github.com/ros-planning/panda_moveit_config))
+- Most of the other basic dependencies can be met by running the following `apt-get` command: `apt install ros-$ROS_DISTRO-gazebo-ros-control ros-${ROS_DISTRO}-rospy-message-converter ros-${ROS_DISTRO}-effort-controllers ros-${ROS_DISTRO}-joint-state-controller ros-${ROS_DISTRO}-moveit ros-${ROS_DISTRO}-moveit-commander ros-${ROS_DISTRO}-moveit-visual-tools`.
 
 The following dependencies can be installed using the `.rosinstall` file (instructions in next section: [Building the Package](#building-the-package)).
 
@@ -89,13 +89,11 @@ Steps 2 and 3 can be automated by running `./build_ws.sh` from `<catkin_ws>/src/
 
 ### Docker Build (experimental!)
 
-**Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0))**
-
-*NOTE: The image for kinetic version is larger than that of the melodic version (~ 1.5x). This is because it uses [cudagl](https://hub.docker.com/r/nvidia/cudagl) image as base to facilitate rendering (without this, opengl does not seem to work for kinetic docker image, and rviz and gazebo fails to load).*
+**Requires [nvidia-docker](https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0)). Gazebo and RViz may not work without nvidia-docker.**
 
 - To build the docker image of the package, run `docker build docker/ -t ps_${ROS_DISTRO}:v1.0.0`, or pull built image from github (`docker pull docker.pkg.github.com/justagist/panda_simulator/ps_${ROS_DISTRO}:v1.0.0`).
 Note: Even when using the docker image, this repository has to be cloned on to the host machine.
-- To run the built image interactively, run the script `./run_docker.sh` from the cloned repository. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_${ROS_DISTRO}_ws`). The host's home directory is also mounted in the container for access to `.ros/` and for making the catkin workspace writable.
+- To run the built image interactively, run the script `./run_docker.sh` from the cloned repository. The container starts in a catkin workspace (directory location in host machine: `$HOME/.panda_sim_${ROS_DISTRO}_ws`). The host's home directory is also mounted in the container for access to `.ros/` and for making the catkin workspace writable. To see and modify other mounted volumes, go through the `run_docker.sh` file.
 - When running for the first time, the catkin workspace has to be built (`cd src/panda_simulator && ./build_ws.sh`).
 - If everything was successfully built in the previous step, you should be able to run the simulator (see [Usage](#usage) section below).
 
@@ -109,11 +107,9 @@ The simulator can be started by running:
     roslaunch panda_gazebo panda_world.launch # (use argument load_gripper:=false for starting without gripper; see other available arguments in launch file)
 ```
 
-This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation. The robot can also be controlled using the [Franka ROS Interface](https://github.com/justagist/franka_ros_interface) package and/or [PandaRobot](https://github.com/justagist/panda_robot) APIs.
+This exposes a variety of ROS topics and services for communicating with and controlling the robot in simulation. The robot can also be controlled using the [Franka ROS Interface](https://github.com/justagist/franka_ros_interface) package and/or [PandaRobot][pr-repo] APIs.
 
-~To start without moveit server, add the argument `start_moveit:=false` to the command. This is sometimes necessary for starting nodes in the right order.~
-
-**Update: The above roslaunch command does not start the moveit server automatically anymore. If using Panda Simulator in ROS Melodic environment, the moveit server now has to be started manually by running the following command in a new terminal:**
+**NOTE: The above roslaunch command does not start the moveit server automatically. If using Panda Simulator in ROS Melodic/Noetic environment, the moveit server now has to be started manually by running the following command in a new terminal:**
 
 ```bash
     roslaunch panda_sim_moveit sim_move_group.launch # (use argument load_gripper:=false for starting without gripper
@@ -178,7 +174,7 @@ Check [versionLog.md](https://github.com/justagist/panda_simulator/blob/melodic-
 ## Related Packages
 
 - [*Franka ROS Interface*][fri-repo] : A ROS API for controlling and managing the Franka Emika Panda robot (real and simulated). Contains controllers for the robot (joint position, velocity, torque), interfaces for the gripper, controller manager, coordinate frames interface, etc.. Provides almost complete sim-to-real transfer of code.
-- [*PandaRobot*](https://github.com/justagist/panda_robot) : Python interface providing higher-level control of the robot integrated with its gripper, controller manager, coordinate frames manager, etc. It also provides access to the kinematics and dynamics of the robot using the [KDL library](http://wiki.ros.org/kdl).
+- [*PandaRobot*][pr-repo] : Python interface providing higher-level control of the robot integrated with its gripper, controller manager, coordinate frames manager, etc. It also provides access to the kinematics and dynamics of the robot using the [KDL library](http://wiki.ros.org/kdl).
 - [*Gazebo Panda*](https://github.com/justagist/gazebo_panda): A simple bare-bone gazebo simulator using in-built gazebo controllers and transmissions. No custom controllers or interfaces.
 
 The [*Franka ROS Interface*][fri-repo] package provides Python API and interface tools to control and communicate with the robot using the ROS topics and services exposed by the simulator. Since the simulator exposes similar information and controllers as the *robot_state_controller_node* of the [*Franka ROS Interface*][fri-repo], the API can be used to control both the real robot, and the simulated robot in this package, with minimum change in code.
@@ -193,5 +189,6 @@ If you use this software, please cite it using [![DOI](https://zenodo.org/badge/
 
    [fri-repo]: <https://github.com/justagist/franka_ros_interface>
    [fpd-repo]: <https://github.com/justagist/franka_panda_description>
+   [pr-repo]: <https://github.com/justagist/panda_robot>
    [libfranka-doc]: <https://frankaemika.github.io/docs/installation_linux.html#building-from-source>
    [franka-ros]: <https://frankaemika.github.io/docs/franka_ros.html>
