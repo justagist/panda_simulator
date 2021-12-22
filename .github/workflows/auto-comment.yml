@@ -1,0 +1,19 @@
+name: Auto Comment
+on: [issues, pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wow-actions/auto-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          issuesOpened: |
+            Hi @{{ author }}, thank you for using this repository. Unfortunately, I am unable to maintain this package any more, sorry!
+            If you are interested in contributing to this repository or are willing to maintain it, please contact me at mail@saifsidhik.page.
+            -- Saif
+
+          pullRequestOpened: |
+            Hi @{{ author }},
+            Thank you for the pull request. Unfortunately, I am unable to maintain this package any more, sorry!
+            Please feel free to maintain a working fork of the repo. If you are interested in contributing to this repository or are willing to maintain it, please contact me at mail@saifsidhik.page.
+            -- Saif
